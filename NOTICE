@@ -1,0 +1,29 @@
+BSK (Rewrite)
+Copyright 2026 tiennm99
+
+This product is an educational, derivative work inspired by:
+
+  BSK All-in-One Clinic Management System
+  https://github.com/lds217/BSK-All-in-One-Clinic-Management-System
+  Author: lds217 (https://github.com/lds217)
+
+The upstream project does not carry an explicit open-source license at
+the time this rewrite was started. This rewrite is a clean-room
+reimplementation: no source code from the upstream project has been
+copied. Feature lists, domain concepts, and data-model shapes were
+reconstructed from the public README and observable application
+behavior, which are not subject to copyright as such.
+
+Vietnamese-language UI labels and domain terminology (e.g., "Đăng nhập",
+"ĐÃ KHÁM") are functional facts of the target locale and are reused
+where they reflect standard clinical terminology, not as a copy of any
+proprietary expression of the upstream project.
+
+If you are the upstream author and would like additional acknowledgement,
+correction, or the removal of any reference, please open an issue on
+this repository.
+
+---
+
+Third-party software used by this project retains its own licenses; see
+the dependency manifests (package.json, pnpm-lock.yaml) for details.
