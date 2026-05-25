@@ -1,9 +1,14 @@
+// WARNING: Do NOT add `'use cache'` to this layout — it calls
+// createSupabaseServerClient() which reads cookies(). Caching this scope would
+// either throw at build time or serve stale auth state across users.
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { SessionProvider } from "@/lib/auth/session-provider";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -37,10 +42,28 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
 
+  // Read the authenticated user here, outside any `'use cache'` scope.
+  // getUser() validates the JWT server-side on every render — do not move this
+  // call into a cached helper. Cached helpers that need the user receive it as
+  // a function argument (see phase 06 patterns).
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // user is null when unauthenticated or when Supabase Auth is unreachable.
+  // No redirect here — route gating is phase 06's responsibility.
+  // The proxy already handles the coarse "unauth → /sign-in" redirect for
+  // explicitly protected path prefixes (/dashboard, /admin).
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          {/* SessionProvider makes `user` available to client components via
+              useSession() without any additional Supabase calls from the client. */}
+          <SessionProvider user={user}>{children}</SessionProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
