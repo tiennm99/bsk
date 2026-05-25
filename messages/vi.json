@@ -32,5 +32,36 @@
       "invalidCredentials": "Email hoặc mật khẩu không đúng.",
       "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
+  },
+  "nav": {
+    "dashboard": "Trang chủ",
+    "invite": "Mời người dùng",
+    "queue": "Hàng chờ",
+    "patients": "Bệnh nhân",
+    "doctors": "Bác sĩ",
+    "services": "Dịch vụ",
+    "medicines": "Thuốc",
+    "reports": "Báo cáo",
+    "register": "Đăng ký bệnh nhân",
+    "invoices": "Hoá đơn",
+    "payments": "Thanh toán",
+    "checkups": "Khám bệnh",
+    "settings": "Cài đặt"
+  },
+  "app": {
+    "signOut": "Đăng xuất",
+    "unenrolledError": "Tài khoản của bạn chưa được đăng ký. Vui lòng liên hệ quản trị viên.",
+    "localeSwitcher": {
+      "label": "Ngôn ngữ",
+      "locales": {
+        "vi": "Tiếng Việt",
+        "en": "English"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Xin chào, {email}",
+    "roleLabel": "Vai trò của bạn:",
+    "placeholder": "Nội dung trang chủ sẽ được bổ sung trong giai đoạn tiếp theo."
   }
 }

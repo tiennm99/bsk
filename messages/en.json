@@ -32,5 +32,36 @@
       "invalidCredentials": "Invalid email or password.",
       "genericError": "Something went wrong. Please try again."
     }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "invite": "Invite Users",
+    "queue": "Queue",
+    "patients": "Patients",
+    "doctors": "Doctors",
+    "services": "Services",
+    "medicines": "Medicines",
+    "reports": "Reports",
+    "register": "Register Patient",
+    "invoices": "Invoices",
+    "payments": "Payments",
+    "checkups": "Checkups",
+    "settings": "Settings"
+  },
+  "app": {
+    "signOut": "Sign out",
+    "unenrolledError": "Your account is not enrolled. Please contact an administrator.",
+    "localeSwitcher": {
+      "label": "Language",
+      "locales": {
+        "vi": "Tiếng Việt",
+        "en": "English"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {email}",
+    "roleLabel": "Your role:",
+    "placeholder": "Dashboard content is coming in a future phase."
   }
 }
