@@ -7,5 +7,15 @@
   "errors": {
     "notFoundTitle": "Không tìm thấy trang",
     "notFoundBody": "Đường dẫn bạn truy cập không tồn tại."
+  },
+  "auth": {
+    "signIn": {
+      "emailLabel": "Email",
+      "passwordLabel": "Mật khẩu",
+      "submit": "Đăng nhập",
+      "submitting": "Đang đăng nhập…",
+      "invalidCredentials": "Email hoặc mật khẩu không đúng.",
+      "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
   }
 }

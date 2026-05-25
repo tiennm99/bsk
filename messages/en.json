@@ -7,5 +7,15 @@
   "errors": {
     "notFoundTitle": "Page not found",
     "notFoundBody": "The path you requested does not exist."
+  },
+  "auth": {
+    "signIn": {
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "invalidCredentials": "Invalid email or password.",
+      "genericError": "Something went wrong. Please try again."
+    }
   }
 }
