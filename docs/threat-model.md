@@ -81,4 +81,4 @@ Mitigation when Phase 7 lands:
 
 ## Unresolved
 
-- Whether to add a CI grep that fails the build if `sb_secret_` appears in any `NEXT_PUBLIC_*` line.
+_(none at this time — revisit before any real user touches the system.)_

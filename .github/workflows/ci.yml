@@ -37,6 +37,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Secret-leak guard (sb_secret_* in NEXT_PUBLIC_*)
+        run: pnpm check:no-secret-leak
+
       - name: Format check
         run: pnpm format:check
 

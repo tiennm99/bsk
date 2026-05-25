@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:preflight": "tsx scripts/preflight-supabase.ts",
-    "db:push": "pnpm db:preflight && supabase db push"
+    "db:push": "pnpm db:preflight && supabase db push",
+    "check:no-secret-leak": "node scripts/check-no-secret-leak.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
