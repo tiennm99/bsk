@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SessionProvider } from "@/lib/auth/session-provider";
+import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -60,6 +61,10 @@ export default async function LocaleLayout({
     <html lang={locale} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider>
+          {/* Toaster is mounted once globally here so toast() calls from any
+              client component in the subtree are rendered. Position: top-right
+              keeps it out of the form's field error region. */}
+          <Toaster richColors position="top-right" />
           {/* SessionProvider makes `user` available to client components via
               useSession() without any additional Supabase calls from the client. */}
           <SessionProvider user={user}>{children}</SessionProvider>

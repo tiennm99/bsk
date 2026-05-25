@@ -10,6 +10,8 @@
   },
   "auth": {
     "signIn": {
+      "title": "Đăng nhập BSK",
+      "subtitle": "Nhập thông tin đăng nhập để truy cập hệ thống phòng khám.",
       "emailLabel": "Email",
       "passwordLabel": "Mật khẩu",
       "submit": "Đăng nhập",

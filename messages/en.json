@@ -10,6 +10,8 @@
   },
   "auth": {
     "signIn": {
+      "title": "Sign in to BSK",
+      "subtitle": "Enter your credentials to access the clinic system.",
       "emailLabel": "Email",
       "passwordLabel": "Password",
       "submit": "Sign in",
