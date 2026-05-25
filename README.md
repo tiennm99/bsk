@@ -24,6 +24,10 @@ Planning phase. See [PLAN.md](./PLAN.md) for the architecture and phased roadmap
 - **No HIPAA / GDPR compliance** is implied or attempted on the free-tier infrastructure.
 - This is a derivative work for learning; if you are the upstream author and would like additional attribution or removal, please open an issue.
 
+## Database
+
+After `pnpm db:push`, run `pnpm db:gen-types` to refresh `types/supabase-bsk.ts`.
+
 ## License
 
 This repository is licensed under the [Apache License 2.0](./LICENSE). The original project does not currently carry an explicit license; see [NOTICE](./NOTICE) for the attribution stance.

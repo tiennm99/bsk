@@ -13,6 +13,7 @@
     "format:check": "prettier --check .",
     "db:preflight": "tsx scripts/preflight-supabase.ts",
     "db:push": "pnpm db:preflight && supabase db push",
+    "db:gen-types": "supabase gen types typescript --schema bsk > types/supabase-bsk.ts",
     "check:no-secret-leak": "node scripts/check-no-secret-leak.mjs"
   },
   "dependencies": {

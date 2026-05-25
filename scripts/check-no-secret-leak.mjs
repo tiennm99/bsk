@@ -18,13 +18,23 @@ const PATTERN = String.raw`NEXT_PUBLIC_[A-Z0-9_]+\s*[=:]\s*["']?sb_secret_`;
 
 const result = spawnSync(
   "git",
-  ["grep", "-nE", PATTERN, "--", ".", ":(exclude)pnpm-lock.yaml", ":(exclude)scripts/check-no-secret-leak.mjs"],
+  [
+    "grep",
+    "-nE",
+    PATTERN,
+    "--",
+    ".",
+    ":(exclude)pnpm-lock.yaml",
+    ":(exclude)scripts/check-no-secret-leak.mjs",
+  ],
   { encoding: "utf8" },
 );
 
 // git grep: exit 0 = matches found, 1 = no matches, other = git error
 if (result.status === 1) {
-  process.stdout.write("[check-no-secret-leak] OK — no NEXT_PUBLIC_*=sb_secret_* assignments found.\n");
+  process.stdout.write(
+    "[check-no-secret-leak] OK — no NEXT_PUBLIC_*=sb_secret_* assignments found.\n",
+  );
   process.exit(0);
 }
 
@@ -38,5 +48,7 @@ if (result.status === 0) {
   process.exit(1);
 }
 
-process.stderr.write(`[check-no-secret-leak] git grep failed (exit ${result.status}):\n${result.stderr}\n`);
+process.stderr.write(
+  `[check-no-secret-leak] git grep failed (exit ${result.status}):\n${result.stderr}\n`,
+);
 process.exit(2);
