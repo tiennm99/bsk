@@ -70,20 +70,47 @@ export async function signInAction(
   // Verify the authenticated user has a row in bsk.app_users. Users who exist
   // in auth.users but have never been enrolled by an admin must be rejected.
   // We return the SAME generic error as wrong-password (enumeration defense).
-  const { data: enrollment } = await supabase
+  let { data: enrollment } = await supabase
     .from("app_users")
     .select("role")
     .eq("user_id", user.id)
     .maybeSingle();
 
   if (!enrollment) {
-    // Sign out so the session cookie is not left in a half-authenticated state.
-    await supabase.auth.signOut();
-    return {
-      status: "error",
-      fieldErrors: {},
-      formError: t("invalidCredentials"),
-    };
+    // First-user-becomes-admin: race-safe claim via SECURITY DEFINER function
+    // that holds pg_advisory_xact_lock and EXISTS-guards the INSERT.
+    // We check count first to avoid calling the RPC when other users exist
+    // (an unenrolled non-first user must be rejected without any promotion).
+    const { count: existingCount } = await supabase
+      .from("app_users")
+      .select("user_id", { count: "exact", head: true });
+
+    if (existingCount === 0) {
+      const { data: claimed } = await supabase.rpc("claim_first_admin", {
+        p_user_id: user.id,
+      });
+
+      if (claimed === true) {
+        // Re-fetch enrollment now that the row exists (role = 'admin').
+        const { data: refetched } = await supabase
+          .from("app_users")
+          .select("role")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        enrollment = refetched;
+      }
+    }
+
+    // If enrollment is still null after the claim attempt (race lost, count > 0,
+    // or RPC returned false), sign out and return a generic error.
+    if (!enrollment) {
+      await supabase.auth.signOut();
+      return {
+        status: "error",
+        fieldErrors: {},
+        formError: t("invalidCredentials"),
+      };
+    }
   }
 
   // Step 4 — redirect to dashboard

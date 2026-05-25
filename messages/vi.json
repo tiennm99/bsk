@@ -8,6 +8,19 @@
     "notFoundTitle": "Không tìm thấy trang",
     "notFoundBody": "Đường dẫn bạn truy cập không tồn tại."
   },
+  "admin": {
+    "invite": {
+      "title": "Mời người dùng",
+      "emailLabel": "Địa chỉ email",
+      "roleLabel": "Vai trò",
+      "submit": "Gửi lời mời",
+      "submitting": "Đang gửi…",
+      "success": "Đã mời {email}. Nếu email không đến trong vòng 5 phút, hãy sao chép liên kết mời từ bảng điều khiển Supabase tại Authentication → Users.",
+      "errorForbidden": "Bạn không có quyền mời người dùng.",
+      "errorEmailTaken": "Người dùng này đã được đăng ký trong BSK.",
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
+  },
   "auth": {
     "signIn": {
       "title": "Đăng nhập BSK",

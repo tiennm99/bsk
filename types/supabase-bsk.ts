@@ -56,6 +56,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: Database["bsk"]["Enums"]["app_role"] | null;
       };
+      claim_first_admin: {
+        Args: { p_user_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       app_role: "admin" | "doctor" | "nurse" | "receptionist" | "cashier" | "patient";

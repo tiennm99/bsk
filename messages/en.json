@@ -8,6 +8,19 @@
     "notFoundTitle": "Page not found",
     "notFoundBody": "The path you requested does not exist."
   },
+  "admin": {
+    "invite": {
+      "title": "Invite User",
+      "emailLabel": "Email address",
+      "roleLabel": "Role",
+      "submit": "Send invite",
+      "submitting": "Sending…",
+      "success": "Invited {email}. If the email does not arrive within 5 minutes, copy the invite link from the Supabase dashboard under Authentication → Users.",
+      "errorForbidden": "You do not have permission to invite users.",
+      "errorEmailTaken": "This user is already enrolled in BSK.",
+      "errorGeneric": "Something went wrong. Please try again."
+    }
+  },
   "auth": {
     "signIn": {
       "title": "Sign in to BSK",
