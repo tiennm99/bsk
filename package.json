@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:preflight": "tsx scripts/preflight-supabase.ts",
+    "db:push": "pnpm db:preflight && supabase db push"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -48,6 +50,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
+    "tsx": "^4.22.3",
     "typescript": "^5.9.2"
   }
 }
