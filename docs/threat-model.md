@@ -33,7 +33,7 @@ The Supabase secret key (`sb_secret_*`) is project-wide. A leak from any sibling
 
 - Server-only env var; never in `NEXT_PUBLIC_*`. Enforced by `.env.example` shape and the env-validation schema in `lib/env/server.ts`.
 - Vercel env scoping: store the production secret as a Production-only variable on each sibling project. Preview/dev use different keys.
-- Rotation: TODO — pick a cadence and add to `docs/supabase-shared-config.md`. Rotate immediately on any suspected leak.
+- Rotation: **event-driven only** for the current educational scope. No scheduled cadence — solo author, no real users. Rotate on any of: suspected leak, key in logs/screenshots/repo history, repo handoff or new contributor, suspected sibling-app compromise. Switch to a scheduled cadence (quarterly is a sensible starting point) the moment any real user exists. Full policy in `docs/supabase-shared-config.md`.
 
 ### R2 — Project-wide PITR
 
@@ -61,9 +61,14 @@ Redis keys are shared across apps. BSK keys are prefixed `bsk:{env}:` enforced i
 
 ### R8 — QStash cross-app spoofing
 
-The QStash signing key is shared across apps on the same Upstash account. A sibling app's compromised key could forge requests to BSK's `/api/qstash/*` routes. Mitigation when QStash routes land: validate Zod payload AND DB invariants (e.g., reject if `checkup_id` is not in `awaiting_recheckup` status), not just the signature.
+The QStash signing key is shared across apps on the same Upstash account. A sibling app's compromised key could forge requests to BSK's `/api/qstash/*` routes. Decision: **keep QStash** (PLAN.md §4 Phase 7) — the free tier (1000 messages/day) comfortably covers clinic-scale reminders, and per-event precision is worth the spoofing-mitigation work.
 
-> Note: PLAN.md §4 Phase 7 lists QStash for the 24h-before-recheckup reminder. Whether to keep QStash, switch to Vercel Cron, or skip the feature entirely is **not yet decided**.
+Mitigation when Phase 7 lands:
+
+- Verify the QStash signature on every request (`getQStashReceiver()` in `lib/upstash.ts`).
+- Re-validate the payload with Zod inside the route handler.
+- Re-validate the DB invariant: reject if `checkup_id` doesn't exist, isn't in `awaiting_recheckup`, or has a `recheckup_date` outside the expected ±48h window. A spoofer can guess IDs but not current row state.
+- Log every QStash receive with topic + checkup_id; alert on unexpected topics.
 
 ## Out of scope
 
@@ -76,7 +81,4 @@ The QStash signing key is shared across apps on the same Upstash account. A sibl
 
 ## Unresolved
 
-- Rotation cadence for `sb_secret_*` and `sb_publishable_*`.
-- Phase 5 imaging cost-control numbers (retention window, compression target).
-- Phase 7 reminder mechanism (QStash vs Vercel Cron vs drop).
 - Whether to add a CI grep that fails the build if `sb_secret_` appears in any `NEXT_PUBLIC_*` line.

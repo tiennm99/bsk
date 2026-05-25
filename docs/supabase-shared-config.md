@@ -61,7 +61,7 @@ These are **single-value-for-the-whole-project** settings. Any change is announc
 - `sb_publishable_*` — browser, replaces anon key.
 - `sb_secret_*` — server, replaces service role key.
 - Legacy `supabase_key_*` retires 2026-12-31. Not in use.
-- Rotation cadence: quarterly, or immediately on suspected leak.
+- Rotation policy: **event-driven** (no scheduled cadence — single-author personal project). Triggers: suspected leak, key appearing in logs/screenshots/repo history, repo handoff or new contributor, suspected sibling-app compromise. Re-evaluate the moment any real (non-author) user exists.
 - Storage location: Vercel project env vars, Production-scoped. Never in repo.
 
 ## Exposed schemas

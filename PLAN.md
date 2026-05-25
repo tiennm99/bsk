@@ -167,7 +167,12 @@ The original has 25+ features. Rewriting all at once is a trap. Phases below are
 - Browser-side capture using `getUserMedia` for webcam (no native USB ultrasound device support — out of educational scope).
 - Per-checkup media gallery; QR/barcode generation client-side (`bwip-js`).
 - Signed-URL access for staff with checkup permissions.
-- **Cost controls (mandatory for Hobby tier — 1 GB total Supabase Storage):** client-side image compression on upload, signed-URL TTLs short (≤24h), nightly Vercel Cron sweeps to delete media older than the configured retention window. Document an optional Cloudinary/Imgix migration path for production clinics; out of scope for the educational build.
+- **Cost controls (mandatory for Hobby tier — 1 GB total Supabase Storage, shared across sibling apps):**
+  - Client-side image compression target: **≤200 KB/image** (browser canvas + JPEG quality knob).
+  - Signed-URL TTL: **1 h** (regenerate per session; never embed a long-lived URL).
+  - Retention window: **7 days** from upload. Nightly Vercel Cron sweeps `bsk-checkup-media` and deletes older objects.
+  - Budget math (rough): 200 KB × 5 photos × 20 checkups/day × 7 days ≈ 140 MB resident — leaves headroom for sibling apps.
+- Document an optional Cloudinary/Imgix migration path for production clinics; out of scope for the educational build.
 
 ### Phase 6 — Printing & reports
 - `@react-pdf/renderer` templates: invoice, prescription, ultrasound report.
