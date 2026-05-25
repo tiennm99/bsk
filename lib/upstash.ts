@@ -7,6 +7,15 @@ import { serverEnv, redisKeyPrefix } from "@/lib/env/server";
 const RATE_LIMIT_NS = "ratelimit";
 const CACHE_NS = "cache";
 
+// Cache keys: lowercase alphanumerics, '-' for words, ':' for sub-namespacing.
+// Forbids spaces, glob chars (* ? [ ]), control chars, uppercase. Matches
+// the strictness of `createRateLimiter` so callers cannot accidentally write
+// keys that interact with SCAN globs or pollute neighboring apps.
+const KEY_RE = /^[a-z0-9][a-z0-9:-]*$/;
+
+// SCAN patterns allow '*' for sweeps but are otherwise constrained.
+const SCAN_PATTERN_RE = /^[a-z0-9:*-]+$/;
+
 type Json = string | number | boolean | null | { [k: string]: Json } | Json[];
 
 const redis = new Redis({
@@ -15,10 +24,19 @@ const redis = new Redis({
 });
 
 function withPrefix(ns: string, key: string) {
-  if (!key || key.includes(" ")) {
-    throw new Error(`Invalid cache key: ${JSON.stringify(key)}`);
+  if (!KEY_RE.test(key)) {
+    throw new Error(
+      `Invalid cache key (lowercase + digits + '-' + ':' only, must start with alphanumeric): ${JSON.stringify(key)}`,
+    );
   }
   return `${redisKeyPrefix}:${ns}:${key}`;
+}
+
+function withScanPattern(ns: string, pattern: string) {
+  if (!SCAN_PATTERN_RE.test(pattern)) {
+    throw new Error(`Invalid SCAN pattern: ${JSON.stringify(pattern)}`);
+  }
+  return `${redisKeyPrefix}:${ns}:${pattern}`;
 }
 
 export const cache = {
@@ -42,7 +60,7 @@ export const cache = {
    */
   async scan(matchSuffix: string, cursor: string | number = 0) {
     return redis.scan(cursor, {
-      match: withPrefix(CACHE_NS, matchSuffix),
+      match: withScanPattern(CACHE_NS, matchSuffix),
       count: 100,
     });
   },

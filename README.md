@@ -12,7 +12,7 @@ Planning phase. See [PLAN.md](./PLAN.md) for the architecture and phased roadmap
 
 ## Stack
 
-- **pnpm** + **Next.js 15** (App Router) + **TypeScript**
+- **pnpm** + **Next.js 16** (App Router) + **TypeScript**
 - **Supabase** (Postgres + Auth + Storage) — shared across personal projects via schema-per-app
 - **Upstash** Redis + QStash — shared across personal projects via key prefixes
 - **Vercel** for hosting

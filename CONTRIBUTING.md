@@ -58,7 +58,7 @@ async function getDashboardData(userId: string) {
 
 `lib/supabase/server.ts` reads cookies → never call it from a `'use cache'` function. Call it at the page/layout/Server-Action level and pass the data (not the client) into cached helpers.
 
-`lib/supabase/admin.ts` does not depend on cookies and is safe to call from cached scopes — but only when the call is genuinely user-agnostic.
+`lib/supabase/admin.ts` does not depend on cookies and is safe to call inside `'use cache'`. When the result depends on a caller's identity (user, role, tenant), the cache key MUST partition on that identity — otherwise one user sees another user's data. For genuinely user-agnostic reads (e.g. clinic settings, services list), no key partitioning is needed.
 
 ### 4. Realtime placement
 
