@@ -16,7 +16,7 @@ Versions are pinned to the latest stable as of May 2026. No code is written yet,
 | Package manager | pnpm |
 | Framework | **Next.js 16** (App Router, RSC, Server Actions, `'use cache'` directive, Turbopack default) |
 | Runtime | React 19 — `params` and `searchParams` are **async-only** (must `await`) |
-| Language | TypeScript 6 (`"strict": true`) |
+| Language | TypeScript 5.9 (`"strict": true`); revisit TS 6 once `eslint-config-next` + `typescript-eslint` ship support |
 | Hosting | Vercel (Hobby tier, Fluid Compute pricing) |
 | DB + Auth + Storage | Supabase (Postgres + Auth + Storage); new `sb_publishable_*` / `sb_secret_*` key format (old keys retire 2026-12-31) |
 | SSR client | `@supabase/ssr` (async `cookies()` aware) |
@@ -113,6 +113,8 @@ These are the cross-cutting changes the plan assumes everywhere; they're called 
 - **Supabase client + `'use cache'` interaction.** Server clients depend on cookies; they must be created *outside* a cached scope. The cached helpers receive a pre-built client (or the data the client returned), not the cookie store.
 - **Supabase Realtime + `'use cache'`.** Realtime channels are subscribed in Client Components or Route Handlers — never inside `'use cache'`. Cached reads provide the initial snapshot; Realtime drives deltas.
 - **Turbopack is the default** for `next dev` and `next build`. No custom webpack config unless we have a concrete reason.
+- **`middleware.ts` renamed to `proxy.ts`.** Next.js 16 deprecates the `middleware` file convention; the root file must be `proxy.ts` (build emits a warning on the old name). The export shape is unchanged — `next-intl`, `@supabase/ssr`, and other libraries still call it "middleware" internally; only the Next.js file convention moved.
+- **`next lint` removed.** Use `eslint .` directly via `package.json` scripts.
 - **Supabase API keys.** Use the new `sb_publishable_*` (browser) and `sb_secret_*` (server) keys from day one. Legacy `supabase_key_*` keys retire 2026-12-31.
 - **Tailwind v4 install shape.** PostCSS config uses `@tailwindcss/postcss`; theme lives in `globals.css` via `@theme`, not in a JS config file. `shadcn init` already scaffolds this layout.
 - **Forms.** React 19's `useActionState` is the official Server-Action form integration. No `next-safe-action` / `zsa` wrapper needed; pair with `react-hook-form` for client-side UX and Zod v4 for the schema shared between client and server.

@@ -1,0 +1,11 @@
+{
+  "home": {
+    "title": "BSK — Clinic Management System",
+    "subtitle": "Educational Next.js rewrite of lds217/BSK.",
+    "status": "Phase {phase} — Foundation."
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The path you requested does not exist."
+  }
+}

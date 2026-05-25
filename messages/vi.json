@@ -1,0 +1,11 @@
+{
+  "home": {
+    "title": "BSK — Hệ thống quản lý phòng khám",
+    "subtitle": "Bản viết lại Next.js cho mục đích học tập của lds217/BSK.",
+    "status": "Giai đoạn {phase} — Khung nền."
+  },
+  "errors": {
+    "notFoundTitle": "Không tìm thấy trang",
+    "notFoundBody": "Đường dẫn bạn truy cập không tồn tại."
+  }
+}
