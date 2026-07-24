@@ -14,10 +14,11 @@
  * side or server-side.
  */
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,10 @@ export function SignInForm() {
   });
 
   const { errors: fieldErrors } = form.formState;
+
+  // Password reveal toggle — shared clinic PCs + VN keyboards make mistyped
+  // passwords common; letting the doctor verify what they typed cuts retries.
+  const [showPassword, setShowPassword] = useState(false);
 
   // Sync server-returned fieldErrors into RHF so the inline error UI is
   // consistent regardless of where the error originated.
@@ -83,6 +88,7 @@ export function SignInForm() {
           <Input
             id="email"
             type="email"
+            autoFocus
             autoComplete="email"
             autoCapitalize="none"
             spellCheck={false}
@@ -101,15 +107,28 @@ export function SignInForm() {
         {/* Password field */}
         <div className="space-y-1.5">
           <Label htmlFor="password">{t("passwordLabel")}</Label>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            disabled={isPending}
-            aria-invalid={!!fieldErrors.password}
-            aria-describedby={fieldErrors.password ? "password-error" : undefined}
-            {...form.register("password")}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              disabled={isPending}
+              className="pr-10"
+              aria-invalid={!!fieldErrors.password}
+              aria-describedby={fieldErrors.password ? "password-error" : undefined}
+              {...form.register("password")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              disabled={isPending}
+              aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+              aria-pressed={showPassword}
+              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-md focus:outline-none focus-visible:ring-2"
+            >
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
           {fieldErrors.password && (
             <p id="password-error" className="text-destructive text-sm" role="alert">
               {fieldErrors.password.message}
@@ -125,12 +144,9 @@ export function SignInForm() {
         )}
 
         {/* Submit */}
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isPending || (!form.formState.isValid && form.formState.isDirty)}
-          aria-disabled={isPending}
-        >
+        {/* Submit stays enabled on partial/invalid input: a greyed-out primary
+            button reads as "app broken". Errors surface inline on submit. */}
+        <Button type="submit" size="lg" className="w-full" disabled={isPending}>
           {isPending ? t("submitting") : t("submit")}
         </Button>
       </form>

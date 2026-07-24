@@ -18,8 +18,17 @@
       "success": "Invited {email}. If the email does not arrive within 5 minutes, copy the invite link from the Supabase dashboard under Authentication → Users.",
       "errorForbidden": "You do not have permission to invite users.",
       "errorEmailTaken": "This user is already enrolled in BSK.",
-      "errorGeneric": "Something went wrong. Please try again."
+      "errorGeneric": "Something went wrong. Please try again.",
+      "tooManyRequests": "Too many invites sent. Please try again in a few minutes."
     }
+  },
+  "roles": {
+    "admin": "Admin",
+    "doctor": "Doctor",
+    "nurse": "Nurse",
+    "receptionist": "Receptionist",
+    "cashier": "Cashier",
+    "patient": "Patient"
   },
   "auth": {
     "signIn": {
@@ -27,9 +36,12 @@
       "subtitle": "Enter your credentials to access the clinic system.",
       "emailLabel": "Email",
       "passwordLabel": "Password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
       "submit": "Sign in",
       "submitting": "Signing in…",
       "invalidCredentials": "Invalid email or password.",
+      "tooManyAttempts": "Too many attempts. Please try again in a few minutes.",
       "genericError": "Something went wrong. Please try again."
     }
   },
@@ -50,6 +62,9 @@
   },
   "app": {
     "signOut": "Sign out",
+    "openMenu": "Open navigation menu",
+    "menu": "Navigation menu",
+    "skipToContent": "Skip to content",
     "unenrolledError": "Your account is not enrolled. Please contact an administrator.",
     "localeSwitcher": {
       "label": "Language",
@@ -60,7 +75,7 @@
     }
   },
   "dashboard": {
-    "welcome": "Welcome, {email}",
+    "welcome": "Welcome, {name}",
     "roleLabel": "Your role:",
     "placeholder": "Dashboard content is coming in a future phase."
   }

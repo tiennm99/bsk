@@ -18,8 +18,17 @@
       "success": "Đã mời {email}. Nếu email không đến trong vòng 5 phút, hãy sao chép liên kết mời từ bảng điều khiển Supabase tại Authentication → Users.",
       "errorForbidden": "Bạn không có quyền mời người dùng.",
       "errorEmailTaken": "Người dùng này đã được đăng ký trong BSK.",
-      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "tooManyRequests": "Bạn đã gửi quá nhiều lời mời. Vui lòng thử lại sau ít phút."
     }
+  },
+  "roles": {
+    "admin": "Quản trị",
+    "doctor": "Bác sĩ",
+    "nurse": "Điều dưỡng",
+    "receptionist": "Lễ tân",
+    "cashier": "Thu ngân",
+    "patient": "Bệnh nhân"
   },
   "auth": {
     "signIn": {
@@ -27,9 +36,12 @@
       "subtitle": "Nhập thông tin đăng nhập để truy cập hệ thống phòng khám.",
       "emailLabel": "Email",
       "passwordLabel": "Mật khẩu",
+      "showPassword": "Hiện mật khẩu",
+      "hidePassword": "Ẩn mật khẩu",
       "submit": "Đăng nhập",
       "submitting": "Đang đăng nhập…",
       "invalidCredentials": "Email hoặc mật khẩu không đúng.",
+      "tooManyAttempts": "Quá nhiều lần thử. Vui lòng thử lại sau ít phút.",
       "genericError": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
@@ -50,6 +62,9 @@
   },
   "app": {
     "signOut": "Đăng xuất",
+    "openMenu": "Mở menu điều hướng",
+    "menu": "Menu điều hướng",
+    "skipToContent": "Bỏ qua đến nội dung",
     "unenrolledError": "Tài khoản của bạn chưa được đăng ký. Vui lòng liên hệ quản trị viên.",
     "localeSwitcher": {
       "label": "Ngôn ngữ",
@@ -60,7 +75,7 @@
     }
   },
   "dashboard": {
-    "welcome": "Xin chào, {email}",
+    "welcome": "Xin chào, {name}",
     "roleLabel": "Vai trò của bạn:",
     "placeholder": "Nội dung trang chủ sẽ được bổ sung trong giai đoạn tiếp theo."
   }

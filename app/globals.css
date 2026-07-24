@@ -6,9 +6,10 @@
   --color-primary: oklch(0.205 0 0);
   --color-primary-foreground: oklch(0.985 0 0);
   --color-muted: oklch(0.97 0 0);
-  --color-muted-foreground: oklch(0.556 0 0);
+  /* Darkened from 0.556 → 0.50 for WCAG AA at small (text-xs) sizes. */
+  --color-muted-foreground: oklch(0.5 0 0);
   --color-border: oklch(0.922 0 0);
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-be-vietnam-pro), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "Courier New", monospace;
   --radius: 0.5rem;
 }
@@ -34,4 +35,16 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+}
+
+/* Respect users who ask the OS to reduce motion (vestibular safety). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

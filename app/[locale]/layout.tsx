@@ -4,6 +4,7 @@
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { Be_Vietnam_Pro } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
@@ -11,6 +12,16 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SessionProvider } from "@/lib/auth/session-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
+
+// Vietnamese-complete web font. `vietnamese` subset covers stacked diacritics
+// (ế, ữ, ộ …) that render inconsistently across the low-end machines clinics
+// actually own. Exposed as a CSS variable consumed by --font-sans in globals.css.
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-be-vietnam-pro",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "BSK Clinic",
@@ -58,7 +69,7 @@ export default async function LocaleLayout({
   // explicitly protected path prefixes (/dashboard, /admin).
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={beVietnamPro.variable} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider>
           {/* Toaster is mounted once globally here so toast() calls from any

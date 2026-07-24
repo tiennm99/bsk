@@ -13,20 +13,23 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   await params;
 
   const t = await getTranslations("dashboard");
+  const tRoles = await getTranslations("roles");
   const session = await getServerSession();
 
   // session is guaranteed non-null by the parent (app)/layout.tsx gate,
   // but we guard here to satisfy TypeScript's strict null checks.
   const email = session?.user.email ?? "";
-  const role = session?.role ?? "";
+  const role = session?.role;
+  // Clinicians think in names, not emails — greet by full_name when set.
+  const name = session?.fullName || email;
 
   return (
     <div className="px-8 py-10">
-      <h1 className="text-foreground text-2xl font-semibold">{t("welcome", { email })}</h1>
+      <h1 className="text-foreground text-2xl font-semibold">{t("welcome", { name })}</h1>
       <p className="text-muted-foreground mt-2 text-sm">
         {t("roleLabel")}{" "}
         <span className="bg-muted text-foreground rounded px-1.5 py-0.5 text-xs font-medium">
-          {role}
+          {role ? tRoles(role) : ""}
         </span>
       </p>
       <p className="text-muted-foreground mt-6 text-sm">{t("placeholder")}</p>
