@@ -121,7 +121,7 @@ These are the cross-cutting changes the plan assumes everywhere; they're called 
 
 ## 4. Feature scope (phased)
 
-The original has 25+ features. Rewriting all at once is a trap. Phases below are sized so each ends with a demoable, deployable slice.
+A source-grounded audit of the original (clone + `ServerHandler.java` + SQLite schema + Swing dialogs, 2026-07-25) counts **46 server commands + 19 UI screens + 8 entities**. Rewriting all at once is a trap. Phases below are sized so each ends with a demoable, deployable slice. Every original command maps to a phase below or to §6 non-goals — the granular features named per phase (geo-lookup, gender templates, accent-insensitive search, queue counter, image batch-sync) come from that audit so they aren't lost during build.
 
 ### Phase 0 — Foundation
 - Repo scaffold: `pnpm create next-app@latest` (Next.js 16, App Router, TypeScript strict, Turbopack); add Tailwind v4 via `@tailwindcss/postcss` + CSS-first `@theme`; initialize shadcn/ui with `pnpm dlx shadcn@latest init` (CLI v4); ESLint + Prettier.
@@ -144,16 +144,20 @@ The original has 25+ features. Rewriting all at once is a trap. Phases below are
 - First Playwright E2E: sign-in → land on dashboard with correct role-gated sidebar.
 
 ### Phase 2 — Core entities (CRUD)
-- `customers` (patients), `doctors`, `staff_users` (extends `app_users`), `clinic_settings`, `provinces`, `wards` (seed Vietnamese geo data).
+- `customers` (patients), `doctors`, `staff_users` (extends `app_users`), `clinic_settings`, `provinces`, `wards` (seed Vietnamese geo data), `checkup_templates`.
 - Admin pages for managing doctors, services, medicines, clinic info.
 - Server Actions for mutations; RSC for reads; TanStack Table on list pages.
+- **Geo-lookup** (orig `GetProvinceRequest`/`GetWardRequest`): province→ward cascading dropdowns on the patient address form.
+- **Checkup templates with gender** (orig `CheckupTemplate.template_gender`): `checkup_templates` carries a gender field so obstetrics/gynecology forms differ from general — CRUD + used to pre-fill the checkup form (Phase 3).
+- **Patient search** (orig): accent-insensitive Vietnamese search ("Phúc" ↔ "Phuc") — unaccent/normalized column or `unaccent`-based query. Plus a **recent-patients** list (orig `GetRecentPatientRequest`).
+- Clinic info is a read (orig `ClinicInfoRequest`) + edit; single-row `clinic_settings`.
 
 ### Phase 3 — Queue & checkup workflow
 - `shifts`, `daily_queue_counters`, `checkups` (status enum, queue number, vitals, diagnosis, conclusion, re-checkup date).
 - Receptionist: register patient, assign to queue.
 - Doctor: pick up next in queue, fill checkup form, mark complete.
 - **Realtime queue** via Supabase Realtime (replaces original's packet broadcast). Subscribed in a Client Component; initial snapshot comes from a cached RSC fetch, deltas come from the channel.
-- Status workflow with optimistic UI (`useOptimistic` + Server Action).
+- Status workflow with optimistic UI (`useOptimistic` + Server Action). Includes the **call-patient** transition (orig `CallPatientRequest`: waiting→in-progress) and explicit **queue-counter** set/get on `daily_queue_counters` (orig `SetCounterRequest`/`GetCounterRequest`). Checkup **read** (orig `GetCheckupDataRequest`) is a distinct RSC fetch from the save/update mutation.
 - Playwright E2E for receptionist→doctor queue handoff; Vitest unit tests for queue-number assignment logic.
 
 ### Phase 4 — Prescriptions, services, billing
@@ -167,6 +171,7 @@ The original has 25+ features. Rewriting all at once is a trap. Phases below are
 - Browser-side capture using `getUserMedia` for webcam (no native USB ultrasound device support — out of educational scope).
 - Per-checkup media gallery; QR/barcode generation client-side (`bwip-js`).
 - Signed-URL access for staff with checkup permissions.
+- Image ops mirror the original's granularity: single upload, list-by-checkup, delete, and **batch sync** (orig `SyncCheckupImagesRequest`: upload many at once from a device session).
 - **Cost controls (mandatory for Hobby tier — 1 GB total Supabase Storage, shared across sibling apps):**
   - Client-side image compression target: **≤200 KB/image** (browser canvas + JPEG quality knob).
   - Signed-URL TTL: **1 h** (regenerate per session; never embed a long-lived URL).
@@ -213,7 +218,8 @@ The original has 25+ features. Rewriting all at once is a trap. Phases below are
 - Native printer drivers (browser print + downloadable PDF only).
 - HIPAA/GDPR compliance (synthetic data only — call this out in README).
 - Multi-tenant clinics (single-clinic deployment; multi-tenant is a future exercise).
-- Real-time chat (original has a minimal `SimpleChatDialog` — drop it).
+- Real-time chat (original `SimpleMessageRequest` / `SimpleChatDialog` — minimal value; drop it).
+- Emergency alerts (original `EmergencyRequest` — in-app urgent notification). Dropped: single-clinic deployment with co-located staff; revisit only if a real multi-room clinic needs it.
 
 ## 7. Risks
 

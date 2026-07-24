@@ -64,6 +64,23 @@ These are **single-value-for-the-whole-project** settings. Any change is announc
 - Rotation policy: **event-driven** (no scheduled cadence — single-author personal project). Triggers: suspected leak, key appearing in logs/screenshots/repo history, repo handoff or new contributor, suspected sibling-app compromise. Re-evaluate the moment any real (non-author) user exists.
 - Storage location: Vercel project env vars, Production-scoped. Never in repo.
 
+## BSK enrollment on the shared auth pool
+
+`auth.users` is project-wide, so an email may already have an `auth.users` row created by a sibling app. Two BSK bootstrap paths depend on this:
+
+- **First admin.** Seed `bsk.admin_allowlist` with the intended admin email **before** they first sign in, or `bsk.claim_first_admin()` returns false and no admin can bootstrap:
+  ```sql
+  INSERT INTO bsk.admin_allowlist (email) VALUES ('owner@example.com');
+  ```
+- **Inviting a pre-existing user (known gap).** `auth.admin.inviteUserByEmail` **errors** when the email already exists in the shared pool, so the admin invite UI cannot enroll a sibling-app user — it surfaces "already known" and stops. This is intentionally out of scope for the educational build (such collisions are rare on a single-author project). Enroll them manually:
+  ```sql
+  INSERT INTO bsk.app_users (user_id, role)
+  SELECT id, 'doctor'   -- pick the role
+  FROM   auth.users
+  WHERE  email = 'existing@example.com';
+  ```
+  If this becomes common, implement an admin lookup (`auth.admin.listUsers` → direct `bsk.app_users` insert) instead of re-inviting.
+
 ## Exposed schemas
 
 PostgREST schema list (Supabase → Settings → API → Exposed schemas): `bsk`, _(others as added)_.
