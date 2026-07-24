@@ -10,6 +10,42 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   bsk: {
     Tables: {
+      admin_allowlist: {
+        Row: { created_at: string; email: string };
+        Insert: { created_at?: string; email: string };
+        Update: { created_at?: string; email?: string };
+        Relationships: [];
+      };
+      audit_log: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          created_at: string;
+          details: Json | null;
+          entity: string;
+          entity_id: string | null;
+          id: number;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          created_at?: string;
+          details?: Json | null;
+          entity: string;
+          entity_id?: string | null;
+          id?: never;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          details?: Json | null;
+          entity?: string;
+          entity_id?: string | null;
+          id?: never;
+        };
+        Relationships: [];
+      };
       app_users: {
         Row: {
           created_at: string;
@@ -57,8 +93,17 @@ export type Database = {
         Returns: Database["bsk"]["Enums"]["app_role"] | null;
       };
       claim_first_admin: {
-        Args: { p_user_id: string };
+        Args: Record<string, never>;
         Returns: boolean;
+      };
+      log_audit: {
+        Args: {
+          p_action: string;
+          p_entity: string;
+          p_entity_id?: string;
+          p_details?: Json;
+        };
+        Returns: undefined;
       };
     };
     Enums: {

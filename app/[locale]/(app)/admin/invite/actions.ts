@@ -11,17 +11,23 @@
  * - The admin client (service-role key) is used for both auth.admin.inviteUserByEmail
  *   AND the bsk.app_users insert, because that table has no INSERT RLS policy
  *   by design — only privileged writes are allowed.
- * - inviteUserByEmail is idempotent for existing auth.users rows: it resends
- *   an invite / password-reset link. We still insert the bsk.app_users row
- *   to enroll them in BSK. If the insert fails due to a duplicate key (user
- *   was already enrolled), we surface errorEmailTaken.
+ * - inviteUserByEmail ERRORS when the email already has an auth.users row
+ *   (e.g. created by a sibling app on the shared pool). We detect that case and
+ *   surface errorEmailTaken rather than a generic error.
+ * - Orphan safety: if the invite creates a fresh auth.users row but the
+ *   bsk.app_users enroll then fails for a non-duplicate reason, we delete the
+ *   just-created auth row so the shared pool doesn't accumulate orphans.
  */
 
 import { getTranslations } from "next-intl/server";
 
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createRateLimiter } from "@/lib/upstash";
 import { InviteUserSchema, type InviteUserState } from "@/lib/auth/invite-schema";
+
+// Bound SMTP spend on the SHARED project: cap invites per admin. 20 / hour.
+const inviteLimiter = createRateLimiter("invite", 20, 3600);
 
 export async function inviteUserAction(
   _prevState: InviteUserState,
@@ -33,6 +39,18 @@ export async function inviteUserAction(
   const session = await getServerSession();
   if (!session || session.role !== "admin") {
     return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
+  }
+
+  // ── Rate limit (bound shared-project SMTP spend) ─────────────────────────────
+  // Keyed by admin id (server-derived, not spoofable). Fail OPEN on Redis
+  // outage — an invite is admin-gated already, so availability wins.
+  try {
+    const { success: withinLimit } = await inviteLimiter.limit(session.user.id);
+    if (!withinLimit) {
+      return { status: "error", fieldErrors: {}, formError: t("tooManyRequests") };
+    }
+  } catch (err) {
+    console.warn("[invite] rate limiter unavailable, failing open:", err);
   }
 
   // ── Input validation ───────────────────────────────────────────────────────
@@ -49,12 +67,26 @@ export async function inviteUserAction(
   const { email, role } = parsed.data;
   const supabaseAdmin = createSupabaseAdminClient();
 
-  // ── Create / re-invite the auth.users row ──────────────────────────────────
+  // ── Create the auth.users row ──────────────────────────────────────────────
   const { data: inviteData, error: inviteError } =
     await supabaseAdmin.auth.admin.inviteUserByEmail(email);
 
   if (inviteError || !inviteData.user) {
-    return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
+    // An existing email (often a sibling-app user on the shared auth pool)
+    // makes inviteUserByEmail fail — report it as "already enrolled/known"
+    // rather than a generic error so the admin understands what happened.
+    const code = (inviteError as { code?: string } | null)?.code;
+    const msg = inviteError?.message?.toLowerCase() ?? "";
+    const emailExists =
+      code === "email_exists" ||
+      msg.includes("already been registered") ||
+      msg.includes("already registered") ||
+      msg.includes("already exists");
+    return {
+      status: "error",
+      fieldErrors: {},
+      formError: emailExists ? t("errorEmailTaken") : t("errorGeneric"),
+    };
   }
 
   const newUserId = inviteData.user.id;
@@ -68,12 +100,13 @@ export async function inviteUserAction(
 
   if (enrollError) {
     // Postgres unique-violation code 23505 → user already enrolled.
-    const isEmailTaken = enrollError.code === "23505";
-    return {
-      status: "error",
-      fieldErrors: {},
-      formError: isEmailTaken ? t("errorEmailTaken") : t("errorGeneric"),
-    };
+    if (enrollError.code === "23505") {
+      return { status: "error", fieldErrors: {}, formError: t("errorEmailTaken") };
+    }
+    // Non-duplicate failure on a freshly-created row: roll it back so the
+    // shared auth pool doesn't accumulate an orphaned, un-enrolled user.
+    await supabaseAdmin.auth.admin.deleteUser(newUserId).catch(() => {});
+    return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
   }
 
   return { status: "success", invitedEmail: email };
