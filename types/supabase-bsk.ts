@@ -46,6 +46,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      doctors: {
+        Row: {
+          created_at: string;
+          deleted: boolean;
+          first_name: string;
+          id: number;
+          last_name: string;
+        };
+        Insert: {
+          created_at?: string;
+          deleted?: boolean;
+          first_name: string;
+          id?: never;
+          last_name: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted?: boolean;
+          first_name?: string;
+          id?: never;
+          last_name?: string;
+        };
+        Relationships: [];
+      };
       app_users: {
         Row: {
           created_at: string;

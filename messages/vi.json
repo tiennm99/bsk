@@ -20,6 +20,20 @@
       "errorEmailTaken": "Người dùng này đã được đăng ký trong BSK.",
       "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
       "tooManyRequests": "Bạn đã gửi quá nhiều lời mời. Vui lòng thử lại sau ít phút."
+    },
+    "doctors": {
+      "title": "Quản lý bác sĩ",
+      "addTitle": "Thêm bác sĩ",
+      "firstName": "Tên",
+      "lastName": "Họ",
+      "add": "Thêm",
+      "submitting": "Đang lưu…",
+      "added": "Đã thêm {name}.",
+      "save": "Lưu",
+      "deactivate": "Ngừng hoạt động",
+      "empty": "Chưa có bác sĩ nào.",
+      "errorForbidden": "Bạn không có quyền quản lý bác sĩ.",
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
   "roles": {

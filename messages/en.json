@@ -20,6 +20,20 @@
       "errorEmailTaken": "This user is already enrolled in BSK.",
       "errorGeneric": "Something went wrong. Please try again.",
       "tooManyRequests": "Too many invites sent. Please try again in a few minutes."
+    },
+    "doctors": {
+      "title": "Doctor management",
+      "addTitle": "Add doctor",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "add": "Add",
+      "submitting": "Saving…",
+      "added": "Added {name}.",
+      "save": "Save",
+      "deactivate": "Deactivate",
+      "empty": "No doctors yet.",
+      "errorForbidden": "You do not have permission to manage doctors.",
+      "errorGeneric": "Something went wrong. Please try again."
     }
   },
   "roles": {
