@@ -23,6 +23,9 @@ next-env.d.ts
 .vscode
 *.tsbuildinfo
 
+# claude code (local, per-developer)
+.claude/settings.local.json
+
 # logs
 npm-debug.log*
 yarn-debug.log*
