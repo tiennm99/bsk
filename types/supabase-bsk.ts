@@ -46,6 +46,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      clinic_settings: {
+        Row: {
+          address: string | null;
+          id: boolean;
+          name: string | null;
+          phone: string | null;
+          prefix: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          address?: string | null;
+          id?: boolean;
+          name?: string | null;
+          phone?: string | null;
+          prefix?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          address?: string | null;
+          id?: boolean;
+          name?: string | null;
+          phone?: string | null;
+          prefix?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       doctors: {
         Row: {
           created_at: string;

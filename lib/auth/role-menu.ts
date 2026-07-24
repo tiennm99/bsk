@@ -14,7 +14,7 @@
 
 import type { AppRole } from "@/lib/db/roles";
 import type { ComponentType } from "react";
-import { LayoutDashboard, UserPlus, Stethoscope } from "lucide-react";
+import { LayoutDashboard, UserPlus, Stethoscope, Settings } from "lucide-react";
 
 export type MenuItem = {
   /** Locale-relative path, e.g. "/dashboard". Sidebar prefixes with locale. */
@@ -40,6 +40,7 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
     { href: "/admin/doctors", labelKey: "nav.doctors", icon: Stethoscope },
     { href: "/admin/invite", labelKey: "nav.invite", icon: UserPlus },
+    { href: "/admin/settings", labelKey: "nav.settings", icon: Settings },
   ],
   doctor: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
   nurse: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],

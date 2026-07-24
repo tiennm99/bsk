@@ -8,7 +8,7 @@
 | # | Entity | Original commands | Status |
 |---|---|---|---|
 | 2a | **Doctors** | AddDoctor/EditDoctor/GetDoctorInfo/GetDoctorGeneralInfo | ✅ DONE (this session) |
-| 2b | Clinic settings | ClinicInfoRequest + settings edit | TODO |
+| 2b | Clinic settings | ClinicInfoRequest + settings edit | ✅ DONE (this session) |
 | 2c | Patients (customers) | AddPatient/GetRecentPatient + **geo-lookup** (provinces/wards) + **accent-insensitive search** | TODO (needs geo seed + unaccent decision) |
 | 2d | Checkup templates | Add/Edit/Delete/GetAllTemplates + **gender** field | TODO |
 | 2e | Staff user management | AddUser/EditUser/GetAllUserInfo (extends app_users) | TODO |
@@ -21,8 +21,10 @@
 - Nav: admin gets `/admin/doctors` (`nav.doctors`, Stethoscope). i18n `admin.doctors.*` both locales.
 - Pattern established: **RLS-as-gate (user client) + getServerSession defense-in-depth + Zod + log_audit + revalidatePath**. Later slices mirror it.
 
+## Decisions locked
+- **2c**: seed full VN geo (`provinces` + `wards`) + enable Postgres `unaccent` for accent-insensitive patient search.
+
 ## Open decisions (before their slices)
-- **2c geo data**: which VN provinces/wards dataset to seed (post-2025 merged administrative units?); accent search via Postgres `unaccent` extension vs a normalized generated column.
 - **2c/2d**: `customers` full field set (CCCD, phone, DOB, gender, weight/height); `checkup_templates` field-layout storage (JSON `fields`) + gender.
 - **2e**: staff management vs the existing invite flow — reconcile (invite creates auth+enrollment; edit/list/role-reassign is the new surface).
 

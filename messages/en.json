@@ -34,6 +34,18 @@
       "empty": "No doctors yet.",
       "errorForbidden": "You do not have permission to manage doctors.",
       "errorGeneric": "Something went wrong. Please try again."
+    },
+    "settings": {
+      "title": "Clinic information",
+      "name": "Clinic name",
+      "address": "Address",
+      "phone": "Phone number",
+      "prefix": "Code prefix",
+      "save": "Save",
+      "submitting": "Saving…",
+      "saved": "Saved.",
+      "errorForbidden": "You do not have permission to edit clinic information.",
+      "errorGeneric": "Something went wrong. Please try again."
     }
   },
   "roles": {

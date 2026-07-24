@@ -34,6 +34,18 @@
       "empty": "Chưa có bác sĩ nào.",
       "errorForbidden": "Bạn không có quyền quản lý bác sĩ.",
       "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "settings": {
+      "title": "Thông tin phòng khám",
+      "name": "Tên phòng khám",
+      "address": "Địa chỉ",
+      "phone": "Số điện thoại",
+      "prefix": "Tiền tố mã",
+      "save": "Lưu",
+      "submitting": "Đang lưu…",
+      "saved": "Đã lưu.",
+      "errorForbidden": "Bạn không có quyền chỉnh sửa thông tin phòng khám.",
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
   "roles": {
