@@ -6,7 +6,7 @@
  * (redirects to the queue on success).
  */
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState, type RefObject } from "react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -41,17 +41,50 @@ export function CheckupForm({
   templates,
   initialTemplateId,
   initialTemplateValues,
+  diagnosisSuggestions = [],
 }: {
   defaults: CheckupDefaults;
   templates: CheckupTemplateOption[];
   initialTemplateId: number | null;
   initialTemplateValues: TemplateValue[];
+  diagnosisSuggestions?: string[];
 }) {
   const t = useTranslations("checkups");
   const [state, dispatch, isPending] = useActionState<CheckupSaveState, FormData>(saveCheckupAction, {
     status: "idle",
   });
   const formError = state.status === "error" ? state.formError : null;
+
+  // Unsaved-changes guard: any edit flips `dirty`; saving clears it so a
+  // successful (or in-flight) submit never triggers the beforeunload prompt.
+  // beforeunload doesn't fire for client-side route changes, so we also show
+  // an in-app marker near the Save button.
+  const [dirty, setDirty] = useState(false);
+  const diagnosisRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!dirty || isPending) return;
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty, isPending]);
+
+  // Diagnosis quick-pick: a <textarea> cannot use a native <datalist>, so
+  // recent diagnoses are offered via a small select above the field that
+  // appends the chosen text into the (uncontrolled) textarea via ref — the
+  // least disruptive option since it doesn't require converting the field to
+  // controlled state.
+  function applyDiagnosisSuggestion(text: string) {
+    if (!text) return;
+    const el = diagnosisRef.current;
+    if (!el) return;
+    const current = el.value.trim();
+    el.value = current ? `${current}; ${text}` : text;
+    setDirty(true);
+  }
 
   // Template picker — plain state, no effects. Selecting a template swaps the
   // rendered field labels below; typed values are kept per-label so switching
@@ -76,12 +109,17 @@ export function CheckupForm({
     </div>
   );
 
-  const area = (name: keyof CheckupDefaults, label: string) => (
+  const area = (
+    name: keyof CheckupDefaults,
+    label: string,
+    ref?: RefObject<HTMLTextAreaElement | null>,
+  ) => (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
       <textarea
         id={name}
         name={name}
+        ref={ref}
         rows={3}
         defaultValue={defaults[name]}
         disabled={isPending}
@@ -91,7 +129,13 @@ export function CheckupForm({
   );
 
   return (
-    <form action={dispatch} noValidate className="space-y-5">
+    <form
+      action={dispatch}
+      noValidate
+      className="space-y-5"
+      onChange={() => setDirty(true)}
+      onSubmit={() => setDirty(false)}
+    >
       <input type="hidden" name="id" value={defaults.id} />
 
       <fieldset className="border-border grid gap-4 rounded-md border p-4 sm:grid-cols-3">
@@ -150,7 +194,26 @@ export function CheckupForm({
         </fieldset>
       )}
 
-      {area("diagnosis", t("diagnosis"))}
+      {diagnosisSuggestions.length > 0 && (
+        <div className="space-y-1.5">
+          <Label htmlFor="diagnosisQuickPick">{t("quickDiagnosis")}</Label>
+          <select
+            id="diagnosisQuickPick"
+            value=""
+            disabled={isPending}
+            onChange={(e) => applyDiagnosisSuggestion(e.target.value)}
+            className={`${CONTROL} h-10`}
+          >
+            <option value="">—</option>
+            {diagnosisSuggestions.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+      {area("diagnosis", t("diagnosis"), diagnosisRef)}
       {area("conclusion", t("conclusion"))}
       {area("notes", t("notes"))}
 
@@ -177,9 +240,14 @@ export function CheckupForm({
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={isPending}>
-        {isPending ? t("saving") : t("save")}
-      </Button>
+      <div className="flex items-center gap-3">
+        <Button type="submit" size="lg" disabled={isPending}>
+          {isPending ? t("saving") : t("save")}
+        </Button>
+        {dirty && !isPending && (
+          <span className="text-muted-foreground text-xs">{t("unsavedChanges")}</span>
+        )}
+      </div>
     </form>
   );
 }

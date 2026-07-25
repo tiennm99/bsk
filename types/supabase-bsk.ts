@@ -525,6 +525,10 @@ export type Database = {
         Args: { p_shift_id: number; p_value: number };
         Returns: undefined;
       };
+      call_next_patient: {
+        Args: { p_shift_id: number };
+        Returns: number | null;
+      };
       set_staff_role: {
         Args: { p_user_id: string; p_role: Database["bsk"]["Enums"]["app_role"] };
         Returns: undefined;

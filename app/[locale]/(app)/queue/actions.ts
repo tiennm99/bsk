@@ -10,6 +10,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 
+import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppRole } from "@/lib/db/roles";
@@ -126,6 +127,38 @@ export async function setQueueCounterAction(
   const locale = await getLocale();
   revalidatePath(`/${locale}/queue`);
   return { status: "success" };
+}
+
+/**
+ * One-key "call next patient": picks the lowest-queue_number waiting checkup
+ * for the given shift (call_next_patient RPC, advisory-locked server-side)
+ * and marks it in_progress. On success, redirects straight to the checkup
+ * screen so the doctor never has to find the row in the list themselves.
+ */
+export async function callNextPatientAction(formData: FormData): Promise<void> {
+  const session = await getServerSession();
+  if (!isClinical(session?.role)) return;
+
+  const shiftId = Number(formData.get("shiftId"));
+  if (!Number.isFinite(shiftId)) return;
+
+  const supabase = await createSupabaseServerClient();
+  const { data: nextId, error } = await supabase.rpc("call_next_patient", { p_shift_id: shiftId });
+  if (error) return;
+
+  await supabase.rpc("log_audit", {
+    p_action: "checkup.call_next",
+    p_entity: "checkups",
+    ...(nextId != null ? { p_entity_id: String(nextId) } : {}),
+    p_details: { shiftId, found: nextId != null },
+  });
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}/queue`);
+
+  if (nextId != null) {
+    return redirect({ href: `/${locale}/checkups/${nextId}`, locale });
+  }
 }
 
 export async function callPatientAction(formData: FormData): Promise<void> {

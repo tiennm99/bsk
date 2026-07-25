@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { RegisterForm } from "./register-form";
 import { QueueRealtime } from "./queue-realtime";
 import { CounterForm } from "./counter-form";
+import { CallNextButton } from "./call-next-button";
 import { callPatientAction } from "./actions";
 
 const COUNTER_MANAGERS = new Set(["admin", "receptionist"]);
@@ -59,10 +60,37 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
   const shiftCode = new Map((shifts ?? []).map((s) => [s.id, s.code]));
   const counterByShift = new Map((counters ?? []).map((c) => [c.shift_id, c.last_number]));
 
+  const waitingCountByShift = new Map<number, number>();
+  for (const r of rows) {
+    if (r.status === "waiting" && r.shift_id != null) {
+      waitingCountByShift.set(r.shift_id, (waitingCountByShift.get(r.shift_id) ?? 0) + 1);
+    }
+  }
+  const shiftsWithWaiting = (shifts ?? []).filter((s) => (waitingCountByShift.get(s.id) ?? 0) > 0);
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <QueueRealtime />
       <h1 className="text-foreground mb-6 text-xl font-semibold">{t("title")}</h1>
+
+      <section className="border-border mb-8 rounded-lg border p-4">
+        <h2 className="text-foreground mb-3 text-sm font-medium">{t("callNext")}</h2>
+        {shiftsWithWaiting.length === 0 ? (
+          <p className="text-muted-foreground text-sm">{t("noneWaiting")}</p>
+        ) : (
+          <div className="flex flex-wrap gap-6">
+            {shiftsWithWaiting.map((s, i) => (
+              <CallNextButton
+                key={s.id}
+                shiftId={s.id}
+                shiftLabel={tShift(s.code)}
+                waitingCount={waitingCountByShift.get(s.id) ?? 0}
+                enableShortcut={i === 0}
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="border-border mb-8 rounded-lg border p-4">
         <h2 className="text-foreground mb-3 text-sm font-medium">{t("counters")}</h2>

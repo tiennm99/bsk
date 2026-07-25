@@ -146,7 +146,14 @@
     "counter": "Số thứ tự hiện tại",
     "setCounter": "Đặt lại",
     "saving": "Đang lưu…",
-    "saved": "Đã lưu."
+    "saved": "Đã lưu.",
+    "callNext": "Gọi bệnh nhân tiếp theo",
+    "callNextHint": "Phím tắt: Alt+N",
+    "callNextFor": "{shift} · {count} đang chờ",
+    "noneWaiting": "Không có bệnh nhân đang chờ.",
+    "live": "Đang cập nhật trực tiếp",
+    "disconnected": "Mất kết nối trực tiếp — hãy tải lại trang",
+    "updatedAt": "Cập nhật lúc {time}"
   },
   "checkups": {
     "title": "Phiếu khám",
@@ -171,7 +178,9 @@
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "template": "Mẫu khám",
     "templateNone": "— Không dùng mẫu —",
-    "templateFields": "Thông tin theo mẫu"
+    "templateFields": "Thông tin theo mẫu",
+    "quickDiagnosis": "Chẩn đoán thường gặp",
+    "unsavedChanges": "Có thay đổi chưa lưu"
   },
   "billing": {
     "title": "Đơn thuốc & thanh toán",

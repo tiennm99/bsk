@@ -35,14 +35,30 @@ export default async function CheckupPage({
 
   if (!c) notFound();
 
-  const [{ data: customer }, { data: templates }] = await Promise.all([
+  const [{ data: customer }, { data: templates }, { data: recentDiagnoses }] = await Promise.all([
     supabase.from("customers").select("last_name, first_name, dob, gender, phone").eq("id", c.customer_id).maybeSingle(),
     supabase
       .from("checkup_templates")
       .select("id, name, gender, fields")
       .eq("deleted", false)
       .order("name", { ascending: true }),
+    supabase
+      .from("checkups")
+      .select("diagnosis")
+      .not("diagnosis", "is", null)
+      .eq("deleted", false)
+      .order("checkup_date", { ascending: false })
+      .limit(200),
   ]);
+
+  // De-dupe + trim recent diagnoses for the quick-pick, capped at 50 entries.
+  const diagnosisSuggestions = [
+    ...new Set(
+      (recentDiagnoses ?? [])
+        .map((r) => r.diagnosis?.trim())
+        .filter((d): d is string => !!d),
+    ),
+  ].slice(0, 50);
 
   const patientName = customer ? `${customer.last_name} ${customer.first_name}` : "—";
 
@@ -113,6 +129,7 @@ export default async function CheckupPage({
         templates={templateOptions}
         initialTemplateId={c.template_id}
         initialTemplateValues={templateValues}
+        diagnosisSuggestions={diagnosisSuggestions}
       />
       <p className="sr-only">{t("title")}</p>
     </div>

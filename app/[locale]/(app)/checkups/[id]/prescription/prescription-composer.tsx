@@ -17,12 +17,15 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { dosePresets } from "@/lib/billing/dose-presets";
 import {
   paymentMethods,
   type MarkPaidState,
   type PrescriptionSaveState,
 } from "@/lib/billing/prescription-schema";
 import { markPaidAction, savePrescriptionAction } from "./actions";
+
+const DOSE_PRESETS_LIST_ID = "dose-presets";
 
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
 
@@ -120,6 +123,12 @@ export function PrescriptionComposer({
 
   return (
     <div className="space-y-8">
+      <datalist id={DOSE_PRESETS_LIST_ID}>
+        {dosePresets.map((d) => (
+          <option key={d} value={d} />
+        ))}
+      </datalist>
+
       <form action={saveDispatch} noValidate className="space-y-6">
         <input type="hidden" name="checkupId" value={checkupId} readOnly />
         <input type="hidden" name="medicineLines" value={medicineLinesJson} readOnly />
@@ -166,6 +175,7 @@ export function PrescriptionComposer({
                     id={`dosage-${row.key}`}
                     value={row.dosage}
                     disabled={isSaving}
+                    list={DOSE_PRESETS_LIST_ID}
                     onChange={(e) => updateMedicineRow(row.key, "dosage", e.target.value)}
                   />
                 </div>
