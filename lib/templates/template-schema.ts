@@ -34,9 +34,13 @@ export function fieldsTextToJson(text: string): { label: string }[] {
 
 /** Inverse: render a stored layout back to one-label-per-line text for editing. */
 export function fieldsJsonToText(fields: unknown): string {
-  if (!Array.isArray(fields)) return "";
+  return fieldsJsonToLabels(fields).join("\n");
+}
+
+/** Extract just the ordered labels from a stored `fields` layout. */
+export function fieldsJsonToLabels(fields: unknown): string[] {
+  if (!Array.isArray(fields)) return [];
   return fields
     .map((f) => (f && typeof f === "object" && "label" in f ? String((f as { label: unknown }).label) : ""))
-    .filter(Boolean)
-    .join("\n");
+    .filter(Boolean);
 }

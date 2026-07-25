@@ -13,10 +13,18 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppRole } from "@/lib/db/roles";
-import { RegisterCheckupSchema, type RegisterCheckupState } from "@/lib/checkups/checkup-schema";
+import {
+  RegisterCheckupSchema,
+  SetQueueCounterSchema,
+  type RegisterCheckupState,
+  type SetQueueCounterState,
+} from "@/lib/checkups/checkup-schema";
 
 const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
 const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
+
+const COUNTER_MANAGERS: AppRole[] = ["admin", "receptionist"];
+const canManageCounter = (r: AppRole | null | undefined) => !!r && COUNTER_MANAGERS.includes(r);
 
 export async function registerCheckupAction(
   _prev: RegisterCheckupState,
@@ -71,6 +79,53 @@ export async function registerCheckupAction(
   const locale = await getLocale();
   revalidatePath(`/${locale}/queue`);
   return { status: "success", queueNumber: row?.queue_number ?? null };
+}
+
+/**
+ * Manually sets today's queue counter for a shift (correcting a miscount,
+ * resetting after a printer jam, etc). admin/receptionist only — RLS +
+ * set_queue_counter's role check enforce it; this is defense-in-depth.
+ */
+export async function setQueueCounterAction(
+  _prev: SetQueueCounterState,
+  formData: FormData,
+): Promise<SetQueueCounterState> {
+  const t = await getTranslations("queue");
+
+  const session = await getServerSession();
+  if (!canManageCounter(session?.role)) {
+    return { status: "error", formError: t("errorForbidden") };
+  }
+
+  const parsed = SetQueueCounterSchema.safeParse({
+    shiftId: formData.get("shiftId"),
+    value: formData.get("value"),
+  });
+  if (!parsed.success) {
+    return { status: "error", formError: t("errorGeneric") };
+  }
+
+  const { shiftId, value } = parsed.data;
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase.rpc("set_queue_counter", {
+    p_shift_id: shiftId,
+    p_value: value,
+  });
+  if (error) {
+    return { status: "error", formError: t("errorGeneric") };
+  }
+
+  await supabase.rpc("log_audit", {
+    p_action: "queue.set_counter",
+    p_entity: "daily_queue_counters",
+    p_entity_id: String(shiftId),
+    p_details: { value },
+  });
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}/queue`);
+  return { status: "success" };
 }
 
 export async function callPatientAction(formData: FormData): Promise<void> {

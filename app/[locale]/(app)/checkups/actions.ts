@@ -13,7 +13,12 @@ import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppRole } from "@/lib/db/roles";
-import { CheckupSaveSchema, parseNum, type CheckupSaveState } from "@/lib/checkups/checkup-schema";
+import {
+  CheckupSaveSchema,
+  parseNum,
+  parseTemplateValues,
+  type CheckupSaveState,
+} from "@/lib/checkups/checkup-schema";
 
 const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
 const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
@@ -55,6 +60,11 @@ export async function saveCheckupAction(
   }
 
   const d = parsed.data;
+
+  const templateIdRaw = get("templateId").trim();
+  const templateId = templateIdRaw && Number.isFinite(Number(templateIdRaw)) ? Number(templateIdRaw) : null;
+  const templateValues = parseTemplateValues(get("templateValues"));
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("checkups")
@@ -70,6 +80,8 @@ export async function saveCheckupAction(
       notes: nullIfBlank(d.notes),
       recheck_date: nullIfBlank(d.recheckDate),
       status: d.status,
+      template_id: templateId,
+      template_values: templateValues,
     })
     .eq("id", id);
 

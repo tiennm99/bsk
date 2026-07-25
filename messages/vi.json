@@ -141,7 +141,12 @@
     "open": "Mở",
     "status": { "waiting": "Chờ khám", "in_progress": "Đang khám", "done": "Đã khám" },
     "errorForbidden": "Bạn không có quyền thao tác hàng chờ.",
-    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "counters": "Số thứ tự các ca",
+    "counter": "Số thứ tự hiện tại",
+    "setCounter": "Đặt lại",
+    "saving": "Đang lưu…",
+    "saved": "Đã lưu."
   },
   "checkups": {
     "title": "Phiếu khám",
@@ -163,7 +168,10 @@
     "delete": "Xóa",
     "confirmDelete": "Bạn có chắc chắn muốn xóa phiếu khám này không?",
     "errorForbidden": "Bạn không có quyền chỉnh sửa phiếu khám.",
-    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "template": "Mẫu khám",
+    "templateNone": "— Không dùng mẫu —",
+    "templateFields": "Thông tin theo mẫu"
   },
   "billing": {
     "title": "Đơn thuốc & thanh toán",

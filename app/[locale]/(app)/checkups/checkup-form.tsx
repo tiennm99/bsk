@@ -6,7 +6,7 @@
  * (redirects to the queue on success).
  */
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -33,12 +33,41 @@ export type CheckupDefaults = {
   status: string;
 };
 
-export function CheckupForm({ defaults }: { defaults: CheckupDefaults }) {
+export type CheckupTemplateOption = { id: number; name: string; labels: string[] };
+type TemplateValue = { label: string; value: string };
+
+export function CheckupForm({
+  defaults,
+  templates,
+  initialTemplateId,
+  initialTemplateValues,
+}: {
+  defaults: CheckupDefaults;
+  templates: CheckupTemplateOption[];
+  initialTemplateId: number | null;
+  initialTemplateValues: TemplateValue[];
+}) {
   const t = useTranslations("checkups");
   const [state, dispatch, isPending] = useActionState<CheckupSaveState, FormData>(saveCheckupAction, {
     status: "idle",
   });
   const formError = state.status === "error" ? state.formError : null;
+
+  // Template picker — plain state, no effects. Selecting a template swaps the
+  // rendered field labels below; typed values are kept per-label so switching
+  // back and forth doesn't lose what was already entered.
+  const [templateId, setTemplateId] = useState(initialTemplateId != null ? String(initialTemplateId) : "");
+  const [templateFieldValues, setTemplateFieldValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(initialTemplateValues.map((v) => [v.label, v.value])),
+  );
+
+  const selectedTemplate = templates.find((tpl) => String(tpl.id) === templateId) ?? null;
+  const templateValuesJson = JSON.stringify(
+    (selectedTemplate?.labels ?? []).map((label) => ({
+      label,
+      value: templateFieldValues[label] ?? "",
+    })),
+  );
 
   const textField = (name: keyof CheckupDefaults, label: string) => (
     <div className="space-y-1.5">
@@ -75,6 +104,52 @@ export function CheckupForm({ defaults }: { defaults: CheckupDefaults }) {
       </fieldset>
 
       {area("symptoms", t("symptoms"))}
+
+      {templates.length > 0 && (
+        <fieldset className="border-border space-y-3 rounded-md border p-4">
+          <legend className="text-muted-foreground px-1 text-xs">{t("template")}</legend>
+          <input type="hidden" name="templateId" value={templateId} readOnly />
+          <input type="hidden" name="templateValues" value={templateValuesJson} readOnly />
+
+          <div className="space-y-1.5">
+            <Label htmlFor="templateSelect">{t("template")}</Label>
+            <select
+              id="templateSelect"
+              value={templateId}
+              disabled={isPending}
+              onChange={(e) => setTemplateId(e.target.value)}
+              className={`${CONTROL} h-10`}
+            >
+              <option value="">{t("templateNone")}</option>
+              {templates.map((tpl) => (
+                <option key={tpl.id} value={tpl.id}>
+                  {tpl.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedTemplate && selectedTemplate.labels.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <p className="text-muted-foreground text-xs sm:col-span-2">{t("templateFields")}</p>
+              {selectedTemplate.labels.map((label) => (
+                <div key={label} className="space-y-1.5">
+                  <Label htmlFor={`template-field-${label}`}>{label}</Label>
+                  <Input
+                    id={`template-field-${label}`}
+                    value={templateFieldValues[label] ?? ""}
+                    disabled={isPending}
+                    onChange={(e) =>
+                      setTemplateFieldValues((prev) => ({ ...prev, [label]: e.target.value }))
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </fieldset>
+      )}
+
       {area("diagnosis", t("diagnosis"))}
       {area("conclusion", t("conclusion"))}
       {area("notes", t("notes"))}

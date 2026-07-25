@@ -8,10 +8,14 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getServerSession } from "@/lib/auth/get-server-session";
 import { Button } from "@/components/ui/button";
 import { RegisterForm } from "./register-form";
 import { QueueRealtime } from "./queue-realtime";
+import { CounterForm } from "./counter-form";
 import { callPatientAction } from "./actions";
+
+const COUNTER_MANAGERS = new Set(["admin", "receptionist"]);
 
 const STATUS_STYLE: Record<string, string> = {
   waiting: "bg-muted text-foreground",
@@ -25,9 +29,11 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
   const tShift = await getTranslations("shifts");
 
   const supabase = await createSupabaseServerClient();
+  const session = await getServerSession();
+  const canManageCounter = COUNTER_MANAGERS.has(session?.role ?? "");
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(new Date());
 
-  const [{ data: checkups }, { data: patients }, { data: shifts }, { data: doctors }] =
+  const [{ data: checkups }, { data: patients }, { data: shifts }, { data: doctors }, { data: counters }] =
     await Promise.all([
       supabase
         .from("checkups")
@@ -39,6 +45,7 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
       supabase.rpc("search_customers", { q: "" }),
       supabase.from("shifts").select("id, code").order("sort_order", { ascending: true }),
       supabase.from("doctors").select("id, last_name, first_name").eq("deleted", false).order("last_name"),
+      supabase.from("daily_queue_counters").select("shift_id, last_number").eq("day", today),
     ]);
 
   const rows = checkups ?? [];
@@ -50,11 +57,33 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
   const custName = new Map((custs ?? []).map((c) => [c.id, `${c.last_name} ${c.first_name}`]));
   const docName = new Map((doctors ?? []).map((d) => [d.id, `${d.last_name} ${d.first_name}`]));
   const shiftCode = new Map((shifts ?? []).map((s) => [s.id, s.code]));
+  const counterByShift = new Map((counters ?? []).map((c) => [c.shift_id, c.last_number]));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <QueueRealtime />
       <h1 className="text-foreground mb-6 text-xl font-semibold">{t("title")}</h1>
+
+      <section className="border-border mb-8 rounded-lg border p-4">
+        <h2 className="text-foreground mb-3 text-sm font-medium">{t("counters")}</h2>
+        <ul className="grid gap-3 sm:grid-cols-3">
+          {(shifts ?? []).map((s) => (
+            <li key={s.id} className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-muted-foreground text-xs">
+                  {tShift(s.code)} · {t("counter")}
+                </p>
+                <p className="text-foreground text-lg font-bold tabular-nums">
+                  {counterByShift.get(s.id) ?? 0}
+                </p>
+              </div>
+              {canManageCounter && (
+                <CounterForm shiftId={s.id} currentValue={counterByShift.get(s.id) ?? 0} />
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <section className="border-border mb-8 rounded-lg border p-4">
         <h2 className="text-foreground mb-3 text-sm font-medium">{t("registerTitle")}</h2>

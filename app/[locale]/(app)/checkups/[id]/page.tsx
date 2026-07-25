@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { fieldsJsonToLabels } from "@/lib/templates/template-schema";
 import { Button } from "@/components/ui/button";
 import { CheckupForm } from "../checkup-form";
 import { DeleteCheckupButton } from "../delete-checkup-button";
@@ -26,7 +27,7 @@ export default async function CheckupPage({
   const { data: c } = await supabase
     .from("checkups")
     .select(
-      "id, customer_id, queue_number, status, heart_beat, blood_pressure, temperature, weight, height, symptoms, diagnosis, conclusion, notes, recheck_date",
+      "id, customer_id, queue_number, status, heart_beat, blood_pressure, temperature, weight, height, symptoms, diagnosis, conclusion, notes, recheck_date, template_id, template_values",
     )
     .eq("id", checkupId)
     .eq("deleted", false)
@@ -34,13 +35,34 @@ export default async function CheckupPage({
 
   if (!c) notFound();
 
-  const { data: customer } = await supabase
-    .from("customers")
-    .select("last_name, first_name, dob, gender, phone")
-    .eq("id", c.customer_id)
-    .maybeSingle();
+  const [{ data: customer }, { data: templates }] = await Promise.all([
+    supabase.from("customers").select("last_name, first_name, dob, gender, phone").eq("id", c.customer_id).maybeSingle(),
+    supabase
+      .from("checkup_templates")
+      .select("id, name, gender, fields")
+      .eq("deleted", false)
+      .order("name", { ascending: true }),
+  ]);
 
   const patientName = customer ? `${customer.last_name} ${customer.first_name}` : "—";
+
+  // Prefer templates matching the patient's gender (or applicable to "any");
+  // keep the full list when the patient has no gender on file.
+  const applicableTemplates = customer?.gender
+    ? (templates ?? []).filter((tpl) => tpl.gender === "any" || tpl.gender === customer.gender)
+    : (templates ?? []);
+
+  const templateValues = Array.isArray(c.template_values)
+    ? (c.template_values as unknown[])
+        .filter((v): v is { label: unknown; value: unknown } => !!v && typeof v === "object")
+        .map((v) => ({ label: String(v.label ?? ""), value: String(v.value ?? "") }))
+    : [];
+
+  const templateOptions = applicableTemplates.map((tpl) => ({
+    id: tpl.id,
+    name: tpl.name,
+    labels: fieldsJsonToLabels(tpl.fields),
+  }));
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
@@ -88,6 +110,9 @@ export default async function CheckupPage({
           recheckDate: str(c.recheck_date),
           status: c.status,
         }}
+        templates={templateOptions}
+        initialTemplateId={c.template_id}
+        initialTemplateValues={templateValues}
       />
       <p className="sr-only">{t("title")}</p>
     </div>

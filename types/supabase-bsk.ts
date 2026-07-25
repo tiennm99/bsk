@@ -69,6 +69,7 @@ export type Database = {
           symptoms: string | null;
           temperature: number | null;
           template_id: number | null;
+          template_values: Json | null;
           updated_at: string;
           weight: number | null;
         };
@@ -94,6 +95,7 @@ export type Database = {
           symptoms?: string | null;
           temperature?: number | null;
           template_id?: number | null;
+          template_values?: Json | null;
           updated_at?: string;
           weight?: number | null;
         };
@@ -119,9 +121,16 @@ export type Database = {
           symptoms?: string | null;
           temperature?: number | null;
           template_id?: number | null;
+          template_values?: Json | null;
           updated_at?: string;
           weight?: number | null;
         };
+        Relationships: [];
+      };
+      daily_queue_counters: {
+        Row: { day: string; last_number: number; shift_id: number };
+        Insert: { day?: string; last_number?: number; shift_id: number };
+        Update: { day?: string; last_number?: number; shift_id?: number };
         Relationships: [];
       };
       shifts: {
@@ -511,6 +520,10 @@ export type Database = {
           p_checkup_type?: string;
         };
         Returns: number;
+      };
+      set_queue_counter: {
+        Args: { p_shift_id: number; p_value: number };
+        Returns: undefined;
       };
       set_staff_role: {
         Args: { p_user_id: string; p_role: Database["bsk"]["Enums"]["app_role"] };

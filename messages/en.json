@@ -141,7 +141,12 @@
     "open": "Open",
     "status": { "waiting": "Waiting", "in_progress": "In progress", "done": "Done" },
     "errorForbidden": "You do not have permission to manage the queue.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "counters": "Shift counters",
+    "counter": "Current number",
+    "setCounter": "Set",
+    "saving": "Saving…",
+    "saved": "Saved."
   },
   "checkups": {
     "title": "Checkup",
@@ -163,7 +168,10 @@
     "delete": "Delete",
     "confirmDelete": "Are you sure you want to delete this checkup?",
     "errorForbidden": "You do not have permission to edit checkups.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "template": "Checkup template",
+    "templateNone": "— No template —",
+    "templateFields": "Template fields"
   },
   "billing": {
     "title": "Prescription & billing",
