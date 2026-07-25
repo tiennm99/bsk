@@ -25,6 +25,7 @@ import {
   ListOrdered,
   Pill,
   ListChecks,
+  FileBarChart,
 } from "lucide-react";
 
 export type MenuItem = {
@@ -57,6 +58,7 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
     { href: "/admin/services", labelKey: "nav.services", icon: ListChecks },
     { href: "/admin/invite", labelKey: "nav.invite", icon: UserPlus },
     { href: "/admin/staff", labelKey: "nav.staff", icon: UserCog },
+    { href: "/admin/reports", labelKey: "nav.reports", icon: FileBarChart },
     { href: "/admin/settings", labelKey: "nav.settings", icon: Settings },
   ],
   doctor: [
