@@ -61,17 +61,25 @@ export async function signInAction(
   // XFF hop (appended by the trusted proxy).
   const hdrs = await headers();
   const xff = hdrs.get("x-forwarded-for");
-  const ip = hdrs.get("x-real-ip")?.trim() || xff?.split(",").at(-1)?.trim() || "unknown";
-  try {
-    const { success: withinLimit } = await signInLimiter.limit(ip);
-    if (!withinLimit) {
-      return { status: "error", fieldErrors: {}, formError: t("tooManyAttempts") };
+  const ip = hdrs.get("x-real-ip")?.trim() || xff?.split(",").at(-1)?.trim() || null;
+  // Only rate-limit when a real client IP is resolvable. If neither header is
+  // set (misconfigured proxy / non-Vercel host), skip rather than bucket every
+  // request under a shared "unknown" key — which would lock out the whole clinic
+  // after 5 attempts/min. Logged so the missing-IP case is visible.
+  if (!ip) {
+    console.warn("[sign-in] no client IP header; skipping rate limit");
+  } else {
+    try {
+      const { success: withinLimit } = await signInLimiter.limit(ip);
+      if (!withinLimit) {
+        return { status: "error", fieldErrors: {}, formError: t("tooManyAttempts") };
+      }
+    } catch (err) {
+      // Shared Redis unavailable: fail OPEN so a sibling app's outage can't lock
+      // doctors out of the clinic. Logged so the gap in brute-force protection
+      // is alertable rather than silent.
+      console.warn("[sign-in] rate limiter unavailable, failing open:", err);
     }
-  } catch (err) {
-    // Shared Redis unavailable: fail OPEN so a sibling app's outage can't lock
-    // doctors out of the clinic. Logged so the gap in brute-force protection
-    // is alertable rather than silent.
-    console.warn("[sign-in] rate limiter unavailable, failing open:", err);
   }
 
   const supabase = await createSupabaseServerClient();

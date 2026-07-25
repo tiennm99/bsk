@@ -512,6 +512,14 @@ export type Database = {
         };
         Returns: number;
       };
+      set_staff_role: {
+        Args: { p_user_id: string; p_role: Database["bsk"]["Enums"]["app_role"] };
+        Returns: undefined;
+      };
+      remove_staff: {
+        Args: { p_user_id: string };
+        Returns: undefined;
+      };
       save_prescription: {
         Args: { p_checkup_id: number; p_items: Json };
         Returns: undefined;

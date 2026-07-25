@@ -25,6 +25,22 @@ import { CHECKUP_MEDIA_BUCKET, MAX_IMAGE_BYTES, buildStoragePath } from "@/lib/i
 import { recordImageAction } from "./actions";
 
 const QUALITY_STEPS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4] as const;
+// Downscale the longest side to this before quality-stepping — a full-res phone
+// photo (e.g. 4000×3000) never fits 200KB on JPEG quality alone, so we must
+// reduce resolution first. 1280px keeps ultrasound/clinic detail legible.
+const MAX_DIMENSION = 1280;
+
+/** Draw a source (video frame or image) onto a canvas scaled to fit MAX_DIMENSION. */
+function makeScaledCanvas(source: CanvasImageSource, w: number, h: number): HTMLCanvasElement | null {
+  const scale = Math.min(1, MAX_DIMENSION / Math.max(w, h));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(w * scale));
+  canvas.height = Math.max(1, Math.round(h * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
 
 // getUserMedia support never changes after mount, so there's nothing to
 // subscribe to — this is purely a way to read a browser-only value without
@@ -55,7 +71,6 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
   const router = useRouter();
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   // Browser-only feature detection without an Effect: getServerSnapshot
@@ -138,12 +153,11 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
   function snapshot() {
     const video = videoRef.current;
     if (!video || !video.videoWidth) return;
-    const canvas = canvasRef.current ?? document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const canvas = makeScaledCanvas(video, video.videoWidth, video.videoHeight);
+    if (!canvas) {
+      setError(t("errorGeneric"));
+      return;
+    }
     void uploadFromCanvas(canvas);
   }
 
@@ -155,16 +169,12 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d");
+      const canvas = makeScaledCanvas(img, img.naturalWidth, img.naturalHeight);
       URL.revokeObjectURL(objectUrl);
-      if (!ctx) {
+      if (!canvas) {
         setError(t("errorGeneric"));
         return;
       }
-      ctx.drawImage(img, 0, 0);
       void uploadFromCanvas(canvas);
     };
     img.onerror = () => {
@@ -219,8 +229,6 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
         />
         {uploading && <p className="text-muted-foreground text-sm">{t("uploading")}</p>}
       </div>
-
-      <canvas ref={canvasRef} className="hidden" />
 
       {error && (
         <p className="text-destructive text-sm" role="alert">

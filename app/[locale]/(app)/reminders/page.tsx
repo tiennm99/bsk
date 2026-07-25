@@ -16,12 +16,15 @@ export default async function RemindersPage({ params }: { params: Promise<{ loca
   const now = new Date();
   const today = fmt.format(now);
   const horizon = fmt.format(new Date(now.getTime() + 7 * 86_400_000));
+  // Lower bound so ancient overdue rows drop off instead of accumulating forever
+  // and burying this-week reminders past the row limit.
+  const floor = fmt.format(new Date(now.getTime() - 30 * 86_400_000));
 
   const supabase = await createSupabaseServerClient();
   const { data: checkups } = await supabase
     .from("checkups")
     .select("id, customer_id, recheck_date")
-    .not("recheck_date", "is", null)
+    .gte("recheck_date", floor)
     .lte("recheck_date", horizon)
     .eq("deleted", false)
     .order("recheck_date", { ascending: true })

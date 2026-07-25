@@ -81,6 +81,17 @@ export async function deleteImageAction(
 
   const supabase = await createSupabaseServerClient();
 
+  // Look up the row's ACTUAL storage_path (scoped by id + checkup_id) — never
+  // trust the client-supplied path, so a scripted call can't remove another
+  // checkup's object.
+  const { data: row } = await supabase
+    .from("checkup_images")
+    .select("storage_path")
+    .eq("id", parsed.data.imageId)
+    .eq("checkup_id", parsed.data.checkupId)
+    .maybeSingle();
+  if (!row) return { status: "error", message: t("errorGeneric") };
+
   const { error: updateError } = await supabase
     .from("checkup_images")
     .update({ deleted: true })
@@ -89,9 +100,9 @@ export async function deleteImageAction(
   if (updateError) return { status: "error", message: t("errorGeneric") };
 
   // Best-effort object removal — metadata is already soft-deleted so the
-  // gallery hides it regardless; a future retention sweep (Phase 7) reconciles
-  // any orphaned object left behind by a failed removal here.
-  await supabase.storage.from(CHECKUP_MEDIA_BUCKET).remove([parsed.data.storagePath]);
+  // gallery hides it regardless; the nightly retention sweep reconciles any
+  // orphaned object left behind by a failed removal here.
+  await supabase.storage.from(CHECKUP_MEDIA_BUCKET).remove([row.storage_path]);
 
   await supabase.rpc("log_audit", {
     p_action: "image.delete",

@@ -23,7 +23,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
   const supabase = await createSupabaseServerClient();
 
   const [{ data: c }, { data: clinic }] = await Promise.all([
-    supabase.from("checkups").select("id, customer_id, queue_number, checkup_date").eq("id", checkupId).maybeSingle(),
+    supabase
+      .from("checkups")
+      .select("id, customer_id, queue_number, checkup_date")
+      .eq("id", checkupId)
+      .eq("deleted", false)
+      .maybeSingle(),
     supabase.from("clinic_settings").select("name, address, phone").eq("id", true).maybeSingle(),
   ]);
   if (!c) return new Response("Not found", { status: 404 });
