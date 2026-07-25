@@ -235,6 +235,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      medicines: {
+        Row: {
+          company: string | null;
+          cost_price: number | null;
+          created_at: string;
+          deleted: boolean;
+          id: number;
+          name: string;
+          route: string | null;
+          sale_price: number;
+          unit: string | null;
+        };
+        Insert: {
+          company?: string | null;
+          cost_price?: number | null;
+          created_at?: string;
+          deleted?: boolean;
+          id?: never;
+          name: string;
+          route?: string | null;
+          sale_price?: number;
+          unit?: string | null;
+        };
+        Update: {
+          company?: string | null;
+          cost_price?: number | null;
+          created_at?: string;
+          deleted?: boolean;
+          id?: never;
+          name?: string;
+          route?: string | null;
+          sale_price?: number;
+          unit?: string | null;
+        };
+        Relationships: [];
+      };
+      services: {
+        Row: { created_at: string; deleted: boolean; id: number; name: string; price: number };
+        Insert: { created_at?: string; deleted?: boolean; id?: never; name: string; price?: number };
+        Update: { created_at?: string; deleted?: boolean; id?: never; name?: string; price?: number };
+        Relationships: [];
+      };
       provinces: {
         Row: { code: string; name: string };
         Insert: { code: string; name: string };

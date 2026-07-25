@@ -23,6 +23,8 @@ import {
   ClipboardList,
   UserCog,
   ListOrdered,
+  Pill,
+  ListChecks,
 } from "lucide-react";
 
 export type MenuItem = {
@@ -51,6 +53,8 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
     { href: "/admin/doctors", labelKey: "nav.doctors", icon: Stethoscope },
     { href: "/admin/templates", labelKey: "nav.templates", icon: ClipboardList },
+    { href: "/admin/medicines", labelKey: "nav.medicines", icon: Pill },
+    { href: "/admin/services", labelKey: "nav.services", icon: ListChecks },
     { href: "/admin/invite", labelKey: "nav.invite", icon: UserPlus },
     { href: "/admin/staff", labelKey: "nav.staff", icon: UserCog },
     { href: "/admin/settings", labelKey: "nav.settings", icon: Settings },

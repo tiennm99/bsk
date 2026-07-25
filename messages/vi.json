@@ -74,6 +74,39 @@
       "save": "Lưu",
       "remove": "Xoá quyền",
       "you": "(bạn)"
+    },
+    "medicines": {
+      "title": "Danh mục thuốc",
+      "new": "Thêm thuốc",
+      "newTitle": "Thêm thuốc",
+      "editTitle": "Sửa: {name}",
+      "empty": "Chưa có thuốc nào.",
+      "edit": "Sửa",
+      "deactivate": "Ẩn",
+      "name": "Tên thuốc",
+      "unit": "Đơn vị",
+      "salePrice": "Giá bán (₫)",
+      "costPrice": "Giá nhập (₫)",
+      "company": "Hãng",
+      "route": "Đường dùng",
+      "saving": "Đang lưu…",
+      "create": "Thêm",
+      "save": "Lưu",
+      "errorForbidden": "Bạn không có quyền quản lý thuốc.",
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "services": {
+      "title": "Danh mục dịch vụ",
+      "addTitle": "Thêm dịch vụ",
+      "name": "Tên dịch vụ",
+      "price": "Giá (₫)",
+      "add": "Thêm",
+      "submitting": "Đang lưu…",
+      "save": "Lưu",
+      "deactivate": "Ẩn",
+      "empty": "Chưa có dịch vụ nào.",
+      "errorForbidden": "Bạn không có quyền quản lý dịch vụ.",
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
   "roles": {

@@ -74,6 +74,39 @@
       "save": "Save",
       "remove": "Remove access",
       "you": "(you)"
+    },
+    "medicines": {
+      "title": "Medicine catalog",
+      "new": "New medicine",
+      "newTitle": "New medicine",
+      "editTitle": "Edit: {name}",
+      "empty": "No medicines yet.",
+      "edit": "Edit",
+      "deactivate": "Archive",
+      "name": "Medicine name",
+      "unit": "Unit",
+      "salePrice": "Sale price (₫)",
+      "costPrice": "Cost price (₫)",
+      "company": "Manufacturer",
+      "route": "Route",
+      "saving": "Saving…",
+      "create": "Add",
+      "save": "Save",
+      "errorForbidden": "You do not have permission to manage medicines.",
+      "errorGeneric": "Something went wrong. Please try again."
+    },
+    "services": {
+      "title": "Service catalog",
+      "addTitle": "Add service",
+      "name": "Service name",
+      "price": "Price (₫)",
+      "add": "Add",
+      "submitting": "Saving…",
+      "save": "Save",
+      "deactivate": "Archive",
+      "empty": "No services yet.",
+      "errorForbidden": "You do not have permission to manage services.",
+      "errorGeneric": "Something went wrong. Please try again."
     }
   },
   "roles": {
