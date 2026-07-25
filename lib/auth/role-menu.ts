@@ -21,6 +21,7 @@ import {
   Settings,
   UsersRound,
   ClipboardList,
+  UserCog,
 } from "lucide-react";
 
 export type MenuItem = {
@@ -49,6 +50,7 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
     { href: "/admin/doctors", labelKey: "nav.doctors", icon: Stethoscope },
     { href: "/admin/templates", labelKey: "nav.templates", icon: ClipboardList },
     { href: "/admin/invite", labelKey: "nav.invite", icon: UserPlus },
+    { href: "/admin/staff", labelKey: "nav.staff", icon: UserCog },
     { href: "/admin/settings", labelKey: "nav.settings", icon: Settings },
   ],
   doctor: [

@@ -1,6 +1,6 @@
 # Phase 2 — Core Entities (CRUD)
 
-**Status:** In progress. Delivered as validated vertical slices (schema + RLS + Server Actions + UI + i18n + audit per entity).
+**Status:** ✅ COMPLETE — all 5 slices delivered as validated verticals (schema + RLS + Server Actions + UI + i18n + audit per entity).
 **Goal:** Build the master-data layer that unblocks Phase 3+ (queue/checkup). Covers the original's Doctor/User/Template/Clinic/Customer/geo commands.
 **Basis:** `plans/reports/researcher-260725-0048-...-report.md` (source-grounded feature list).
 
@@ -11,7 +11,7 @@
 | 2b | Clinic settings | ClinicInfoRequest + settings edit | ✅ DONE (this session) |
 | 2c | Patients (customers) | AddPatient/GetRecentPatient + **geo-lookup** (provinces/wards) + **accent-insensitive search** | ✅ DONE (this session) |
 | 2d | Checkup templates | Add/Edit/Delete/GetAllTemplates + **gender** field | ✅ DONE (this session) |
-| 2e | Staff user management | AddUser/EditUser/GetAllUserInfo (extends app_users) | TODO |
+| 2e | Staff user management | AddUser/EditUser/GetAllUserInfo (extends app_users) | ✅ DONE (this session) |
 
 ## Slice 2a — Doctors (done)
 - Migration `20260725015000_bsk_doctors.sql`: `bsk.doctors` (first_name, last_name, soft-delete), RLS (read=enrolled, write=admin), grants (no DELETE — soft-delete only).

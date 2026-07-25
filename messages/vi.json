@@ -67,6 +67,13 @@
       "save": "Lưu",
       "errorForbidden": "Bạn không có quyền quản lý mẫu khám.",
       "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "staff": {
+      "title": "Quản lý nhân viên",
+      "role": "Vai trò",
+      "save": "Lưu",
+      "remove": "Xoá quyền",
+      "you": "(bạn)"
     }
   },
   "roles": {
@@ -123,6 +130,7 @@
   "nav": {
     "dashboard": "Trang chủ",
     "invite": "Mời người dùng",
+    "staff": "Nhân viên",
     "queue": "Hàng chờ",
     "patients": "Bệnh nhân",
     "doctors": "Bác sĩ",
