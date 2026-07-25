@@ -1,30 +1,30 @@
 /**
  * AppShell — Server Component.
  *
- * Composes the full authenticated layout: fixed sidebar on the left,
- * scrollable main content area on the right. Receives user info from the
- * (app) layout which has already validated session + role.
- *
- * No client state here — sidebar is server-rendered, top-bar lives inside
- * the sidebar's bottom section for Phase 1 simplicity.
+ * Renders the server-side Sidebar and hands it to AppShellFrame, which owns the
+ * responsive chrome (persistent at md+, off-canvas drawer below md). Receives
+ * user info from the (app) layout which has already validated session + role.
  */
 
 import type { ReactNode } from "react";
 import type { AppRole } from "@/lib/db/roles";
 import { Sidebar } from "@/components/app-shell/sidebar";
+import { AppShellFrame } from "@/components/app-shell/app-shell-frame";
 
 type AppShellProps = {
   email: string;
+  fullName: string | null;
   role: AppRole;
   locale: string;
   children: ReactNode;
 };
 
-export function AppShell({ email, role, locale, children }: AppShellProps) {
+export function AppShell({ email, fullName, role, locale, children }: AppShellProps) {
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar email={email} role={role} locale={locale} />
-      <main className="flex-1 overflow-y-auto">{children}</main>
-    </div>
+    <AppShellFrame
+      sidebar={<Sidebar email={email} fullName={fullName} role={role} locale={locale} />}
+    >
+      {children}
+    </AppShellFrame>
   );
 }

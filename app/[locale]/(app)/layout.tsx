@@ -50,10 +50,10 @@ export default async function AppLayout({
     return null;
   }
 
-  const { user, role } = session;
+  const { user, role, fullName } = session;
 
   return (
-    <AppShell email={user.email ?? ""} role={role} locale={locale}>
+    <AppShell email={user.email ?? ""} fullName={fullName} role={role} locale={locale}>
       {children}
     </AppShell>
   );

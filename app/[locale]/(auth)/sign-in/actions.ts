@@ -14,11 +14,17 @@
  *   redirect silently.
  */
 
+import { headers } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { redirect } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createRateLimiter } from "@/lib/upstash";
 import { parseSignIn, type SignInState } from "@/lib/auth/schemas";
+
+// Brute-force guard on the SHARED Supabase auth quota. Keyed by client IP
+// (not email) so an attacker cannot lock a specific victim out. 5 tries / 60s.
+const signInLimiter = createRateLimiter("login", 5, 60);
 
 // ---------------------------------------------------------------------------
 // signInAction
@@ -47,6 +53,34 @@ export async function signInAction(
   }
 
   const { email, password } = parsed.data;
+
+  // Step 1b — rate limit by client IP before hitting Supabase auth.
+  // Key on the PLATFORM-set IP, never the client-appendable leftmost
+  // x-forwarded-for hop (rotating that header would mint a fresh bucket per
+  // request and bypass the limit). Prefer Vercel's x-real-ip; else the LAST
+  // XFF hop (appended by the trusted proxy).
+  const hdrs = await headers();
+  const xff = hdrs.get("x-forwarded-for");
+  const ip = hdrs.get("x-real-ip")?.trim() || xff?.split(",").at(-1)?.trim() || null;
+  // Only rate-limit when a real client IP is resolvable. If neither header is
+  // set (misconfigured proxy / non-Vercel host), skip rather than bucket every
+  // request under a shared "unknown" key — which would lock out the whole clinic
+  // after 5 attempts/min. Logged so the missing-IP case is visible.
+  if (!ip) {
+    console.warn("[sign-in] no client IP header; skipping rate limit");
+  } else {
+    try {
+      const { success: withinLimit } = await signInLimiter.limit(ip);
+      if (!withinLimit) {
+        return { status: "error", fieldErrors: {}, formError: t("tooManyAttempts") };
+      }
+    } catch (err) {
+      // Shared Redis unavailable: fail OPEN so a sibling app's outage can't lock
+      // doctors out of the clinic. Logged so the gap in brute-force protection
+      // is alertable rather than silent.
+      console.warn("[sign-in] rate limiter unavailable, failing open:", err);
+    }
+  }
 
   const supabase = await createSupabaseServerClient();
 
@@ -77,32 +111,26 @@ export async function signInAction(
     .maybeSingle();
 
   if (!enrollment) {
-    // First-user-becomes-admin: race-safe claim via SECURITY DEFINER function
-    // that holds pg_advisory_xact_lock and EXISTS-guards the INSERT.
-    // We check count first to avoid calling the RPC when other users exist
-    // (an unenrolled non-first user must be rejected without any promotion).
-    const { count: existingCount } = await supabase
-      .from("app_users")
-      .select("user_id", { count: "exact", head: true });
+    // First-admin bootstrap: allowlist-gated, race-safe SECURITY DEFINER RPC.
+    // Returns true ONLY if the caller's email is in bsk.admin_allowlist AND
+    // bsk.app_users is empty. Safe to call unconditionally — a non-allowlisted
+    // or non-first caller simply gets false and is rejected below. (The old
+    // client-side count guard was dead: under the caller's RLS an unenrolled
+    // user always sees zero rows, so it protected nothing.)
+    const { data: claimed } = await supabase.rpc("claim_first_admin");
 
-    if (existingCount === 0) {
-      const { data: claimed } = await supabase.rpc("claim_first_admin", {
-        p_user_id: user.id,
-      });
-
-      if (claimed === true) {
-        // Re-fetch enrollment now that the row exists (role = 'admin').
-        const { data: refetched } = await supabase
-          .from("app_users")
-          .select("role")
-          .eq("user_id", user.id)
-          .maybeSingle();
-        enrollment = refetched;
-      }
+    if (claimed === true) {
+      // Re-fetch enrollment now that the row exists (role = 'admin').
+      const { data: refetched } = await supabase
+        .from("app_users")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      enrollment = refetched;
     }
 
-    // If enrollment is still null after the claim attempt (race lost, count > 0,
-    // or RPC returned false), sign out and return a generic error.
+    // If enrollment is still null after the claim attempt (not allowlisted,
+    // table non-empty, or race lost), sign out and return a generic error.
     if (!enrollment) {
       await supabase.auth.signOut();
       return {

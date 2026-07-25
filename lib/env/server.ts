@@ -23,6 +23,10 @@ const serverSchema = z
     QSTASH_TOKEN: z.string().optional(),
     QSTASH_CURRENT_SIGNING_KEY: z.string().optional(),
     QSTASH_NEXT_SIGNING_KEY: z.string().optional(),
+
+    // Vercel Cron sends `Authorization: Bearer $CRON_SECRET`; the nightly route
+    // rejects requests that don't match. Absent locally → cron route 503s.
+    CRON_SECRET: z.string().optional(),
   })
   .superRefine((env, ctx) => {
     // Cross-check NEXT_PUBLIC_APP_ENV against VERCEL_ENV so prod credentials

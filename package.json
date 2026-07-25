@@ -14,6 +14,7 @@
     "db:preflight": "tsx scripts/preflight-supabase.ts",
     "db:push": "pnpm db:preflight && supabase db push",
     "db:gen-types": "supabase gen types typescript --schema bsk > types/supabase-bsk.ts",
+    "db:seed-geo": "tsx scripts/seed-geo.ts",
     "check:no-secret-leak": "node scripts/check-no-secret-leak.mjs"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "@upstash/qstash": "^2.11.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "bwip-js": "^4.11.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.3.0",
@@ -37,8 +39,10 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.76.1",
+    "recharts": "^3.10.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
+    "xlsx": "^0.18.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {

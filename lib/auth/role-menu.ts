@@ -14,7 +14,20 @@
 
 import type { AppRole } from "@/lib/db/roles";
 import type { ComponentType } from "react";
-import { LayoutDashboard, UserPlus } from "lucide-react";
+import {
+  LayoutDashboard,
+  UserPlus,
+  Stethoscope,
+  Settings,
+  UsersRound,
+  ClipboardList,
+  UserCog,
+  ListOrdered,
+  Pill,
+  ListChecks,
+  FileBarChart,
+  BellRing,
+} from "lucide-react";
 
 export type MenuItem = {
   /** Locale-relative path, e.g. "/dashboard". Sidebar prefixes with locale. */
@@ -38,11 +51,36 @@ export type MenuItem = {
 export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
   admin: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
+    { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
+    { href: "/admin/doctors", labelKey: "nav.doctors", icon: Stethoscope },
+    { href: "/admin/templates", labelKey: "nav.templates", icon: ClipboardList },
+    { href: "/admin/medicines", labelKey: "nav.medicines", icon: Pill },
+    { href: "/admin/services", labelKey: "nav.services", icon: ListChecks },
     { href: "/admin/invite", labelKey: "nav.invite", icon: UserPlus },
+    { href: "/admin/staff", labelKey: "nav.staff", icon: UserCog },
+    { href: "/admin/reports", labelKey: "nav.reports", icon: FileBarChart },
+    { href: "/admin/settings", labelKey: "nav.settings", icon: Settings },
   ],
-  doctor: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
-  nurse: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
-  receptionist: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
+  doctor: [
+    { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
+    { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
+  ],
+  nurse: [
+    { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
+    { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
+  ],
+  receptionist: [
+    { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
+    { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
+  ],
   cashier: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
   patient: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
 };

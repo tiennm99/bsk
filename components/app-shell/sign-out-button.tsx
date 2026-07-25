@@ -22,7 +22,6 @@ function SignOutButtonInner() {
     <Button
       type="submit"
       variant="ghost"
-      size="sm"
       disabled={pending}
       className="w-full justify-start gap-2"
     >

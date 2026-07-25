@@ -36,6 +36,7 @@ import { inviteUserAction } from "./actions";
 
 export function InviteUserForm() {
   const t = useTranslations("admin.invite");
+  const tRoles = useTranslations("roles");
 
   const [state, dispatchAction, isPending] = useActionState<InviteUserState, FormData>(
     inviteUserAction,
@@ -120,7 +121,7 @@ export function InviteUserForm() {
           >
             {appRoles.map((r) => (
               <option key={r} value={r}>
-                {r}
+                {tRoles(r)}
               </option>
             ))}
           </select>
@@ -138,12 +139,7 @@ export function InviteUserForm() {
           </p>
         )}
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isPending || (!form.formState.isValid && form.formState.isDirty)}
-          aria-disabled={isPending}
-        >
+        <Button type="submit" size="lg" className="w-full" disabled={isPending}>
           {isPending ? t("submitting") : t("submit")}
         </Button>
       </form>

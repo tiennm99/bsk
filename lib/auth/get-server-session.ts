@@ -12,6 +12,8 @@ export type User = NonNullable<GetUserResult["data"]["user"]>;
 export type ServerSession = {
   user: User;
   role: AppRole | null;
+  /** Display name from bsk.app_users.full_name; null until an admin sets it. */
+  fullName: string | null;
 };
 
 /**
@@ -51,22 +53,29 @@ export async function getServerSession(): Promise<ServerSession | null> {
     return null;
   }
 
-  // Query the BSK role via the RPC defined in migration 20260525163300.
-  // Returns null when the user has no row in bsk.app_users.
-  // The RPC relies on auth.uid() matching a row in bsk.app_users; if the
-  // migration has not been applied yet (pre-provisioning), the RPC will throw —
-  // treated as role: null, not as an auth failure.
+  // Read role + display name in ONE own-row query. The app_users_select_own
+  // RLS policy (migration 20260525163300) permits a user to read their own row,
+  // so a direct select is equivalent to the current_role() RPC for the caller's
+  // own role — and folds the former separate full_name lookup into the same
+  // round-trip. Pre-provisioning (table absent) or transient DB errors fall
+  // back to role/fullName = null, never an auth failure.
   let role: AppRole | null = null;
+  let fullName: string | null = null;
 
   try {
-    const { data: rpcRole, error: rpcError } = await supabase.rpc("current_role");
+    const { data: profile } = await supabase
+      .from("app_users")
+      .select("role, full_name")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (!rpcError && rpcRole !== null && isAppRole(rpcRole)) {
-      role = rpcRole;
+    if (profile) {
+      if (isAppRole(profile.role)) role = profile.role;
+      fullName = profile.full_name ?? null;
     }
   } catch {
-    // Pre-provisioning or transient DB error: proceed with role: null.
+    // Pre-provisioning or transient DB error: proceed with role/fullName null.
   }
 
-  return { user, role };
+  return { user, role, fullName };
 }

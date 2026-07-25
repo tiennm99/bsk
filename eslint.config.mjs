@@ -54,6 +54,12 @@ const config = [
     ],
     rules: { "no-restricted-imports": "off" },
   },
+  // Standalone Node scripts (seed/preflight) run outside Next and legitimately
+  // build their own schema-scoped client from env — not the request factories.
+  {
+    files: ["scripts/**/*.ts", "scripts/**/*.mjs"],
+    rules: { "no-restricted-imports": "off" },
+  },
 ];
 
 export default config;

@@ -7,21 +7,20 @@
  */
 
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { ROLE_MENU } from "@/lib/auth/role-menu";
 import type { AppRole } from "@/lib/db/roles";
+import { SidebarNav } from "@/components/app-shell/sidebar-nav";
 import { SignOutButton } from "@/components/app-shell/sign-out-button";
 import { LocaleSwitcher } from "@/components/app-shell/locale-switcher";
 
 type SidebarProps = {
   email: string;
+  fullName: string | null;
   role: AppRole;
   locale: string;
 };
 
-export async function Sidebar({ email, role, locale }: SidebarProps) {
-  const t = await getTranslations();
-  const items = ROLE_MENU[role];
+export async function Sidebar({ email, fullName, role, locale }: SidebarProps) {
+  const tRoles = await getTranslations("roles");
 
   return (
     <aside className="bg-background border-border flex h-full w-56 shrink-0 flex-col border-r">
@@ -31,34 +30,17 @@ export async function Sidebar({ email, role, locale }: SidebarProps) {
         <p className="text-muted-foreground text-xs">Clinic Management</p>
       </div>
 
-      {/* User info */}
+      {/* User info — greet by name when set; email drops to a secondary line. */}
       <div className="border-border border-b px-4 py-3">
-        <p className="text-foreground truncate text-sm font-medium">{email}</p>
-        <span className="bg-muted text-muted-foreground mt-1 inline-block rounded px-1.5 py-0.5 text-xs font-medium">
-          {role}
+        <p className="text-foreground truncate text-sm font-medium">{fullName || email}</p>
+        {fullName && <p className="text-muted-foreground truncate text-xs">{email}</p>}
+        <span className="bg-muted text-foreground mt-1 inline-block rounded px-1.5 py-0.5 text-xs font-medium">
+          {tRoles(role)}
         </span>
       </div>
 
-      {/* Nav items */}
-      <nav className="flex-1 overflow-y-auto px-2 py-3" aria-label="Main navigation">
-        <ul className="space-y-0.5">
-          {items.map((item) => {
-            const Icon = item.icon;
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  locale={locale as "vi" | "en"}
-                  className="text-foreground hover:bg-muted flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors"
-                >
-                  <Icon className="size-4 shrink-0" />
-                  {t(item.labelKey as Parameters<typeof t>[0])}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      {/* Nav items (client component: marks the active route) */}
+      <SidebarNav role={role} locale={locale} />
 
       {/* Bottom actions */}
       <div className="border-border space-y-1 border-t px-2 py-3">
