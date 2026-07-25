@@ -60,6 +60,13 @@ const config = [
     files: ["scripts/**/*.ts", "scripts/**/*.mjs"],
     rules: { "no-restricted-imports": "off" },
   },
+  // Test files (unit/e2e) and config files are exempt from Next.js rules.
+  {
+    files: ["tests/**/*.ts", "*.config.ts", "*.config.mjs"],
+    rules: {
+      "@next/next/no-html-link-for-pages": "off",
+    },
+  },
 ];
 
 export default config;

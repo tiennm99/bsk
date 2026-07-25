@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { renderInvoicePdf, type InvoiceLine } from "@/lib/pdf/invoice-document";
+import { sumLineTotals } from "@/lib/billing/totals";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -63,7 +64,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
     unitPrice: x.unit_price,
     lineTotal: x.line_total,
   }));
-  const total = [...medicines, ...serviceLines].reduce((sum, l) => sum + l.lineTotal, 0);
+  const total = sumLineTotals([...medicines, ...serviceLines]);
 
   const t = await getTranslations("reports");
   const buffer = await renderInvoicePdf({

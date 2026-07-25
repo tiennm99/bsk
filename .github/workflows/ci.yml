@@ -41,6 +41,9 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
+      - name: Unit tests
+        run: pnpm test
+
       - name: Lint
         run: pnpm lint
 
@@ -49,3 +52,8 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      # E2E tests (pnpm test:e2e) are run locally / can be enabled later
+      # when Playwright browser installation and full build time are available.
+      # Current suite covers smoke tests; full happy-path tests require
+      # a provisioned Supabase project with seed data.

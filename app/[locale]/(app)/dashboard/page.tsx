@@ -9,8 +9,9 @@ import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { RevenueChart } from "./revenue-chart";
+import { formatVnd, sumLineTotals } from "@/lib/billing/totals";
 
-const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
+const vnd = formatVnd;
 
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   await params;
@@ -78,7 +79,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       if (paid.has(cid)) byDay.set(dt, (byDay.get(dt) ?? 0) + (totalByCheckup.get(cid) ?? 0));
     }
     revenue7d = days.map((d) => ({ day: d.slice(5), amount: byDay.get(d) ?? 0 }));
-    revenueTotal = revenue7d.reduce((s, r) => s + r.amount, 0);
+    revenueTotal = sumLineTotals(revenue7d.map((r) => ({ line_total: r.amount })));
   }
 
   return (

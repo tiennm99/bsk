@@ -11,6 +11,10 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "db:preflight": "tsx scripts/preflight-supabase.ts",
     "db:push": "pnpm db:preflight && supabase db push",
     "db:gen-types": "supabase gen types typescript --schema bsk > types/supabase-bsk.ts",
@@ -47,10 +51,12 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^22.10.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9.36.0",
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
@@ -59,6 +65,7 @@
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
     "tsx": "^4.22.3",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.10"
   }
 }

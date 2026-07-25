@@ -3,9 +3,10 @@
 /** 7-day paid-revenue bar chart (recharts). Theme-aware via currentColor. */
 
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { formatVnd, formatVndCompact } from "@/lib/billing/totals";
 
-const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
-const compact = (n: number) => new Intl.NumberFormat("vi-VN", { notation: "compact" }).format(n);
+const vnd = formatVnd;
+const compact = formatVndCompact;
 
 export function RevenueChart({ data }: { data: { day: string; amount: number }[] }) {
   return (
