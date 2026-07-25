@@ -46,6 +46,27 @@
       "saved": "Đã lưu.",
       "errorForbidden": "Bạn không có quyền chỉnh sửa thông tin phòng khám.",
       "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "templates": {
+      "title": "Mẫu khám",
+      "new": "Thêm mẫu",
+      "newTitle": "Thêm mẫu khám",
+      "editTitle": "Sửa: {name}",
+      "empty": "Chưa có mẫu nào.",
+      "edit": "Sửa",
+      "deactivate": "Ẩn",
+      "name": "Tên mẫu",
+      "printTitle": "Tiêu đề in",
+      "gender": "Giới tính áp dụng",
+      "genders": { "any": "Tất cả", "male": "Nam", "female": "Nữ", "other": "Khác" },
+      "photoNum": "Số ảnh",
+      "fields": "Các trường (mỗi dòng một trường)",
+      "fieldsHint": "Nhập mỗi trường trên một dòng, theo thứ tự hiển thị.",
+      "saving": "Đang lưu…",
+      "create": "Thêm",
+      "save": "Lưu",
+      "errorForbidden": "Bạn không có quyền quản lý mẫu khám.",
+      "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
   "roles": {
@@ -105,6 +126,7 @@
     "queue": "Hàng chờ",
     "patients": "Bệnh nhân",
     "doctors": "Bác sĩ",
+    "templates": "Mẫu khám",
     "services": "Dịch vụ",
     "medicines": "Thuốc",
     "reports": "Báo cáo",

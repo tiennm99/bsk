@@ -10,7 +10,7 @@
 | 2a | **Doctors** | AddDoctor/EditDoctor/GetDoctorInfo/GetDoctorGeneralInfo | ✅ DONE (this session) |
 | 2b | Clinic settings | ClinicInfoRequest + settings edit | ✅ DONE (this session) |
 | 2c | Patients (customers) | AddPatient/GetRecentPatient + **geo-lookup** (provinces/wards) + **accent-insensitive search** | ✅ DONE (this session) |
-| 2d | Checkup templates | Add/Edit/Delete/GetAllTemplates + **gender** field | TODO |
+| 2d | Checkup templates | Add/Edit/Delete/GetAllTemplates + **gender** field | ✅ DONE (this session) |
 | 2e | Staff user management | AddUser/EditUser/GetAllUserInfo (extends app_users) | TODO |
 
 ## Slice 2a — Doctors (done)

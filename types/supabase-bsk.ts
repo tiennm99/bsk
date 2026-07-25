@@ -46,6 +46,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      checkup_templates: {
+        Row: {
+          created_at: string;
+          deleted: boolean;
+          fields: Json;
+          gender: string;
+          id: number;
+          name: string;
+          photo_num: number;
+          title: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          deleted?: boolean;
+          fields?: Json;
+          gender?: string;
+          id?: never;
+          name: string;
+          photo_num?: number;
+          title?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          deleted?: boolean;
+          fields?: Json;
+          gender?: string;
+          id?: never;
+          name?: string;
+          photo_num?: number;
+          title?: string | null;
+        };
+        Relationships: [];
+      };
       clinic_settings: {
         Row: {
           address: string | null;

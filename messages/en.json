@@ -46,6 +46,27 @@
       "saved": "Saved.",
       "errorForbidden": "You do not have permission to edit clinic information.",
       "errorGeneric": "Something went wrong. Please try again."
+    },
+    "templates": {
+      "title": "Checkup templates",
+      "new": "New template",
+      "newTitle": "New template",
+      "editTitle": "Edit: {name}",
+      "empty": "No templates yet.",
+      "edit": "Edit",
+      "deactivate": "Archive",
+      "name": "Template name",
+      "printTitle": "Print title",
+      "gender": "Applies to",
+      "genders": { "any": "All", "male": "Male", "female": "Female", "other": "Other" },
+      "photoNum": "Photo count",
+      "fields": "Fields (one per line)",
+      "fieldsHint": "Enter one field per line, in display order.",
+      "saving": "Saving…",
+      "create": "Add",
+      "save": "Save",
+      "errorForbidden": "You do not have permission to manage templates.",
+      "errorGeneric": "Something went wrong. Please try again."
     }
   },
   "roles": {
@@ -105,6 +126,7 @@
     "queue": "Queue",
     "patients": "Patients",
     "doctors": "Doctors",
+    "templates": "Templates",
     "services": "Services",
     "medicines": "Medicines",
     "reports": "Reports",
