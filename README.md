@@ -8,7 +8,23 @@ An educational rewrite of the **BSK All-in-One Clinic Management System** into a
 
 ## Status
 
-Planning phase. See [PLAN.md](./PLAN.md) for the architecture and phased roadmap.
+Core system implemented (Phases 0–8). See [PLAN.md](./PLAN.md) for the architecture and phased roadmap.
+
+**Built:** auth + RBAC (allowlist-gated admin bootstrap, rate limiting, audit log); master data (doctors, medicines, services, checkup templates, clinic settings, staff management); patients (VN geo lookup + accent-insensitive search); queue + checkup workflow with realtime; prescriptions + billing (server-authoritative VND totals, cashier mark-paid); imaging (webcam/file capture, ≤200 KB compression, signed URLs, barcode); reports (Vietnamese PDF invoice, Excel export, revenue dashboard); recheck reminders + nightly retention sweep.
+
+### First-run setup (operator)
+
+After provisioning Supabase/Upstash/Vercel and `pnpm db:push`:
+
+1. **Seed the admin allowlist** before the first sign-in (or nobody can bootstrap admin):
+   ```sql
+   INSERT INTO bsk.admin_allowlist (email) VALUES ('you@example.com');
+   ```
+2. **Seed Vietnamese geo data** (province/ward address dropdowns): `pnpm db:seed-geo` (see `scripts/seed-geo.ts`).
+3. **Enable Supabase Realtime** on `bsk.checkups` (Database → Replication) for the live queue.
+4. **Set `CRON_SECRET`** in Vercel so the nightly media-retention sweep (`/api/cron/nightly`, scheduled in `vercel.json`) can authenticate.
+
+See [docs/supabase-shared-config.md](./docs/supabase-shared-config.md) for the shared-project rules and [docs/design-guidelines.md](./docs/design-guidelines.md) for UI conventions.
 
 ## Stack
 

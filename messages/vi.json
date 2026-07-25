@@ -6,7 +6,10 @@
   },
   "errors": {
     "notFoundTitle": "Không tìm thấy trang",
-    "notFoundBody": "Đường dẫn bạn truy cập không tồn tại."
+    "notFoundBody": "Đường dẫn bạn truy cập không tồn tại.",
+    "errorTitle": "Đã xảy ra lỗi",
+    "errorBody": "Rất tiếc, đã có sự cố. Vui lòng thử lại.",
+    "retry": "Thử lại"
   },
   "admin": {
     "invite": {
