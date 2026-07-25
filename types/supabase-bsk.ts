@@ -408,6 +408,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      checkup_images: {
+        Row: {
+          checkup_id: number;
+          created_at: string;
+          created_by: string | null;
+          deleted: boolean;
+          id: number;
+          storage_path: string;
+        };
+        Insert: {
+          checkup_id: number;
+          created_at?: string;
+          created_by?: string | null;
+          deleted?: boolean;
+          id?: never;
+          storage_path: string;
+        };
+        Update: {
+          checkup_id?: number;
+          created_at?: string;
+          created_by?: string | null;
+          deleted?: boolean;
+          id?: never;
+          storage_path?: string;
+        };
+        Relationships: [];
+      };
       app_users: {
         Row: {
           created_at: string;

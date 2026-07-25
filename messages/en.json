@@ -189,6 +189,23 @@
     "errorForbidden": "You do not have permission to manage billing.",
     "errorGeneric": "Something went wrong. Please try again."
   },
+  "imaging": {
+    "title": "Imaging",
+    "capture": "Capture",
+    "startCamera": "Start camera",
+    "stopCamera": "Stop camera",
+    "snapshot": "Snapshot",
+    "choosePhoto": "Or choose a photo",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "delete": "Delete",
+    "empty": "No images yet.",
+    "barcode": "Checkup barcode",
+    "print": "Print",
+    "tooLarge": "This image is too large to compress under 200KB. Please try a smaller photo.",
+    "errorForbidden": "You do not have permission to manage checkup images.",
+    "errorGeneric": "Something went wrong. Please try again."
+  },
   "patients": {
     "title": "Patients",
     "new": "New patient",

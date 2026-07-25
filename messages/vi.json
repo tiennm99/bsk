@@ -189,6 +189,23 @@
     "errorForbidden": "Bạn không có quyền quản lý thanh toán.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
+  "imaging": {
+    "title": "Hình ảnh",
+    "capture": "Chụp ảnh",
+    "startCamera": "Bật camera",
+    "stopCamera": "Tắt camera",
+    "snapshot": "Chụp",
+    "choosePhoto": "Hoặc chọn ảnh",
+    "upload": "Tải lên",
+    "uploading": "Đang tải lên…",
+    "delete": "Xóa",
+    "empty": "Chưa có hình ảnh nào.",
+    "barcode": "Mã vạch phiếu khám",
+    "print": "In",
+    "tooLarge": "Ảnh này quá lớn, không thể nén dưới 200KB. Vui lòng chọn ảnh nhỏ hơn.",
+    "errorForbidden": "Bạn không có quyền quản lý hình ảnh phiếu khám.",
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
   "patients": {
     "title": "Bệnh nhân",
     "new": "Thêm bệnh nhân",

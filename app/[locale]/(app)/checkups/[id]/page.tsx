@@ -17,6 +17,7 @@ export default async function CheckupPage({
   const { locale, id } = await params;
   const t = await getTranslations("checkups");
   const tBilling = await getTranslations("billing");
+  const tImaging = await getTranslations("imaging");
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) notFound();
 
@@ -56,11 +57,18 @@ export default async function CheckupPage({
             </p>
           )}
         </div>
-        <Button asChild variant="outline">
-          <Link href={`/checkups/${c.id}/prescription`} locale={locale as "vi" | "en"}>
-            {tBilling("title")}
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href={`/checkups/${c.id}/prescription`} locale={locale as "vi" | "en"}>
+              {tBilling("title")}
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href={`/checkups/${c.id}/imaging`} locale={locale as "vi" | "en"}>
+              {tImaging("title")}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <CheckupForm
