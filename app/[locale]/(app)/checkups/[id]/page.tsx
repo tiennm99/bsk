@@ -2,7 +2,9 @@
 
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
 import { CheckupForm } from "../checkup-form";
 
 const str = (v: string | number | null) => (v == null ? "" : String(v));
@@ -12,8 +14,9 @@ export default async function CheckupPage({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
-  const { id } = await params;
+  const { locale, id } = await params;
   const t = await getTranslations("checkups");
+  const tBilling = await getTranslations("billing");
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) notFound();
 
@@ -39,18 +42,25 @@ export default async function CheckupPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="mb-6">
-        <div className="flex items-center gap-3">
-          {c.queue_number != null && (
-            <span className="text-foreground text-2xl font-bold tabular-nums">#{c.queue_number}</span>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            {c.queue_number != null && (
+              <span className="text-foreground text-2xl font-bold tabular-nums">#{c.queue_number}</span>
+            )}
+            <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
+          </div>
+          {customer && (
+            <p className="text-muted-foreground mt-1 text-sm">
+              {[customer.phone, customer.dob].filter(Boolean).join(" · ")}
+            </p>
           )}
-          <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
         </div>
-        {customer && (
-          <p className="text-muted-foreground mt-1 text-sm">
-            {[customer.phone, customer.dob].filter(Boolean).join(" · ")}
-          </p>
-        )}
+        <Button asChild variant="outline">
+          <Link href={`/checkups/${c.id}/prescription`} locale={locale as "vi" | "en"}>
+            {tBilling("title")}
+          </Link>
+        </Button>
       </div>
 
       <CheckupForm

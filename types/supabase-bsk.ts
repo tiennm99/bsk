@@ -321,6 +321,93 @@ export type Database = {
         };
         Relationships: [];
       };
+      order_items: {
+        Row: {
+          checkup_id: number;
+          dosage: string | null;
+          id: number;
+          line_total: number;
+          medicine_id: number;
+          notes: string | null;
+          quantity: number;
+          unit_price: number;
+        };
+        Insert: {
+          checkup_id: number;
+          dosage?: string | null;
+          id?: never;
+          line_total: number;
+          medicine_id: number;
+          notes?: string | null;
+          quantity: number;
+          unit_price: number;
+        };
+        Update: {
+          checkup_id?: number;
+          dosage?: string | null;
+          id?: never;
+          line_total?: number;
+          medicine_id?: number;
+          notes?: string | null;
+          quantity?: number;
+          unit_price?: number;
+        };
+        Relationships: [];
+      };
+      checkup_services: {
+        Row: {
+          checkup_id: number;
+          id: number;
+          line_total: number;
+          quantity: number;
+          service_id: number;
+          unit_price: number;
+        };
+        Insert: {
+          checkup_id: number;
+          id?: never;
+          line_total: number;
+          quantity: number;
+          service_id: number;
+          unit_price: number;
+        };
+        Update: {
+          checkup_id?: number;
+          id?: never;
+          line_total?: number;
+          quantity?: number;
+          service_id?: number;
+          unit_price?: number;
+        };
+        Relationships: [];
+      };
+      medicine_orders: {
+        Row: {
+          checkup_id: number;
+          created_at: string;
+          paid_at: string | null;
+          payment_method: string | null;
+          payment_status: Database["bsk"]["Enums"]["payment_status"];
+          processed_by: string | null;
+        };
+        Insert: {
+          checkup_id: number;
+          created_at?: string;
+          paid_at?: string | null;
+          payment_method?: string | null;
+          payment_status?: Database["bsk"]["Enums"]["payment_status"];
+          processed_by?: string | null;
+        };
+        Update: {
+          checkup_id?: number;
+          created_at?: string;
+          paid_at?: string | null;
+          payment_method?: string | null;
+          payment_status?: Database["bsk"]["Enums"]["payment_status"];
+          processed_by?: string | null;
+        };
+        Relationships: [];
+      };
       app_users: {
         Row: {
           created_at: string;
@@ -398,10 +485,23 @@ export type Database = {
         };
         Returns: number;
       };
+      save_prescription: {
+        Args: { p_checkup_id: number; p_items: Json };
+        Returns: undefined;
+      };
+      save_checkup_services: {
+        Args: { p_checkup_id: number; p_items: Json };
+        Returns: undefined;
+      };
+      mark_order_paid: {
+        Args: { p_checkup_id: number; p_method: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       app_role: "admin" | "doctor" | "nurse" | "receptionist" | "cashier" | "patient";
       checkup_status: "waiting" | "in_progress" | "done";
+      payment_status: "unpaid" | "paid";
     };
     CompositeTypes: Record<string, never>;
   };

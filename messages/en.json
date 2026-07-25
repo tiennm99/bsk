@@ -160,6 +160,35 @@
     "errorForbidden": "You do not have permission to edit checkups.",
     "errorGeneric": "Something went wrong. Please try again."
   },
+  "billing": {
+    "title": "Prescription & billing",
+    "medicines": "Medicines",
+    "medicine": "Medicine",
+    "services": "Services",
+    "service": "Service",
+    "quantity": "Quantity",
+    "dosage": "Dosage",
+    "notes": "Notes",
+    "addRow": "Add row",
+    "remove": "Remove",
+    "noLines": "No lines yet.",
+    "subtotal": "Subtotal: {amount}",
+    "total": "Grand total: {amount}",
+    "save": "Save",
+    "saving": "Saving…",
+    "payment": "Payment",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "markPaid": "Mark paid",
+    "method": {
+      "label": "Payment method",
+      "cash": "Cash",
+      "card": "Card",
+      "transfer": "Bank transfer"
+    },
+    "errorForbidden": "You do not have permission to manage billing.",
+    "errorGeneric": "Something went wrong. Please try again."
+  },
   "patients": {
     "title": "Patients",
     "new": "New patient",

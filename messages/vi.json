@@ -160,6 +160,35 @@
     "errorForbidden": "Bạn không có quyền chỉnh sửa phiếu khám.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
+  "billing": {
+    "title": "Đơn thuốc & thanh toán",
+    "medicines": "Thuốc",
+    "medicine": "Thuốc",
+    "services": "Dịch vụ",
+    "service": "Dịch vụ",
+    "quantity": "Số lượng",
+    "dosage": "Liều dùng",
+    "notes": "Ghi chú",
+    "addRow": "Thêm dòng",
+    "remove": "Xóa",
+    "noLines": "Chưa có dòng nào.",
+    "subtotal": "Tạm tính: {amount}",
+    "total": "Tổng cộng: {amount}",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "payment": "Thanh toán",
+    "paid": "Đã thanh toán",
+    "unpaid": "Chưa thanh toán",
+    "markPaid": "Đánh dấu đã thanh toán",
+    "method": {
+      "label": "Phương thức thanh toán",
+      "cash": "Tiền mặt",
+      "card": "Thẻ",
+      "transfer": "Chuyển khoản"
+    },
+    "errorForbidden": "Bạn không có quyền quản lý thanh toán.",
+    "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
   "patients": {
     "title": "Bệnh nhân",
     "new": "Thêm bệnh nhân",
