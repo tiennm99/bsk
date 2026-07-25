@@ -87,3 +87,26 @@ export async function saveCheckupAction(
   revalidatePath(`/${locale}/queue`);
   return redirect({ href: `/${locale}/queue`, locale });
 }
+
+// ── Soft-delete ───────────────────────────────────────────────────────────────
+export async function deleteCheckupAction(formData: FormData): Promise<void> {
+  const session = await getServerSession();
+  if (!isClinical(session?.role)) return;
+
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("checkups").update({ deleted: true }).eq("id", id);
+  if (error) return;
+
+  await supabase.rpc("log_audit", {
+    p_action: "checkup.delete",
+    p_entity: "checkups",
+    p_entity_id: String(id),
+  });
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}/queue`);
+  return redirect({ href: `/${locale}/queue`, locale });
+}

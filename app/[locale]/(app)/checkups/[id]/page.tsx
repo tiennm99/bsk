@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { CheckupForm } from "../checkup-form";
+import { DeleteCheckupButton } from "../delete-checkup-button";
 
 const str = (v: string | number | null) => (v == null ? "" : String(v));
 
@@ -68,6 +69,7 @@ export default async function CheckupPage({
               {tImaging("title")}
             </Link>
           </Button>
+          <DeleteCheckupButton checkupId={c.id} />
         </div>
       </div>
 

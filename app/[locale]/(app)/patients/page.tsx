@@ -35,6 +35,34 @@ export default async function PatientsPage({
   };
   const patients = (data ?? []) as PatientRow[];
 
+  // Recently seen: most recent distinct customers by their latest checkup.
+  const { data: recentCheckups } = await supabase
+    .from("checkups")
+    .select("customer_id")
+    .eq("deleted", false)
+    .order("checkup_date", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(50);
+
+  const seenIds = new Set<number>();
+  const recentIds: number[] = [];
+  for (const row of recentCheckups ?? []) {
+    if (!seenIds.has(row.customer_id)) {
+      seenIds.add(row.customer_id);
+      recentIds.push(row.customer_id);
+    }
+    if (recentIds.length >= 8) break;
+  }
+
+  const { data: recentCustomers } = recentIds.length
+    ? await supabase.from("customers").select("id, last_name, first_name").in("id", recentIds).eq("deleted", false)
+    : { data: [] };
+
+  const recentNames = new Map((recentCustomers ?? []).map((c) => [c.id, `${c.last_name} ${c.first_name}`]));
+  const recentlySeen = recentIds
+    .filter((cid) => recentNames.has(cid))
+    .map((cid) => ({ id: cid, name: recentNames.get(cid)! }));
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-center justify-between gap-4">
@@ -45,6 +73,26 @@ export default async function PatientsPage({
           </Link>
         </Button>
       </div>
+
+      {recentlySeen.length > 0 && (
+        <section className="mb-6">
+          <h2 className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
+            {t("recentlySeen")}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {recentlySeen.map((p) => (
+              <Link
+                key={p.id}
+                href={`/patients/${p.id}`}
+                locale={locale as "vi" | "en"}
+                className="border-border bg-muted/50 hover:bg-accent rounded-full border px-3 py-1 text-sm"
+              >
+                {p.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <form className="mb-6 flex gap-2">
         <Input name="q" defaultValue={q} placeholder={t("searchPlaceholder")} aria-label={t("search")} />
@@ -60,9 +108,13 @@ export default async function PatientsPage({
           {patients.map((p) => (
             <li key={p.id} className="flex items-center justify-between gap-3 py-3">
               <div className="min-w-0">
-                <p className="text-foreground truncate font-medium">
+                <Link
+                  href={`/patients/${p.id}`}
+                  locale={locale as "vi" | "en"}
+                  className="text-foreground block truncate font-medium hover:underline"
+                >
                   {p.last_name} {p.first_name}
-                </p>
+                </Link>
                 <p className="text-muted-foreground text-xs">
                   {[p.phone, p.dob].filter(Boolean).join(" · ") || "—"}
                 </p>
