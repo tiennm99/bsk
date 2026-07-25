@@ -9,7 +9,7 @@
 |---|---|---|---|
 | 2a | **Doctors** | AddDoctor/EditDoctor/GetDoctorInfo/GetDoctorGeneralInfo | ✅ DONE (this session) |
 | 2b | Clinic settings | ClinicInfoRequest + settings edit | ✅ DONE (this session) |
-| 2c | Patients (customers) | AddPatient/GetRecentPatient + **geo-lookup** (provinces/wards) + **accent-insensitive search** | TODO (needs geo seed + unaccent decision) |
+| 2c | Patients (customers) | AddPatient/GetRecentPatient + **geo-lookup** (provinces/wards) + **accent-insensitive search** | ✅ DONE (this session) |
 | 2d | Checkup templates | Add/Edit/Delete/GetAllTemplates + **gender** field | TODO |
 | 2e | Staff user management | AddUser/EditUser/GetAllUserInfo (extends app_users) | TODO |
 
@@ -23,6 +23,12 @@
 
 ## Decisions locked
 - **2c**: seed full VN geo (`provinces` + `wards`) + enable Postgres `unaccent` for accent-insensitive patient search.
+
+## Slice 2c — Patients (done)
+- Migration `20260725112500_bsk_patients.sql`: `unaccent` ext + `bsk.immutable_unaccent` wrapper; `provinces`/`wards` geo tables; `customers` (soft-delete; per-visit vitals live on checkups, not here); `search_customers(q)` RPC (SECURITY INVOKER, accent-insensitive name/phone contains, no index — fine at clinic scale).
+- RLS: read=enrolled; customer write=clinical roles (admin/receptionist/doctor/nurse); geo read-only (seed via service_role).
+- UI: `/patients` list+search, `/patients/new`, `/patients/[id]/edit`; shared `PatientForm` with cascading province→ward (`getWardsAction`); clinical-role layout gate; nav for admin/doctor/nurse/receptionist; vi/en.
+- **Operator step:** `pnpm db:seed-geo` (reads `supabase/seed/vn-geo.json`, gitignored — source e.g. provinces.open-api.vn) to populate the address dropdowns.
 
 ## Open decisions (before their slices)
 - **2c/2d**: `customers` full field set (CCCD, phone, DOB, gender, weight/height); `checkup_templates` field-layout storage (JSON `fields`) + gender.

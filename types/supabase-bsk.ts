@@ -73,6 +73,71 @@ export type Database = {
         };
         Relationships: [];
       };
+      customers: {
+        Row: {
+          address_detail: string | null;
+          cccd: string | null;
+          created_at: string;
+          deleted: boolean;
+          dob: string | null;
+          first_name: string;
+          gender: string | null;
+          id: number;
+          last_name: string;
+          phone: string | null;
+          province_code: string | null;
+          ward_code: string | null;
+        };
+        Insert: {
+          address_detail?: string | null;
+          cccd?: string | null;
+          created_at?: string;
+          deleted?: boolean;
+          dob?: string | null;
+          first_name: string;
+          gender?: string | null;
+          id?: never;
+          last_name: string;
+          phone?: string | null;
+          province_code?: string | null;
+          ward_code?: string | null;
+        };
+        Update: {
+          address_detail?: string | null;
+          cccd?: string | null;
+          created_at?: string;
+          deleted?: boolean;
+          dob?: string | null;
+          first_name?: string;
+          gender?: string | null;
+          id?: never;
+          last_name?: string;
+          phone?: string | null;
+          province_code?: string | null;
+          ward_code?: string | null;
+        };
+        Relationships: [];
+      };
+      provinces: {
+        Row: { code: string; name: string };
+        Insert: { code: string; name: string };
+        Update: { code?: string; name?: string };
+        Relationships: [];
+      };
+      wards: {
+        Row: { code: string; name: string; province_code: string };
+        Insert: { code: string; name: string; province_code: string };
+        Update: { code?: string; name?: string; province_code?: string };
+        Relationships: [
+          {
+            foreignKeyName: "wards_province_code_fkey";
+            columns: ["province_code"];
+            isOneToOne: false;
+            referencedRelation: "provinces";
+            referencedColumns: ["code"];
+          },
+        ];
+      };
       doctors: {
         Row: {
           created_at: string;
@@ -155,6 +220,14 @@ export type Database = {
           p_details?: Json;
         };
         Returns: undefined;
+      };
+      immutable_unaccent: {
+        Args: { "": string };
+        Returns: string;
+      };
+      search_customers: {
+        Args: { q: string };
+        Returns: Database["bsk"]["Tables"]["customers"]["Row"][];
       };
     };
     Enums: {
