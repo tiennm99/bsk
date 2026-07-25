@@ -8,9 +8,15 @@ An educational rewrite of the **BSK All-in-One Clinic Management System** into a
 
 ## Status
 
-Core system implemented (Phases 0–8). See [PLAN.md](./PLAN.md) for the architecture and phased roadmap.
+Feature-complete against the original (Phases 0–8). See [PLAN.md](./PLAN.md) for the architecture and phased roadmap.
 
-**Built:** auth + RBAC (allowlist-gated admin bootstrap, rate limiting, audit log); master data (doctors, medicines, services, checkup templates, clinic settings, staff management); patients (VN geo lookup + accent-insensitive search); queue + checkup workflow with realtime; prescriptions + billing (server-authoritative VND totals, cashier mark-paid); imaging (webcam/file capture, ≤200 KB compression, signed URLs, barcode); reports (Vietnamese PDF invoice, Excel export, revenue dashboard); recheck reminders + nightly retention sweep.
+**Built:** auth + RBAC (allowlist-gated admin bootstrap, rate limiting, audit log); master data (doctors, medicines, services, checkup templates, clinic settings, staff management); patients (VN geo lookup + accent-insensitive search, detail page with visit history, recently-seen); queue + checkup workflow with realtime, per-shift queue-counter control, and template-driven checkup fields; prescriptions + billing (server-authoritative VND totals, paid-invoice lock, cashier mark-paid); imaging (webcam/file capture, downscale + ≤200 KB compression, signed URLs, barcode); reports (Vietnamese PDF invoice / prescription / ultrasound report, Excel exports for visits, patients, catalog and revenue, revenue dashboard); recheck reminders + nightly retention sweep.
+
+Every command in the original's server protocol is either implemented or recorded as a non-goal in [PLAN.md](./PLAN.md) §6 — see the audits under `plans/reports/` for the source-grounded mapping.
+
+**Testing:** `pnpm test` runs the Vitest unit suite (schemas, invoice math, date/age helpers). `pnpm test:e2e` runs Playwright smoke tests that need no database (auth gates, i18n, sign-in ergonomics); the full queue→checkup→prescription→paid→invoice happy path needs a seeded Supabase project — prerequisites are documented in [tests/e2e/README.md](./tests/e2e/README.md).
+
+> **Not yet runtime-verified.** The code type-checks, lints, builds, and passes the suites above, but the infrastructure-dependent paths (Realtime queue push, Storage upload/webcam, PDF/Excel rendering against real rows, the SQL RPCs, and the cron sweep) have never been executed against a live Supabase project. Smoke-test them after the setup below.
 
 ### First-run setup (operator)
 
