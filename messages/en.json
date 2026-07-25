@@ -206,6 +206,12 @@
     "errorForbidden": "You do not have permission to manage checkup images.",
     "errorGeneric": "Something went wrong. Please try again."
   },
+  "reminders": {
+    "title": "Recheck reminders",
+    "empty": "No upcoming rechecks.",
+    "overdue": "Overdue",
+    "upcoming": "Upcoming"
+  },
   "reports": {
     "title": "Reports",
     "invoice": "INVOICE",
@@ -278,6 +284,7 @@
     "staff": "Staff",
     "queue": "Queue",
     "patients": "Patients",
+    "reminders": "Reminders",
     "doctors": "Doctors",
     "templates": "Templates",
     "services": "Services",

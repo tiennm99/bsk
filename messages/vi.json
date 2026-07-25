@@ -206,6 +206,12 @@
     "errorForbidden": "Bạn không có quyền quản lý hình ảnh phiếu khám.",
     "errorGeneric": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
+  "reminders": {
+    "title": "Nhắc tái khám",
+    "empty": "Không có lịch tái khám nào sắp tới.",
+    "overdue": "Quá hạn",
+    "upcoming": "Sắp tới"
+  },
   "reports": {
     "title": "Báo cáo",
     "invoice": "HÓA ĐƠN",
@@ -278,6 +284,7 @@
     "staff": "Nhân viên",
     "queue": "Hàng chờ",
     "patients": "Bệnh nhân",
+    "reminders": "Nhắc tái khám",
     "doctors": "Bác sĩ",
     "templates": "Mẫu khám",
     "services": "Dịch vụ",

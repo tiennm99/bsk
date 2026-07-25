@@ -26,6 +26,7 @@ import {
   Pill,
   ListChecks,
   FileBarChart,
+  BellRing,
 } from "lucide-react";
 
 export type MenuItem = {
@@ -52,6 +53,7 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
     { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
     { href: "/admin/doctors", labelKey: "nav.doctors", icon: Stethoscope },
     { href: "/admin/templates", labelKey: "nav.templates", icon: ClipboardList },
     { href: "/admin/medicines", labelKey: "nav.medicines", icon: Pill },
@@ -65,16 +67,19 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
     { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
   ],
   nurse: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
     { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
   ],
   receptionist: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
     { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
+    { href: "/reminders", labelKey: "nav.reminders", icon: BellRing },
   ],
   cashier: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
   patient: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],
