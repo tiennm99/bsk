@@ -22,6 +22,7 @@ import {
   UsersRound,
   ClipboardList,
   UserCog,
+  ListOrdered,
 } from "lucide-react";
 
 export type MenuItem = {
@@ -46,6 +47,7 @@ export type MenuItem = {
 export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
   admin: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
     { href: "/admin/doctors", labelKey: "nav.doctors", icon: Stethoscope },
     { href: "/admin/templates", labelKey: "nav.templates", icon: ClipboardList },
@@ -55,14 +57,17 @@ export const ROLE_MENU: Record<AppRole, MenuItem[]> = {
   ],
   doctor: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
   ],
   nurse: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
   ],
   receptionist: [
     { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+    { href: "/queue", labelKey: "nav.queue", icon: ListOrdered },
     { href: "/patients", labelKey: "nav.patients", icon: UsersRound },
   ],
   cashier: [{ href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard }],

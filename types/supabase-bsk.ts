@@ -46,6 +46,90 @@ export type Database = {
         };
         Relationships: [];
       };
+      checkups: {
+        Row: {
+          blood_pressure: string | null;
+          checkup_date: string;
+          checkup_type: string | null;
+          conclusion: string | null;
+          created_at: string;
+          created_by: string | null;
+          customer_id: number;
+          deleted: boolean;
+          diagnosis: string | null;
+          doctor_id: number | null;
+          heart_beat: string | null;
+          height: number | null;
+          id: number;
+          notes: string | null;
+          queue_number: number | null;
+          recheck_date: string | null;
+          shift_id: number | null;
+          status: Database["bsk"]["Enums"]["checkup_status"];
+          symptoms: string | null;
+          temperature: number | null;
+          template_id: number | null;
+          updated_at: string;
+          weight: number | null;
+        };
+        Insert: {
+          blood_pressure?: string | null;
+          checkup_date?: string;
+          checkup_type?: string | null;
+          conclusion?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          customer_id: number;
+          deleted?: boolean;
+          diagnosis?: string | null;
+          doctor_id?: number | null;
+          heart_beat?: string | null;
+          height?: number | null;
+          id?: never;
+          notes?: string | null;
+          queue_number?: number | null;
+          recheck_date?: string | null;
+          shift_id?: number | null;
+          status?: Database["bsk"]["Enums"]["checkup_status"];
+          symptoms?: string | null;
+          temperature?: number | null;
+          template_id?: number | null;
+          updated_at?: string;
+          weight?: number | null;
+        };
+        Update: {
+          blood_pressure?: string | null;
+          checkup_date?: string;
+          checkup_type?: string | null;
+          conclusion?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          customer_id?: number;
+          deleted?: boolean;
+          diagnosis?: string | null;
+          doctor_id?: number | null;
+          heart_beat?: string | null;
+          height?: number | null;
+          id?: never;
+          notes?: string | null;
+          queue_number?: number | null;
+          recheck_date?: string | null;
+          shift_id?: number | null;
+          status?: Database["bsk"]["Enums"]["checkup_status"];
+          symptoms?: string | null;
+          temperature?: number | null;
+          template_id?: number | null;
+          updated_at?: string;
+          weight?: number | null;
+        };
+        Relationships: [];
+      };
+      shifts: {
+        Row: { code: string; id: number; sort_order: number };
+        Insert: { code: string; id: number; sort_order?: number };
+        Update: { code?: string; id?: number; sort_order?: number };
+        Relationships: [];
+      };
       checkup_templates: {
         Row: {
           created_at: string;
@@ -262,9 +346,20 @@ export type Database = {
         Args: { q: string };
         Returns: Database["bsk"]["Tables"]["customers"]["Row"][];
       };
+      register_checkup: {
+        Args: {
+          p_customer_id: number;
+          p_shift_id: number;
+          p_doctor_id?: number;
+          p_template_id?: number;
+          p_checkup_type?: string;
+        };
+        Returns: number;
+      };
     };
     Enums: {
       app_role: "admin" | "doctor" | "nurse" | "receptionist" | "cashier" | "patient";
+      checkup_status: "waiting" | "in_progress" | "done";
     };
     CompositeTypes: Record<string, never>;
   };
