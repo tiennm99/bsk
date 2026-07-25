@@ -50,7 +50,11 @@ export function AddDoctorForm() {
   const formError = state.status === "error" && state.formError ? state.formError : null;
 
   return (
-    <form action={dispatchAction} noValidate className="flex flex-col gap-3 sm:flex-row sm:items-end">
+    <form
+      action={dispatchAction}
+      noValidate
+      className="flex flex-col gap-3 sm:flex-row sm:items-end"
+    >
       <div className="flex-1 space-y-1.5">
         <Label htmlFor="doctor-last-name">{t("lastName")}</Label>
         <Input

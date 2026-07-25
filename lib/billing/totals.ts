@@ -8,7 +8,7 @@
  * Useful for computing totals from order_items, checkup_services, or InvoiceLine arrays.
  */
 export function sumLineTotals(
-  lines: Array<{ line_total?: number; lineTotal?: number } & Record<string, unknown>>
+  lines: Array<{ line_total?: number; lineTotal?: number } & Record<string, unknown>>,
 ): number {
   return lines.reduce((sum, line) => sum + ((line.line_total ?? line.lineTotal) || 0), 0);
 }

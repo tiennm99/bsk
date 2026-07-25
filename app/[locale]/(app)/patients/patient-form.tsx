@@ -80,12 +80,22 @@ export function PatientForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="lastName">{t("lastName")}</Label>
-          <Input id="lastName" name="lastName" defaultValue={defaults.lastName} disabled={isPending} />
+          <Input
+            id="lastName"
+            name="lastName"
+            defaultValue={defaults.lastName}
+            disabled={isPending}
+          />
           {err("lastName")}
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="firstName">{t("firstName")}</Label>
-          <Input id="firstName" name="firstName" defaultValue={defaults.firstName} disabled={isPending} />
+          <Input
+            id="firstName"
+            name="firstName"
+            defaultValue={defaults.firstName}
+            disabled={isPending}
+          />
           {err("firstName")}
         </div>
         <div className="space-y-1.5">
@@ -95,7 +105,13 @@ export function PatientForm({
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="gender">{t("gender.label")}</Label>
-          <select id="gender" name="gender" defaultValue={defaults.gender} disabled={isPending} className={SELECT_CLASS}>
+          <select
+            id="gender"
+            name="gender"
+            defaultValue={defaults.gender}
+            disabled={isPending}
+            className={SELECT_CLASS}
+          >
             <option value="">—</option>
             <option value="male">{t("gender.male")}</option>
             <option value="female">{t("gender.female")}</option>
@@ -105,7 +121,13 @@ export function PatientForm({
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="phone">{t("phone")}</Label>
-          <Input id="phone" name="phone" type="tel" defaultValue={defaults.phone} disabled={isPending} />
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            defaultValue={defaults.phone}
+            disabled={isPending}
+          />
           {err("phone")}
         </div>
         <div className="space-y-1.5">

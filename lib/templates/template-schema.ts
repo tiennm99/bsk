@@ -41,6 +41,8 @@ export function fieldsJsonToText(fields: unknown): string {
 export function fieldsJsonToLabels(fields: unknown): string[] {
   if (!Array.isArray(fields)) return [];
   return fields
-    .map((f) => (f && typeof f === "object" && "label" in f ? String((f as { label: unknown }).label) : ""))
+    .map((f) =>
+      f && typeof f === "object" && "label" in f ? String((f as { label: unknown }).label) : "",
+    )
     .filter(Boolean);
 }

@@ -18,9 +18,12 @@ import { createServiceAction } from "./actions";
 export function AddServiceForm() {
   const t = useTranslations("admin.services");
   const formRef = useRef<HTMLFormElement>(null);
-  const [state, dispatch, isPending] = useActionState<ServiceFormState, FormData>(createServiceAction, {
-    status: "idle",
-  });
+  const [state, dispatch, isPending] = useActionState<ServiceFormState, FormData>(
+    createServiceAction,
+    {
+      status: "idle",
+    },
+  );
 
   useEffect(() => {
     if (state.status === "success") formRef.current?.reset();
@@ -30,7 +33,12 @@ export function AddServiceForm() {
   const formError = state.status === "error" ? state.formError : null;
 
   return (
-    <form ref={formRef} action={dispatch} noValidate className="flex flex-col gap-3 sm:flex-row sm:items-end">
+    <form
+      ref={formRef}
+      action={dispatch}
+      noValidate
+      className="flex flex-col gap-3 sm:flex-row sm:items-end"
+    >
       <div className="flex-1 space-y-1.5">
         <Label htmlFor="service-name">{t("name")}</Label>
         <Input id="service-name" name="name" disabled={isPending} aria-invalid={!!fe.name} />
@@ -42,7 +50,14 @@ export function AddServiceForm() {
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="service-price">{t("price")}</Label>
-        <Input id="service-price" name="price" type="number" min={0} defaultValue={0} disabled={isPending} />
+        <Input
+          id="service-price"
+          name="price"
+          type="number"
+          min={0}
+          defaultValue={0}
+          disabled={isPending}
+        />
       </div>
       <Button type="submit" size="lg" disabled={isPending}>
         {isPending ? t("submitting") : t("add")}

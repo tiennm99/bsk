@@ -64,7 +64,11 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   if (canSeeRevenue && weekCheckups && weekCheckups.length) {
     const ids = weekCheckups.map((c) => c.id);
     const [{ data: paidOrders }, { data: oi }, { data: cs }] = await Promise.all([
-      supabase.from("medicine_orders").select("checkup_id").eq("payment_status", "paid").in("checkup_id", ids),
+      supabase
+        .from("medicine_orders")
+        .select("checkup_id")
+        .eq("payment_status", "paid")
+        .in("checkup_id", ids),
       supabase.from("order_items").select("checkup_id, line_total").in("checkup_id", ids),
       supabase.from("checkup_services").select("checkup_id, line_total").in("checkup_id", ids),
     ]);
@@ -104,7 +108,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
         {canSeeRevenue && (
           <div className="border-border rounded-lg border p-4">
             <p className="text-muted-foreground text-xs">{tReports("revenue7d")}</p>
-            <p className="text-foreground mt-1 text-2xl font-bold tabular-nums">{vnd(revenueTotal)}</p>
+            <p className="text-foreground mt-1 text-2xl font-bold tabular-nums">
+              {vnd(revenueTotal)}
+            </p>
           </div>
         )}
       </div>

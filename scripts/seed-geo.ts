@@ -63,7 +63,9 @@ async function upsertBatched<T>(
     const batch = rows.slice(i, i + size);
     const { error } = await supabase.from(table).upsert(batch as never[]);
     if (error) die(`Upsert into ${table} failed at row ${i}: ${error.message}`);
-    process.stdout.write(`[seed-geo] ${table}: ${Math.min(i + size, rows.length)}/${rows.length}\n`);
+    process.stdout.write(
+      `[seed-geo] ${table}: ${Math.min(i + size, rows.length)}/${rows.length}\n`,
+    );
   }
 }
 

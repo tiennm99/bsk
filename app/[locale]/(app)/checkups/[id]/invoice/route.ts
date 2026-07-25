@@ -13,7 +13,10 @@ import { sumLineTotals } from "@/lib/billing/totals";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(_req: Request, { params }: { params: Promise<{ locale: string; id: string }> }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ locale: string; id: string }> },
+) {
   const { id } = await params;
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
@@ -35,10 +38,24 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
   if (!c) return new Response("Not found", { status: 404 });
 
   const [{ data: customer }, { data: items }, { data: svcs }, { data: order }] = await Promise.all([
-    supabase.from("customers").select("last_name, first_name").eq("id", c.customer_id).maybeSingle(),
-    supabase.from("order_items").select("medicine_id, quantity, unit_price, line_total").eq("checkup_id", checkupId),
-    supabase.from("checkup_services").select("service_id, quantity, unit_price, line_total").eq("checkup_id", checkupId),
-    supabase.from("medicine_orders").select("payment_status").eq("checkup_id", checkupId).maybeSingle(),
+    supabase
+      .from("customers")
+      .select("last_name, first_name")
+      .eq("id", c.customer_id)
+      .maybeSingle(),
+    supabase
+      .from("order_items")
+      .select("medicine_id, quantity, unit_price, line_total")
+      .eq("checkup_id", checkupId),
+    supabase
+      .from("checkup_services")
+      .select("service_id, quantity, unit_price, line_total")
+      .eq("checkup_id", checkupId),
+    supabase
+      .from("medicine_orders")
+      .select("payment_status")
+      .eq("checkup_id", checkupId)
+      .maybeSingle(),
   ]);
 
   const medIds = [...new Set((items ?? []).map((i) => i.medicine_id))];

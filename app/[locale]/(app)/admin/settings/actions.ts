@@ -62,7 +62,10 @@ export async function updateClinicSettingsAction(
     return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
   }
 
-  await supabase.rpc("log_audit", { p_action: "clinic_settings.update", p_entity: "clinic_settings" });
+  await supabase.rpc("log_audit", {
+    p_action: "clinic_settings.update",
+    p_entity: "clinic_settings",
+  });
 
   const locale = await getLocale();
   revalidatePath(`/${locale}/admin/settings`);

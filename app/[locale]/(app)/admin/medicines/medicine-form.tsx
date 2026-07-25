@@ -30,14 +30,23 @@ export function MedicineForm({
   defaults: MedicineDefaults;
 }) {
   const t = useTranslations("admin.medicines");
-  const [state, dispatch, isPending] = useActionState<MedicineFormState, FormData>(action, { status: "idle" });
+  const [state, dispatch, isPending] = useActionState<MedicineFormState, FormData>(action, {
+    status: "idle",
+  });
   const fe = state.status === "error" ? state.fieldErrors : {};
   const formError = state.status === "error" ? state.formError : null;
 
   const field = (name: keyof MedicineDefaults, label: string, type = "text") => (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} type={type} defaultValue={defaults[name]} disabled={isPending} min={type === "number" ? 0 : undefined} />
+      <Input
+        id={name}
+        name={name}
+        type={type}
+        defaultValue={defaults[name]}
+        disabled={isPending}
+        min={type === "number" ? 0 : undefined}
+      />
       {fe[name]?.length ? (
         <p className="text-destructive text-sm" role="alert">
           {fe[name][0]}

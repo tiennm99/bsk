@@ -19,12 +19,7 @@ function SignOutButtonInner() {
   const t = useTranslations("app");
 
   return (
-    <Button
-      type="submit"
-      variant="ghost"
-      disabled={pending}
-      className="w-full justify-start gap-2"
-    >
+    <Button type="submit" variant="ghost" disabled={pending} className="w-full justify-start gap-2">
       <LogOut className="size-4" />
       {pending ? "…" : t("signOut")}
     </Button>

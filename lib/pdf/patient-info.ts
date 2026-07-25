@@ -16,9 +16,12 @@ export function computeAge(dob: string | null): number | null {
   const birthYear = Number(yStr);
   const birthMonth = Number(mStr);
   const birthDay = Number(dStr);
-  if (!Number.isFinite(birthYear) || !Number.isFinite(birthMonth) || !Number.isFinite(birthDay)) return null;
+  if (!Number.isFinite(birthYear) || !Number.isFinite(birthMonth) || !Number.isFinite(birthDay))
+    return null;
 
-  const todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(new Date());
+  const todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(
+    new Date(),
+  );
   const [todayY, todayM, todayD] = todayStr.split("-").map(Number);
   if (todayY == null || todayM == null || todayD == null) return null;
 

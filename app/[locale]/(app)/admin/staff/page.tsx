@@ -21,7 +21,10 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
 
   const admin = createSupabaseAdminClient();
   const [{ data: rows }, { data: userList }] = await Promise.all([
-    admin.from("app_users").select("user_id, role, full_name").order("created_at", { ascending: true }),
+    admin
+      .from("app_users")
+      .select("user_id, role, full_name")
+      .order("created_at", { ascending: true }),
     admin.auth.admin.listUsers({ perPage: 1000 }),
   ]);
 
@@ -44,7 +47,9 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
                   {isSelf && <span className="text-muted-foreground ml-2 text-xs">{t("you")}</span>}
                 </p>
                 {s.full_name && (
-                  <p className="text-muted-foreground truncate text-xs">{emailById.get(s.user_id)}</p>
+                  <p className="text-muted-foreground truncate text-xs">
+                    {emailById.get(s.user_id)}
+                  </p>
                 )}
               </div>
 
@@ -73,7 +78,12 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
                 </form>
                 <form action={removeStaffAction}>
                   <input type="hidden" name="userId" value={s.user_id} />
-                  <Button type="submit" variant="ghost" className="text-destructive" disabled={isSelf}>
+                  <Button
+                    type="submit"
+                    variant="ghost"
+                    className="text-destructive"
+                    disabled={isSelf}
+                  >
                     {t("remove")}
                   </Button>
                 </form>

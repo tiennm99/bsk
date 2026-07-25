@@ -25,9 +25,7 @@ export type ServiceLine = z.infer<typeof ServiceLineSchema>;
 export const MedicineLinesSchema = z.array(MedicineLineSchema).max(200);
 export const ServiceLinesSchema = z.array(ServiceLineSchema).max(200);
 
-export type PrescriptionSaveState =
-  | { status: "idle" }
-  | { status: "error"; formError: string };
+export type PrescriptionSaveState = { status: "idle" } | { status: "error"; formError: string };
 
 // ── Payment (admin/cashier) ──────────────────────────────────────────────────
 export const paymentMethods = ["cash", "card", "transfer"] as const;

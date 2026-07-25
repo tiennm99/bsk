@@ -42,8 +42,19 @@ const s = StyleSheet.create({
   h1: { fontSize: 16, fontWeight: "bold", marginTop: 16, marginBottom: 8, textAlign: "center" },
   meta: { marginBottom: 4 },
   sectionTitle: { fontSize: 11, fontWeight: "bold", marginTop: 14, marginBottom: 4 },
-  row: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "#eee", paddingVertical: 3 },
-  head: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "#999", paddingVertical: 3, fontWeight: "bold" },
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    paddingVertical: 3,
+  },
+  head: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#999",
+    paddingVertical: 3,
+    fontWeight: "bold",
+  },
   cName: { flex: 4 },
   cQty: { flex: 1, textAlign: "right" },
   cPrice: { flex: 2, textAlign: "right" },
@@ -54,7 +65,15 @@ const s = StyleSheet.create({
   status: { marginTop: 10, textAlign: "right", fontSize: 10 },
 });
 
-function Table({ title, rows, L }: { title: string; rows: InvoiceLine[]; L: InvoiceData["labels"] }) {
+function Table({
+  title,
+  rows,
+  L,
+}: {
+  title: string;
+  rows: InvoiceLine[];
+  L: InvoiceData["labels"];
+}) {
   if (rows.length === 0) return null;
   return (
     <View>

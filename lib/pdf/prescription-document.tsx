@@ -51,8 +51,19 @@ const s = StyleSheet.create({
   h1: { fontSize: 16, fontWeight: "bold", marginTop: 16, marginBottom: 8, textAlign: "center" },
   meta: { marginBottom: 4 },
   sectionTitle: { fontSize: 11, fontWeight: "bold", marginTop: 14, marginBottom: 4 },
-  row: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "#eee", paddingVertical: 3 },
-  head: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: "#999", paddingVertical: 3, fontWeight: "bold" },
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    paddingVertical: 3,
+  },
+  head: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#999",
+    paddingVertical: 3,
+    fontWeight: "bold",
+  },
   cIndex: { flex: 0.5 },
   cName: { flex: 4 },
   cQty: { flex: 1, textAlign: "right" },
@@ -65,7 +76,13 @@ const s = StyleSheet.create({
   signatureName: { fontWeight: "bold", marginTop: 4 },
 });
 
-function MedicineTable({ rows, L }: { rows: PrescriptionMedicineLine[]; L: PrescriptionData["labels"] }) {
+function MedicineTable({
+  rows,
+  L,
+}: {
+  rows: PrescriptionMedicineLine[];
+  L: PrescriptionData["labels"];
+}) {
   if (rows.length === 0) return null;
   return (
     <View>

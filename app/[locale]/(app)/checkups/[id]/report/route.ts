@@ -21,7 +21,10 @@ export const dynamic = "force-dynamic";
 
 const MAX_REPORT_IMAGES = 4;
 
-export async function GET(_req: Request, { params }: { params: Promise<{ locale: string; id: string }> }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ locale: string; id: string }> },
+) {
   const { id } = await params;
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
@@ -42,22 +45,31 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
   ]);
   if (!c) return new Response("Not found", { status: 404 });
 
-  const [{ data: customer }, { data: doctor }, { data: template }, { data: images }] = await Promise.all([
-    supabase.from("customers").select("last_name, first_name, dob, gender").eq("id", c.customer_id).maybeSingle(),
-    c.doctor_id
-      ? supabase.from("doctors").select("last_name, first_name").eq("id", c.doctor_id).maybeSingle()
-      : Promise.resolve({ data: null }),
-    c.template_id
-      ? supabase.from("checkup_templates").select("title").eq("id", c.template_id).maybeSingle()
-      : Promise.resolve({ data: null }),
-    supabase
-      .from("checkup_images")
-      .select("id, storage_path, created_at")
-      .eq("checkup_id", checkupId)
-      .eq("deleted", false)
-      .order("created_at", { ascending: false })
-      .limit(MAX_REPORT_IMAGES),
-  ]);
+  const [{ data: customer }, { data: doctor }, { data: template }, { data: images }] =
+    await Promise.all([
+      supabase
+        .from("customers")
+        .select("last_name, first_name, dob, gender")
+        .eq("id", c.customer_id)
+        .maybeSingle(),
+      c.doctor_id
+        ? supabase
+            .from("doctors")
+            .select("last_name, first_name")
+            .eq("id", c.doctor_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      c.template_id
+        ? supabase.from("checkup_templates").select("title").eq("id", c.template_id).maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase
+        .from("checkup_images")
+        .select("id, storage_path, created_at")
+        .eq("checkup_id", checkupId)
+        .eq("deleted", false)
+        .order("created_at", { ascending: false })
+        .limit(MAX_REPORT_IMAGES),
+    ]);
 
   const t = await getTranslations("reports");
   const tPatients = await getTranslations("patients");
@@ -78,7 +90,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
       }
     }),
   );
-  const reportImages: UltrasoundImage[] = downloaded.filter((img): img is UltrasoundImage => img != null);
+  const reportImages: UltrasoundImage[] = downloaded.filter(
+    (img): img is UltrasoundImage => img != null,
+  );
 
   const buffer = await renderUltrasoundPdf({
     clinicName: clinic?.name ?? "",

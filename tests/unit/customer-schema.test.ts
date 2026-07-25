@@ -94,14 +94,14 @@ describe("CustomerSchema", () => {
       CustomerSchema.safeParse({
         ...validBase,
         lastName: "x".repeat(101),
-      }).success
+      }).success,
     ).toBe(false);
 
     expect(
       CustomerSchema.safeParse({
         ...validBase,
         addressDetail: "x".repeat(301),
-      }).success
+      }).success,
     ).toBe(false);
   });
 

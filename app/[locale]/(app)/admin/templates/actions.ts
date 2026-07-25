@@ -100,13 +100,18 @@ export async function updateTemplateAction(
   if (!Number.isFinite(id) || !parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.success ? {} : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+      fieldErrors: parsed.success
+        ? {}
+        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from("checkup_templates").update(toRow(parsed.data)).eq("id", id);
+  const { error } = await supabase
+    .from("checkup_templates")
+    .update(toRow(parsed.data))
+    .eq("id", id);
   if (error) {
     return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
   }

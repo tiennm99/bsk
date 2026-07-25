@@ -54,7 +54,12 @@ export function CheckupBarcode({ checkupId }: { checkupId: number }) {
           </p>
         )}
       </div>
-      <Button type="button" variant="outline" onClick={() => window.print()} className="print:hidden">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => window.print()}
+        className="print:hidden"
+      >
         {t("print")}
       </Button>
     </section>

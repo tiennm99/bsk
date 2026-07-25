@@ -12,20 +12,12 @@ describe("sumLineTotals", () => {
   });
 
   it("sums multiple lines", () => {
-    const lines = [
-      { line_total: 50000 },
-      { line_total: 100000 },
-      { line_total: 25000 },
-    ];
+    const lines = [{ line_total: 50000 }, { line_total: 100000 }, { line_total: 25000 }];
     expect(sumLineTotals(lines)).toBe(175000);
   });
 
   it("handles zero values", () => {
-    const lines = [
-      { line_total: 0 },
-      { line_total: 50000 },
-      { line_total: 0 },
-    ];
+    const lines = [{ line_total: 0 }, { line_total: 50000 }, { line_total: 0 }];
     expect(sumLineTotals(lines)).toBe(50000);
   });
 
@@ -39,10 +31,7 @@ describe("sumLineTotals", () => {
   });
 
   it("preserves line_total as integer (no float)", () => {
-    const lines = [
-      { line_total: 12345 },
-      { line_total: 67890 },
-    ];
+    const lines = [{ line_total: 12345 }, { line_total: 67890 }];
     const total = sumLineTotals(lines);
     expect(Number.isInteger(total)).toBe(true);
     expect(total).toBe(80235);

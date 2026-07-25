@@ -30,7 +30,10 @@ import {
 const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
 const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
 
-export async function recordImageAction(checkupId: number, storagePath: string): Promise<ImageActionState> {
+export async function recordImageAction(
+  checkupId: number,
+  storagePath: string,
+): Promise<ImageActionState> {
   const t = await getTranslations("imaging");
 
   const session = await getServerSession();

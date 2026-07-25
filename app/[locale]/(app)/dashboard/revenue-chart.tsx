@@ -13,7 +13,12 @@ export function RevenueChart({ data }: { data: { day: string; amount: number }[]
     <div className="h-56 w-full text-current">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 8 }}>
-          <XAxis dataKey="day" tick={{ fontSize: 11, fill: "currentColor" }} tickLine={false} axisLine={false} />
+          <XAxis
+            dataKey="day"
+            tick={{ fontSize: 11, fill: "currentColor" }}
+            tickLine={false}
+            axisLine={false}
+          />
           <YAxis
             width={48}
             tick={{ fontSize: 11, fill: "currentColor" }}

@@ -55,10 +55,16 @@ export default async function PatientsPage({
   }
 
   const { data: recentCustomers } = recentIds.length
-    ? await supabase.from("customers").select("id, last_name, first_name").in("id", recentIds).eq("deleted", false)
+    ? await supabase
+        .from("customers")
+        .select("id, last_name, first_name")
+        .in("id", recentIds)
+        .eq("deleted", false)
     : { data: [] };
 
-  const recentNames = new Map((recentCustomers ?? []).map((c) => [c.id, `${c.last_name} ${c.first_name}`]));
+  const recentNames = new Map(
+    (recentCustomers ?? []).map((c) => [c.id, `${c.last_name} ${c.first_name}`]),
+  );
   const recentlySeen = recentIds
     .filter((cid) => recentNames.has(cid))
     .map((cid) => ({ id: cid, name: recentNames.get(cid)! }));
@@ -95,7 +101,12 @@ export default async function PatientsPage({
       )}
 
       <form className="mb-6 flex gap-2">
-        <Input name="q" defaultValue={q} placeholder={t("searchPlaceholder")} aria-label={t("search")} />
+        <Input
+          name="q"
+          defaultValue={q}
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("search")}
+        />
         <Button type="submit" variant="outline">
           {t("search")}
         </Button>

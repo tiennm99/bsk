@@ -36,7 +36,11 @@ export default async function CheckupPage({
   if (!c) notFound();
 
   const [{ data: customer }, { data: templates }, { data: recentDiagnoses }] = await Promise.all([
-    supabase.from("customers").select("last_name, first_name, dob, gender, phone").eq("id", c.customer_id).maybeSingle(),
+    supabase
+      .from("customers")
+      .select("last_name, first_name, dob, gender, phone")
+      .eq("id", c.customer_id)
+      .maybeSingle(),
     supabase
       .from("checkup_templates")
       .select("id, name, gender, fields")
@@ -54,9 +58,7 @@ export default async function CheckupPage({
   // De-dupe + trim recent diagnoses for the quick-pick, capped at 50 entries.
   const diagnosisSuggestions = [
     ...new Set(
-      (recentDiagnoses ?? [])
-        .map((r) => r.diagnosis?.trim())
-        .filter((d): d is string => !!d),
+      (recentDiagnoses ?? []).map((r) => r.diagnosis?.trim()).filter((d): d is string => !!d),
     ),
   ].slice(0, 50);
 
@@ -86,7 +88,9 @@ export default async function CheckupPage({
         <div>
           <div className="flex items-center gap-3">
             {c.queue_number != null && (
-              <span className="text-foreground text-2xl font-bold tabular-nums">#{c.queue_number}</span>
+              <span className="text-foreground text-2xl font-bold tabular-nums">
+                #{c.queue_number}
+              </span>
             )}
             <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
           </div>

@@ -52,7 +52,13 @@ export function RegisterForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="customerId">{t("patient")}</Label>
-          <select id="customerId" name="customerId" required disabled={isPending} className={SELECT}>
+          <select
+            id="customerId"
+            name="customerId"
+            required
+            disabled={isPending}
+            className={SELECT}
+          >
             <option value="">—</option>
             {patients.map((p) => (
               <option key={p.id} value={p.id}>

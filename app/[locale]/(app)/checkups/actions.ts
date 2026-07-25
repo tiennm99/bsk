@@ -54,7 +54,9 @@ export async function saveCheckupAction(
   if (!Number.isFinite(id) || !parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.success ? {} : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+      fieldErrors: parsed.success
+        ? {}
+        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -62,7 +64,8 @@ export async function saveCheckupAction(
   const d = parsed.data;
 
   const templateIdRaw = get("templateId").trim();
-  const templateId = templateIdRaw && Number.isFinite(Number(templateIdRaw)) ? Number(templateIdRaw) : null;
+  const templateId =
+    templateIdRaw && Number.isFinite(Number(templateIdRaw)) ? Number(templateIdRaw) : null;
   const templateValues = parseTemplateValues(get("templateValues"));
 
   const supabase = await createSupabaseServerClient();

@@ -21,7 +21,11 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { CHECKUP_MEDIA_BUCKET, MAX_IMAGE_BYTES, buildStoragePath } from "@/lib/imaging/image-schema";
+import {
+  CHECKUP_MEDIA_BUCKET,
+  MAX_IMAGE_BYTES,
+  buildStoragePath,
+} from "@/lib/imaging/image-schema";
 import { recordImageAction } from "./actions";
 
 const QUALITY_STEPS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4] as const;
@@ -31,7 +35,11 @@ const QUALITY_STEPS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4] as const;
 const MAX_DIMENSION = 1280;
 
 /** Draw a source (video frame or image) onto a canvas scaled to fit MAX_DIMENSION. */
-function makeScaledCanvas(source: CanvasImageSource, w: number, h: number): HTMLCanvasElement | null {
+function makeScaledCanvas(
+  source: CanvasImageSource,
+  w: number,
+  h: number,
+): HTMLCanvasElement | null {
   const scale = Math.min(1, MAX_DIMENSION / Math.max(w, h));
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(w * scale));

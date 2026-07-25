@@ -55,7 +55,10 @@ export async function GET(req: Request) {
     );
 
   if (updErr) {
-    return Response.json({ ok: false, error: updErr.message, removedObjects: rows.length }, { status: 500 });
+    return Response.json(
+      { ok: false, error: updErr.message, removedObjects: rows.length },
+      { status: 500 },
+    );
   }
 
   return Response.json({ ok: true, swept: rows.length });

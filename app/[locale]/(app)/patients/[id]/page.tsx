@@ -33,7 +33,9 @@ export default async function PatientDetailPage({
 
   const { data: customer } = await supabase
     .from("customers")
-    .select("id, first_name, last_name, dob, gender, phone, cccd, province_code, ward_code, address_detail")
+    .select(
+      "id, first_name, last_name, dob, gender, phone, cccd, province_code, ward_code, address_detail",
+    )
     .eq("id", customerId)
     .eq("deleted", false)
     .maybeSingle();
@@ -58,7 +60,9 @@ export default async function PatientDetailPage({
   ]);
 
   const rows = checkups ?? [];
-  const doctorIds = [...new Set(rows.map((r) => r.doctor_id).filter((d): d is number => d != null))];
+  const doctorIds = [
+    ...new Set(rows.map((r) => r.doctor_id).filter((d): d is number => d != null)),
+  ];
   const { data: doctors } = doctorIds.length
     ? await supabase.from("doctors").select("id, last_name, first_name").in("id", doctorIds)
     : { data: [] };
@@ -71,7 +75,9 @@ export default async function PatientDetailPage({
     <div className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-foreground text-xl font-semibold">{t("detailTitle", { name: fullName })}</h1>
+          <h1 className="text-foreground text-xl font-semibold">
+            {t("detailTitle", { name: fullName })}
+          </h1>
           <p className="text-muted-foreground mt-1 text-sm">
             {[
               customer.dob,

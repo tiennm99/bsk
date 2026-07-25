@@ -57,7 +57,9 @@ export async function savePrescriptionAction(
     return { status: "error", formError: t("errorGeneric") };
   }
 
-  const medicineParsed = MedicineLinesSchema.safeParse(parseJsonArray(formData.get("medicineLines")));
+  const medicineParsed = MedicineLinesSchema.safeParse(
+    parseJsonArray(formData.get("medicineLines")),
+  );
   const serviceParsed = ServiceLinesSchema.safeParse(parseJsonArray(formData.get("serviceLines")));
   if (!medicineParsed.success || !serviceParsed.success) {
     return { status: "error", formError: t("errorGeneric") };

@@ -55,7 +55,9 @@ export function CallNextButton({
         <Button type="submit" size="lg">
           {t("callNext")}
         </Button>
-        {enableShortcut && <span className="text-muted-foreground text-xs">{t("callNextHint")}</span>}
+        {enableShortcut && (
+          <span className="text-muted-foreground text-xs">{t("callNextHint")}</span>
+        )}
       </form>
       <span className="text-muted-foreground text-xs">
         {t("callNextFor", { shift: shiftLabel, count: waitingCount })}

@@ -45,7 +45,10 @@ export default async function DoctorsPage({ params }: { params: Promise<{ locale
               key={d.id}
               className="border-border flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-end"
             >
-              <form action={updateDoctorAction} className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end">
+              <form
+                action={updateDoctorAction}
+                className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end"
+              >
                 <input type="hidden" name="id" value={d.id} />
                 <div className="flex-1 space-y-1">
                   <label htmlFor={`ln-${d.id}`} className="text-muted-foreground text-xs">

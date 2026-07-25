@@ -50,9 +50,12 @@ export function CheckupForm({
   diagnosisSuggestions?: string[];
 }) {
   const t = useTranslations("checkups");
-  const [state, dispatch, isPending] = useActionState<CheckupSaveState, FormData>(saveCheckupAction, {
-    status: "idle",
-  });
+  const [state, dispatch, isPending] = useActionState<CheckupSaveState, FormData>(
+    saveCheckupAction,
+    {
+      status: "idle",
+    },
+  );
   const formError = state.status === "error" ? state.formError : null;
 
   // Unsaved-changes guard: any edit flips `dirty`; saving clears it so a
@@ -89,7 +92,9 @@ export function CheckupForm({
   // Template picker — plain state, no effects. Selecting a template swaps the
   // rendered field labels below; typed values are kept per-label so switching
   // back and forth doesn't lose what was already entered.
-  const [templateId, setTemplateId] = useState(initialTemplateId != null ? String(initialTemplateId) : "");
+  const [templateId, setTemplateId] = useState(
+    initialTemplateId != null ? String(initialTemplateId) : "",
+  );
   const [templateFieldValues, setTemplateFieldValues] = useState<Record<string, string>>(() =>
     Object.fromEntries(initialTemplateValues.map((v) => [v.label, v.value])),
   );
@@ -220,11 +225,23 @@ export function CheckupForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="recheckDate">{t("recheckDate")}</Label>
-          <Input id="recheckDate" name="recheckDate" type="date" defaultValue={defaults.recheckDate} disabled={isPending} />
+          <Input
+            id="recheckDate"
+            name="recheckDate"
+            type="date"
+            defaultValue={defaults.recheckDate}
+            disabled={isPending}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="status">{t("statusLabel")}</Label>
-          <select id="status" name="status" defaultValue={defaults.status} disabled={isPending} className={`${CONTROL} h-10`}>
+          <select
+            id="status"
+            name="status"
+            defaultValue={defaults.status}
+            disabled={isPending}
+            className={`${CONTROL} h-10`}
+          >
             {checkupStatuses.map((s) => (
               <option key={s} value={s}>
                 {t(`status.${s}`)}

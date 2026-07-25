@@ -38,7 +38,11 @@ export async function GET(req: Request) {
   const month =
     monthParam && MONTH_RE.test(monthParam)
       ? monthParam
-      : new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit" })
+      : new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          year: "numeric",
+          month: "2-digit",
+        })
           .format(new Date())
           .slice(0, 7);
   const { start, end } = monthRange(month);
@@ -64,7 +68,9 @@ export async function GET(req: Request) {
         .select("checkup_id, payment_status, payment_method")
         .in("checkup_id", ids)
         .eq("payment_status", "paid")
-    : { data: [] as { checkup_id: number; payment_status: string; payment_method: string | null }[] };
+    : {
+        data: [] as { checkup_id: number; payment_status: string; payment_method: string | null }[],
+      };
 
   const paidIds = new Set((orders ?? []).map((o) => o.checkup_id));
   const paidRows = rows.filter((r) => paidIds.has(r.id));
@@ -77,10 +83,16 @@ export async function GET(req: Request) {
       ? supabase.from("customers").select("id, last_name, first_name").in("id", custIds)
       : Promise.resolve({ data: [] as { id: number; last_name: string; first_name: string }[] }),
     paidCheckupIds.length
-      ? supabase.from("order_items").select("checkup_id, line_total").in("checkup_id", paidCheckupIds)
+      ? supabase
+          .from("order_items")
+          .select("checkup_id, line_total")
+          .in("checkup_id", paidCheckupIds)
       : Promise.resolve({ data: [] as { checkup_id: number; line_total: number }[] }),
     paidCheckupIds.length
-      ? supabase.from("checkup_services").select("checkup_id, line_total").in("checkup_id", paidCheckupIds)
+      ? supabase
+          .from("checkup_services")
+          .select("checkup_id, line_total")
+          .in("checkup_id", paidCheckupIds)
       : Promise.resolve({ data: [] as { checkup_id: number; line_total: number }[] }),
   ]);
 
@@ -97,7 +109,9 @@ export async function GET(req: Request) {
   const KNOWN_METHODS = ["cash", "card", "transfer"] as const;
   const methodLabel = (method: string | null) => {
     if (!method) return "";
-    return (KNOWN_METHODS as readonly string[]).includes(method) ? tBilling(`method.${method}`) : method;
+    return (KNOWN_METHODS as readonly string[]).includes(method)
+      ? tBilling(`method.${method}`)
+      : method;
   };
 
   type RevenueRow = Record<string, string | number>;

@@ -32,8 +32,7 @@ export function SidebarNav({ role, locale }: SidebarNavProps) {
       <ul className="space-y-0.5">
         {items.map((item) => {
           const Icon = item.icon;
-          const isActive =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <li key={item.href}>
               <Link

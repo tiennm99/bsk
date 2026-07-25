@@ -8,7 +8,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { MedicineSchema, type MedicineFormState, type MedicineInput } from "@/lib/catalog/medicine-schema";
+import {
+  MedicineSchema,
+  type MedicineFormState,
+  type MedicineInput,
+} from "@/lib/catalog/medicine-schema";
 
 function readForm(formData: FormData) {
   const get = (k: string) => String(formData.get(k) ?? "");
@@ -46,18 +50,31 @@ export async function createMedicineAction(
 ): Promise<MedicineFormState> {
   const t = await getTranslations("admin.medicines");
   const session = await getServerSession();
-  if (session?.role !== "admin") return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
+  if (session?.role !== "admin")
+    return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
 
   const parsed = MedicineSchema.safeParse(readForm(formData));
   if (!parsed.success) {
-    return { status: "error", fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>, formError: null };
+    return {
+      status: "error",
+      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      formError: null,
+    };
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.from("medicines").insert(toRow(parsed.data)).select("id").single();
+  const { data, error } = await supabase
+    .from("medicines")
+    .insert(toRow(parsed.data))
+    .select("id")
+    .single();
   if (error || !data) return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
 
-  await supabase.rpc("log_audit", { p_action: "medicine.create", p_entity: "medicines", p_entity_id: String(data.id) });
+  await supabase.rpc("log_audit", {
+    p_action: "medicine.create",
+    p_entity: "medicines",
+    p_entity_id: String(data.id),
+  });
   return finish();
 }
 
@@ -67,14 +84,17 @@ export async function updateMedicineAction(
 ): Promise<MedicineFormState> {
   const t = await getTranslations("admin.medicines");
   const session = await getServerSession();
-  if (session?.role !== "admin") return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
+  if (session?.role !== "admin")
+    return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
 
   const id = Number(formData.get("id"));
   const parsed = MedicineSchema.safeParse(readForm(formData));
   if (!Number.isFinite(id) || !parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.success ? {} : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+      fieldErrors: parsed.success
+        ? {}
+        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -83,7 +103,11 @@ export async function updateMedicineAction(
   const { error } = await supabase.from("medicines").update(toRow(parsed.data)).eq("id", id);
   if (error) return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
 
-  await supabase.rpc("log_audit", { p_action: "medicine.update", p_entity: "medicines", p_entity_id: String(id) });
+  await supabase.rpc("log_audit", {
+    p_action: "medicine.update",
+    p_entity: "medicines",
+    p_entity_id: String(id),
+  });
   return finish();
 }
 
@@ -97,7 +121,11 @@ export async function deactivateMedicineAction(formData: FormData): Promise<void
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("medicines").update({ deleted: true }).eq("id", id);
   if (!error) {
-    await supabase.rpc("log_audit", { p_action: "medicine.deactivate", p_entity: "medicines", p_entity_id: String(id) });
+    await supabase.rpc("log_audit", {
+      p_action: "medicine.deactivate",
+      p_entity: "medicines",
+      p_entity_id: String(id),
+    });
     const locale = await getLocale();
     revalidatePath(`/${locale}/admin/medicines`);
   }

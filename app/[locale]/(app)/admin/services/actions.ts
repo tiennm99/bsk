@@ -20,11 +20,19 @@ export async function createServiceAction(
 ): Promise<ServiceFormState> {
   const t = await getTranslations("admin.services");
   const session = await getServerSession();
-  if (session?.role !== "admin") return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
+  if (session?.role !== "admin")
+    return { status: "error", fieldErrors: {}, formError: t("errorForbidden") };
 
-  const parsed = ServiceSchema.safeParse({ name: formData.get("name"), price: formData.get("price") });
+  const parsed = ServiceSchema.safeParse({
+    name: formData.get("name"),
+    price: formData.get("price"),
+  });
   if (!parsed.success) {
-    return { status: "error", fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>, formError: null };
+    return {
+      status: "error",
+      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      formError: null,
+    };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -35,7 +43,11 @@ export async function createServiceAction(
     .single();
   if (error || !data) return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
 
-  await supabase.rpc("log_audit", { p_action: "service.create", p_entity: "services", p_entity_id: String(data.id) });
+  await supabase.rpc("log_audit", {
+    p_action: "service.create",
+    p_entity: "services",
+    p_entity_id: String(data.id),
+  });
   await revalidateServices();
   return { status: "success", serviceName: parsed.data.name };
 }
@@ -45,7 +57,10 @@ export async function updateServiceAction(formData: FormData): Promise<void> {
   if (session?.role !== "admin") return;
 
   const id = Number(formData.get("id"));
-  const parsed = ServiceSchema.safeParse({ name: formData.get("name"), price: formData.get("price") });
+  const parsed = ServiceSchema.safeParse({
+    name: formData.get("name"),
+    price: formData.get("price"),
+  });
   if (!Number.isFinite(id) || !parsed.success) return;
 
   const supabase = await createSupabaseServerClient();
@@ -54,7 +69,11 @@ export async function updateServiceAction(formData: FormData): Promise<void> {
     .update({ name: parsed.data.name, price: parsed.data.price })
     .eq("id", id);
   if (!error) {
-    await supabase.rpc("log_audit", { p_action: "service.update", p_entity: "services", p_entity_id: String(id) });
+    await supabase.rpc("log_audit", {
+      p_action: "service.update",
+      p_entity: "services",
+      p_entity_id: String(id),
+    });
     await revalidateServices();
   }
 }
@@ -69,7 +88,11 @@ export async function deactivateServiceAction(formData: FormData): Promise<void>
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("services").update({ deleted: true }).eq("id", id);
   if (!error) {
-    await supabase.rpc("log_audit", { p_action: "service.deactivate", p_entity: "services", p_entity_id: String(id) });
+    await supabase.rpc("log_audit", {
+      p_action: "service.deactivate",
+      p_entity: "services",
+      p_entity_id: String(id),
+    });
     await revalidateServices();
   }
 }

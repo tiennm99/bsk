@@ -38,25 +38,39 @@ export default async function PrescriptionPage({
     .maybeSingle();
   if (!checkup) notFound();
 
-  const [{ data: customer }, { data: medicines }, { data: services }, { data: orderItems }, { data: checkupServices }, { data: order }] =
-    await Promise.all([
-      supabase.from("customers").select("last_name, first_name").eq("id", checkup.customer_id).maybeSingle(),
-      supabase.from("medicines").select("id, name, unit, sale_price").eq("deleted", false).order("name"),
-      supabase.from("services").select("id, name, price").eq("deleted", false).order("name"),
-      supabase
-        .from("order_items")
-        .select("id, medicine_id, quantity, dosage, unit_price, line_total, notes")
-        .eq("checkup_id", checkupId),
-      supabase
-        .from("checkup_services")
-        .select("id, service_id, quantity, unit_price, line_total")
-        .eq("checkup_id", checkupId),
-      supabase
-        .from("medicine_orders")
-        .select("payment_status, payment_method, paid_at")
-        .eq("checkup_id", checkupId)
-        .maybeSingle(),
-    ]);
+  const [
+    { data: customer },
+    { data: medicines },
+    { data: services },
+    { data: orderItems },
+    { data: checkupServices },
+    { data: order },
+  ] = await Promise.all([
+    supabase
+      .from("customers")
+      .select("last_name, first_name")
+      .eq("id", checkup.customer_id)
+      .maybeSingle(),
+    supabase
+      .from("medicines")
+      .select("id, name, unit, sale_price")
+      .eq("deleted", false)
+      .order("name"),
+    supabase.from("services").select("id, name, price").eq("deleted", false).order("name"),
+    supabase
+      .from("order_items")
+      .select("id, medicine_id, quantity, dosage, unit_price, line_total, notes")
+      .eq("checkup_id", checkupId),
+    supabase
+      .from("checkup_services")
+      .select("id, service_id, quantity, unit_price, line_total")
+      .eq("checkup_id", checkupId),
+    supabase
+      .from("medicine_orders")
+      .select("payment_status, payment_method, paid_at")
+      .eq("checkup_id", checkupId)
+      .maybeSingle(),
+  ]);
 
   const patientName = customer ? `${customer.last_name} ${customer.first_name}` : "—";
 
@@ -66,7 +80,9 @@ export default async function PrescriptionPage({
         <div>
           <div className="flex items-center gap-3">
             {checkup.queue_number != null && (
-              <span className="text-foreground text-2xl font-bold tabular-nums">#{checkup.queue_number}</span>
+              <span className="text-foreground text-2xl font-bold tabular-nums">
+                #{checkup.queue_number}
+              </span>
             )}
             <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
           </div>

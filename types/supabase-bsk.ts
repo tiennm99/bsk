@@ -282,8 +282,20 @@ export type Database = {
       };
       services: {
         Row: { created_at: string; deleted: boolean; id: number; name: string; price: number };
-        Insert: { created_at?: string; deleted?: boolean; id?: never; name: string; price?: number };
-        Update: { created_at?: string; deleted?: boolean; id?: never; name?: string; price?: number };
+        Insert: {
+          created_at?: string;
+          deleted?: boolean;
+          id?: never;
+          name: string;
+          price?: number;
+        };
+        Update: {
+          created_at?: string;
+          deleted?: boolean;
+          id?: never;
+          name?: string;
+          price?: number;
+        };
         Relationships: [];
       };
       provinces: {

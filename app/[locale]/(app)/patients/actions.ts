@@ -14,7 +14,11 @@ import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppRole } from "@/lib/db/roles";
-import { CustomerSchema, type CustomerFormState, type CustomerInput } from "@/lib/customers/customer-schema";
+import {
+  CustomerSchema,
+  type CustomerFormState,
+  type CustomerInput,
+} from "@/lib/customers/customer-schema";
 
 const CLINICAL_ROLES: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
 const isClinical = (role: AppRole | null | undefined) => !!role && CLINICAL_ROLES.includes(role);
@@ -71,7 +75,11 @@ export async function createCustomerAction(
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.from("customers").insert(toRow(parsed.data)).select("id").single();
+  const { data, error } = await supabase
+    .from("customers")
+    .insert(toRow(parsed.data))
+    .select("id")
+    .single();
   if (error || !data) {
     return { status: "error", fieldErrors: {}, formError: t("errorGeneric") };
   }
@@ -105,7 +113,9 @@ export async function updateCustomerAction(
   if (!Number.isFinite(id) || !parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.success ? {} : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+      fieldErrors: parsed.success
+        ? {}
+        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -149,7 +159,9 @@ export async function deactivateCustomerAction(formData: FormData): Promise<void
 }
 
 // ── Wards for a province (cascading address dropdown) ─────────────────────────
-export async function getWardsAction(provinceCode: string): Promise<{ code: string; name: string }[]> {
+export async function getWardsAction(
+  provinceCode: string,
+): Promise<{ code: string; name: string }[]> {
   const session = await getServerSession();
   if (!session?.role || !provinceCode) return [];
 

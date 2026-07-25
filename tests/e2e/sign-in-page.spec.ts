@@ -38,7 +38,9 @@ test.describe("Sign-in page", () => {
     await page.goto("/vi/sign-in");
     const passwordInput = page.locator('input[id="password"]');
     // Toggle button is a button element with aria-label containing "Hiện" or "Ẩn"
-    const toggleButton = page.locator('button[aria-label*="Hiện"], button[aria-label*="Ẩn"]').first();
+    const toggleButton = page
+      .locator('button[aria-label*="Hiện"], button[aria-label*="Ẩn"]')
+      .first();
 
     // Initially password type
     await expect(passwordInput).toHaveAttribute("type", "password");

@@ -33,8 +33,14 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
       ) : (
         <ul className="space-y-2">
           {rows.map((s) => (
-            <li key={s.id} className="border-border flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-end">
-              <form action={updateServiceAction} className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end">
+            <li
+              key={s.id}
+              className="border-border flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-end"
+            >
+              <form
+                action={updateServiceAction}
+                className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end"
+              >
                 <input type="hidden" name="id" value={s.id} />
                 <div className="flex-1 space-y-1">
                   <label htmlFor={`sn-${s.id}`} className="text-muted-foreground text-xs">
@@ -46,7 +52,13 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
                   <label htmlFor={`sp-${s.id}`} className="text-muted-foreground text-xs">
                     {t("price")}
                   </label>
-                  <Input id={`sp-${s.id}`} name="price" type="number" min={0} defaultValue={s.price} />
+                  <Input
+                    id={`sp-${s.id}`}
+                    name="price"
+                    type="number"
+                    min={0}
+                    defaultValue={s.price}
+                  />
                 </div>
                 <Button type="submit" variant="outline">
                   {t("save")}

@@ -21,7 +21,9 @@ export default async function EditPatientPage({
   const [{ data: customer }, { data: provinces }] = await Promise.all([
     supabase
       .from("customers")
-      .select("id, first_name, last_name, dob, gender, phone, cccd, province_code, ward_code, address_detail")
+      .select(
+        "id, first_name, last_name, dob, gender, phone, cccd, province_code, ward_code, address_detail",
+      )
       .eq("id", customerId)
       .eq("deleted", false)
       .maybeSingle(),

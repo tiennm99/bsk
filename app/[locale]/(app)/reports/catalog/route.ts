@@ -30,7 +30,11 @@ export async function GET() {
       .select("name, unit, sale_price, cost_price, company, route")
       .eq("deleted", false)
       .order("name", { ascending: true }),
-    supabase.from("services").select("name, price").eq("deleted", false).order("name", { ascending: true }),
+    supabase
+      .from("services")
+      .select("name, price")
+      .eq("deleted", false)
+      .order("name", { ascending: true }),
   ]);
 
   const medicineRows = (medicines ?? []).map((m) => ({
@@ -51,7 +55,9 @@ export async function GET() {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(serviceRows), t("servicesSheet"));
   const buffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
 
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(new Date());
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(
+    new Date(),
+  );
 
   return new Response(new Uint8Array(buffer), {
     headers: {

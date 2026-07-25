@@ -36,7 +36,11 @@ export async function GET(req: Request) {
   const month =
     monthParam && MONTH_RE.test(monthParam)
       ? monthParam
-      : new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh", year: "numeric", month: "2-digit" })
+      : new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          year: "numeric",
+          month: "2-digit",
+        })
           .format(new Date())
           .slice(0, 7);
   const { start, end } = monthRange(month);

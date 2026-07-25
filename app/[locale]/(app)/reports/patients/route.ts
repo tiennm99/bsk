@@ -25,14 +25,20 @@ export async function GET() {
 
   const { data: customers } = await supabase
     .from("customers")
-    .select("id, last_name, first_name, dob, gender, phone, cccd, province_code, ward_code, address_detail, created_at")
+    .select(
+      "id, last_name, first_name, dob, gender, phone, cccd, province_code, ward_code, address_detail, created_at",
+    )
     .eq("deleted", false)
     .order("last_name", { ascending: true })
     .order("first_name", { ascending: true });
 
   const rows = customers ?? [];
-  const provinceCodes = [...new Set(rows.map((r) => r.province_code).filter((v): v is string => v != null))];
-  const wardCodes = [...new Set(rows.map((r) => r.ward_code).filter((v): v is string => v != null))];
+  const provinceCodes = [
+    ...new Set(rows.map((r) => r.province_code).filter((v): v is string => v != null)),
+  ];
+  const wardCodes = [
+    ...new Set(rows.map((r) => r.ward_code).filter((v): v is string => v != null)),
+  ];
 
   const [{ data: provinces }, { data: wards }] = await Promise.all([
     provinceCodes.length
@@ -52,7 +58,11 @@ export async function GET() {
     [t("gender")]: r.gender ? tPatients(`gender.${r.gender}`) : "",
     [tPatients("phone")]: r.phone ?? "",
     [tPatients("cccd")]: r.cccd ?? "",
-    [t("address")]: [r.address_detail, r.ward_code ? (wardName.get(r.ward_code) ?? "") : "", r.province_code ? (provinceName.get(r.province_code) ?? "") : ""]
+    [t("address")]: [
+      r.address_detail,
+      r.ward_code ? (wardName.get(r.ward_code) ?? "") : "",
+      r.province_code ? (provinceName.get(r.province_code) ?? "") : "",
+    ]
       .filter(Boolean)
       .join(", "),
     [t("createdAt")]: r.created_at.slice(0, 10),
@@ -63,7 +73,9 @@ export async function GET() {
   XLSX.utils.book_append_sheet(wb, ws, "Patients");
   const buffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
 
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(new Date());
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(
+    new Date(),
+  );
 
   return new Response(new Uint8Array(buffer), {
     headers: {

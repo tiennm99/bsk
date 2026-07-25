@@ -155,7 +155,7 @@ describe("RegisterCheckupSchema", () => {
         shiftId: "1",
         doctorId: "",
         checkupType: "",
-      }).success
+      }).success,
     ).toBe(false);
 
     expect(
@@ -164,7 +164,7 @@ describe("RegisterCheckupSchema", () => {
         shiftId: "1",
         doctorId: "",
         checkupType: "",
-      }).success
+      }).success,
     ).toBe(false);
   });
 
@@ -175,7 +175,7 @@ describe("RegisterCheckupSchema", () => {
         shiftId: "0",
         doctorId: "",
         checkupType: "",
-      }).success
+      }).success,
     ).toBe(false);
   });
 

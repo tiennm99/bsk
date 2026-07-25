@@ -32,22 +32,33 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
   const supabase = await createSupabaseServerClient();
   const session = await getServerSession();
   const canManageCounter = COUNTER_MANAGERS.has(session?.role ?? "");
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(new Date());
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(
+    new Date(),
+  );
 
-  const [{ data: checkups }, { data: patients }, { data: shifts }, { data: doctors }, { data: counters }] =
-    await Promise.all([
-      supabase
-        .from("checkups")
-        .select("id, queue_number, status, shift_id, customer_id, doctor_id")
-        .eq("checkup_date", today)
-        .eq("deleted", false)
-        .order("shift_id", { ascending: true })
-        .order("queue_number", { ascending: true }),
-      supabase.rpc("search_customers", { q: "" }),
-      supabase.from("shifts").select("id, code").order("sort_order", { ascending: true }),
-      supabase.from("doctors").select("id, last_name, first_name").eq("deleted", false).order("last_name"),
-      supabase.from("daily_queue_counters").select("shift_id, last_number").eq("day", today),
-    ]);
+  const [
+    { data: checkups },
+    { data: patients },
+    { data: shifts },
+    { data: doctors },
+    { data: counters },
+  ] = await Promise.all([
+    supabase
+      .from("checkups")
+      .select("id, queue_number, status, shift_id, customer_id, doctor_id")
+      .eq("checkup_date", today)
+      .eq("deleted", false)
+      .order("shift_id", { ascending: true })
+      .order("queue_number", { ascending: true }),
+    supabase.rpc("search_customers", { q: "" }),
+    supabase.from("shifts").select("id, code").order("sort_order", { ascending: true }),
+    supabase
+      .from("doctors")
+      .select("id, last_name, first_name")
+      .eq("deleted", false)
+      .order("last_name"),
+    supabase.from("daily_queue_counters").select("shift_id, last_number").eq("day", today),
+  ]);
 
   const rows = checkups ?? [];
   const custIds = [...new Set(rows.map((r) => r.customer_id))];
@@ -146,7 +157,9 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
                     {custName.get(c.customer_id) ?? "—"}
                   </p>
                   <p className="text-muted-foreground truncate text-xs">
-                    {shiftCode.get(c.shift_id ?? -1) ? tShift(shiftCode.get(c.shift_id ?? -1)!) : "—"}
+                    {shiftCode.get(c.shift_id ?? -1)
+                      ? tShift(shiftCode.get(c.shift_id ?? -1)!)
+                      : "—"}
                     {c.doctor_id ? ` · ${docName.get(c.doctor_id) ?? "—"}` : ""}
                   </p>
                 </div>

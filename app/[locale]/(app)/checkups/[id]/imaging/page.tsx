@@ -40,7 +40,11 @@ export default async function ImagingPage({
   if (!checkup) notFound();
 
   const [{ data: customer }, { data: images }] = await Promise.all([
-    supabase.from("customers").select("last_name, first_name").eq("id", checkup.customer_id).maybeSingle(),
+    supabase
+      .from("customers")
+      .select("last_name, first_name")
+      .eq("id", checkup.customer_id)
+      .maybeSingle(),
     supabase
       .from("checkup_images")
       .select("id, storage_path, created_at")
@@ -70,7 +74,9 @@ export default async function ImagingPage({
         <div>
           <div className="flex items-center gap-3">
             {checkup.queue_number != null && (
-              <span className="text-foreground text-2xl font-bold tabular-nums">#{checkup.queue_number}</span>
+              <span className="text-foreground text-2xl font-bold tabular-nums">
+                #{checkup.queue_number}
+              </span>
             )}
             <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
           </div>
