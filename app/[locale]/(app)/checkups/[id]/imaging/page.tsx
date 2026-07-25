@@ -12,6 +12,8 @@ import { getTranslations } from "next-intl/server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CHECKUP_MEDIA_BUCKET, SIGNED_URL_TTL_SECONDS } from "@/lib/imaging/image-schema";
+import { Button } from "@/components/ui/button";
+import { routing } from "@/i18n/routing";
 import { ImageCapture } from "./image-capture";
 import { ImageGallery } from "./image-gallery";
 import { CheckupBarcode } from "./checkup-barcode";
@@ -21,8 +23,9 @@ export default async function ImagingPage({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
-  const { id } = await params;
+  const { locale, id } = await params;
   const t = await getTranslations("imaging");
+  const tReports = await getTranslations("reports");
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) notFound();
 
@@ -63,14 +66,25 @@ export default async function ImagingPage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-6">
-        <div className="flex items-center gap-3">
-          {checkup.queue_number != null && (
-            <span className="text-foreground text-2xl font-bold tabular-nums">#{checkup.queue_number}</span>
-          )}
-          <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            {checkup.queue_number != null && (
+              <span className="text-foreground text-2xl font-bold tabular-nums">#{checkup.queue_number}</span>
+            )}
+            <h1 className="text-foreground text-xl font-semibold">{patientName}</h1>
+          </div>
+          <p className="text-muted-foreground mt-1 text-sm">{t("title")}</p>
         </div>
-        <p className="text-muted-foreground mt-1 text-sm">{t("title")}</p>
+        <Button asChild variant="outline" data-print-hidden>
+          <a
+            href={`${locale === routing.defaultLocale ? "" : `/${locale}`}/checkups/${checkup.id}/report`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {tReports("printReport")}
+          </a>
+        </Button>
       </div>
 
       <div className="space-y-8">

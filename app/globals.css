@@ -48,3 +48,37 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Browser-print support for screens (e.g. the checkup detail page). The
+ * primary print path is the server-rendered PDFs (lib/pdf/*) — this block
+ * only cleans up whatever screen the user hits Ctrl+P on directly.
+ */
+@media print {
+  nav,
+  aside,
+  header,
+  [data-print-hidden] {
+    display: none !important;
+  }
+
+  * {
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #000 !important;
+  }
+
+  body {
+    color: #000;
+  }
+
+  tr,
+  li {
+    break-inside: avoid;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}

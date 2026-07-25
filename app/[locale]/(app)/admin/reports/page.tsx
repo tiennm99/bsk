@@ -20,24 +20,61 @@ export default async function ReportsPage({ params }: { params: Promise<{ locale
     .format(new Date())
     .slice(0, 7);
 
-  const exportHref = `${locale === routing.defaultLocale ? "" : `/${locale}`}/reports/visits`;
+  const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+  const visitsHref = `${prefix}/reports/visits`;
+  const revenueHref = `${prefix}/reports/revenue`;
+  const patientsHref = `${prefix}/reports/patients`;
+  const catalogHref = `${prefix}/reports/catalog`;
 
   return (
     <div className="mx-auto max-w-md px-4 py-10">
       <h1 className="text-foreground mb-6 text-xl font-semibold">{t("title")}</h1>
 
-      <section className="border-border rounded-lg border p-4">
-        <h2 className="text-foreground mb-3 text-sm font-medium">{t("exportVisits")}</h2>
-        <form action={exportHref} method="get" target="_blank" className="flex items-end gap-3">
-          <div className="flex-1 space-y-1.5">
-            <Label htmlFor="month">{t("month")}</Label>
-            <Input id="month" name="month" type="month" defaultValue={thisMonth} />
-          </div>
-          <Button type="submit" size="lg">
-            {t("download")}
-          </Button>
-        </form>
-      </section>
+      <div className="space-y-4">
+        <section className="border-border rounded-lg border p-4">
+          <h2 className="text-foreground mb-3 text-sm font-medium">{t("exportVisits")}</h2>
+          <form action={visitsHref} method="get" target="_blank" className="flex items-end gap-3">
+            <div className="flex-1 space-y-1.5">
+              <Label htmlFor="month">{t("month")}</Label>
+              <Input id="month" name="month" type="month" defaultValue={thisMonth} />
+            </div>
+            <Button type="submit" size="lg">
+              {t("download")}
+            </Button>
+          </form>
+        </section>
+
+        <section className="border-border rounded-lg border p-4">
+          <h2 className="text-foreground mb-3 text-sm font-medium">{t("exportRevenue")}</h2>
+          <form action={revenueHref} method="get" target="_blank" className="flex items-end gap-3">
+            <div className="flex-1 space-y-1.5">
+              <Label htmlFor="revenue-month">{t("month")}</Label>
+              <Input id="revenue-month" name="month" type="month" defaultValue={thisMonth} />
+            </div>
+            <Button type="submit" size="lg">
+              {t("download")}
+            </Button>
+          </form>
+        </section>
+
+        <section className="border-border rounded-lg border p-4">
+          <h2 className="text-foreground mb-3 text-sm font-medium">{t("exportPatients")}</h2>
+          <form action={patientsHref} method="get" target="_blank">
+            <Button type="submit" size="lg">
+              {t("download")}
+            </Button>
+          </form>
+        </section>
+
+        <section className="border-border rounded-lg border p-4">
+          <h2 className="text-foreground mb-3 text-sm font-medium">{t("exportCatalog")}</h2>
+          <form action={catalogHref} method="get" target="_blank">
+            <Button type="submit" size="lg">
+              {t("download")}
+            </Button>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }

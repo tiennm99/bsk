@@ -103,11 +103,13 @@ export function AppShellFrame({ sidebar, children }: AppShellFrameProps) {
       </a>
 
       {/* Persistent sidebar — desktop only. */}
-      <div className="hidden md:flex">{sidebar}</div>
+      <div className="hidden md:flex" data-print-hidden>
+        {sidebar}
+      </div>
 
       {/* Off-canvas drawer — below md, only when opened. */}
       {open && (
-        <div className="fixed inset-0 z-40 md:hidden">
+        <div className="fixed inset-0 z-40 md:hidden" data-print-hidden>
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => setOpen(false)}
@@ -128,7 +130,10 @@ export function AppShellFrame({ sidebar, children }: AppShellFrameProps) {
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile top bar with hamburger — below md only. */}
-        <header className="border-border flex h-14 shrink-0 items-center gap-2 border-b px-3 md:hidden">
+        <header
+          className="border-border flex h-14 shrink-0 items-center gap-2 border-b px-3 md:hidden"
+          data-print-hidden
+        >
           <button
             ref={triggerRef}
             type="button"

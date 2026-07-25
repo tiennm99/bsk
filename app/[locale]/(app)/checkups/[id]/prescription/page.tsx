@@ -72,15 +72,26 @@ export default async function PrescriptionPage({
           </div>
           <p className="text-muted-foreground mt-1 text-sm">{t("title")}</p>
         </div>
-        <Button asChild variant="outline">
-          <a
-            href={`${locale === routing.defaultLocale ? "" : `/${locale}`}/checkups/${checkup.id}/invoice`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {tReports("printInvoice")}
-          </a>
-        </Button>
+        <div className="flex gap-2" data-print-hidden>
+          <Button asChild variant="outline">
+            <a
+              href={`${locale === routing.defaultLocale ? "" : `/${locale}`}/checkups/${checkup.id}/prescription/pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {tReports("printPrescription")}
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <a
+              href={`${locale === routing.defaultLocale ? "" : `/${locale}`}/checkups/${checkup.id}/invoice`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {tReports("printInvoice")}
+            </a>
+          </Button>
+        </div>
       </div>
 
       <PrescriptionComposer
