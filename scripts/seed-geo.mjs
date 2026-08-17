@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env node
 /**
  * Seed Vietnamese geo lookup (bsk.provinces + bsk.wards).
  *
@@ -23,10 +23,14 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
-type Ward = { code: string; name: string };
-type Province = { code: string; name: string; wards: Ward[] };
+/** @typedef {{ code: string, name: string }} Ward */
+/** @typedef {{ code: string, name: string, wards: Ward[] }} Province */
 
-function die(msg: string): never {
+/**
+ * @param {string} msg
+ * @returns {never}
+ */
+function die(msg) {
   process.stderr.write(`\n[seed-geo] ${msg}\n\n`);
   process.exit(1);
 }
@@ -38,7 +42,8 @@ if (!url || !key) {
 }
 
 const dataPath = resolve(process.cwd(), "supabase/seed/vn-geo.json");
-let provinces: Province[];
+/** @type {Province[]} */
+let provinces;
 try {
   provinces = JSON.parse(readFileSync(dataPath, "utf8"));
 } catch {
@@ -54,14 +59,17 @@ if (!Array.isArray(provinces) || provinces.length === 0) {
 
 const supabase = createClient(url, key, { db: { schema: "bsk" }, auth: { persistSession: false } });
 
-async function upsertBatched<T>(
-  table: "provinces" | "wards",
-  rows: T[],
-  size = 500,
-): Promise<void> {
+/**
+ * @template T
+ * @param {"provinces" | "wards"} table
+ * @param {T[]} rows
+ * @param {number} [size]
+ * @returns {Promise<void>}
+ */
+async function upsertBatched(table, rows, size = 500) {
   for (let i = 0; i < rows.length; i += size) {
     const batch = rows.slice(i, i + size);
-    const { error } = await supabase.from(table).upsert(batch as never[]);
+    const { error } = await supabase.from(table).upsert(/** @type {never[]} */ (batch));
     if (error) die(`Upsert into ${table} failed at row ${i}: ${error.message}`);
     process.stdout.write(
       `[seed-geo] ${table}: ${Math.min(i + size, rows.length)}/${rows.length}\n`,

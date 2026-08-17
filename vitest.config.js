@@ -4,18 +4,18 @@ import path from "path";
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["tests/unit/**/*.test.ts"],
+    include: ["tests/unit/**/*.test.js"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
-      include: ["lib/**/*.ts"],
-      exclude: ["lib/**/*.d.ts", "lib/**/*.config.ts"],
+      include: ["lib/**/*.js"],
+      exclude: ["lib/**/*.d.ts", "lib/**/*.config.js"],
     },
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
-      "server-only": path.resolve(__dirname, "tests/unit/mocks/server-only.ts"),
+      "server-only": path.resolve(__dirname, "tests/unit/mocks/server-only.js"),
     },
   },
 });

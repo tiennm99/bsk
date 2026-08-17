@@ -26,7 +26,7 @@ After provisioning Supabase/Upstash/Vercel and `npm run db:push`:
    ```sql
    INSERT INTO bsk.admin_allowlist (email) VALUES ('you@example.com');
    ```
-2. **Seed Vietnamese geo data** (province/ward address dropdowns): `npm run db:seed-geo` (see `scripts/seed-geo.ts`).
+2. **Seed Vietnamese geo data** (province/ward address dropdowns): `npm run db:seed-geo` (see `scripts/seed-geo.mjs`).
 3. **Enable Supabase Realtime** on `bsk.checkups` (Database → Replication) for the live queue.
 4. **Set `CRON_SECRET`** in Vercel so the nightly media-retention sweep (`/api/cron/nightly`, scheduled in `vercel.json`) can authenticate.
 
@@ -34,7 +34,7 @@ See [docs/supabase-shared-config.md](./docs/supabase-shared-config.md) for the s
 
 ## Stack
 
-- **npm** + **Next.js 16** (App Router) + **TypeScript**
+- **npm** + **Next.js 16** (App Router) + **JavaScript with JSDoc types** (checked by tsc)
 - **Supabase** (Postgres + Auth + Storage) — shared across personal projects via schema-per-app
 - **Upstash** Redis + QStash — shared across personal projects via key prefixes
 - **Vercel** for hosting
@@ -48,7 +48,7 @@ See [docs/supabase-shared-config.md](./docs/supabase-shared-config.md) for the s
 
 ## Database
 
-After `npm run db:push`, run `npm run db:gen-types` to refresh `types/supabase-bsk.ts`.
+After `npm run db:push`, run `npm run db:gen-types` to refresh `types/supabase-bsk.d.ts`.
 
 ## License
 

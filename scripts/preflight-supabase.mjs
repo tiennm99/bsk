@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env node
 /**
  * Preflight guard for `supabase db push` against the shared project.
  *
@@ -9,7 +9,7 @@
  * currently-linked Supabase project ref matches BSK's allow-list.
  *
  * Wire it in package.json:
- *   "db:push": "tsx scripts/preflight-supabase.ts && supabase db push"
+ *   "db:push": "node scripts/preflight-supabase.mjs && supabase db push"
  *
  * The allow-list is intentionally checked into the repo: it's not secret,
  * and a PR diff is the right place to notice "wait, why did the ref change?"
@@ -20,11 +20,13 @@ import { resolve } from "node:path";
 
 // BSK is only ever linked to these project refs. Add new ones via PR.
 // Source of truth: Supabase dashboard → Project Settings → General → Reference ID.
-const ALLOWED_PROJECT_REFS: ReadonlyArray<string> = [
+/** @type {ReadonlyArray<string>} */
+const ALLOWED_PROJECT_REFS = [
   // "abcdefghijklmnopqrst", // example: tiennm99's personal shared project
 ];
 
-function readLinkedRef(): string | null {
+/** @returns {string | null} */
+function readLinkedRef() {
   // `supabase link` writes the project ref to supabase/.temp/project-ref.
   try {
     const path = resolve(process.cwd(), "supabase/.temp/project-ref");
@@ -34,7 +36,11 @@ function readLinkedRef(): string | null {
   }
 }
 
-function die(msg: string): never {
+/**
+ * @param {string} msg
+ * @returns {never}
+ */
+function die(msg) {
   process.stderr.write(`\n[preflight-supabase] ${msg}\n\n`);
   process.exit(1);
 }
@@ -50,7 +56,7 @@ if (!ref) {
 
 if (ALLOWED_PROJECT_REFS.length === 0) {
   die(
-    "ALLOWED_PROJECT_REFS is empty in scripts/preflight-supabase.ts.\n" +
+    "ALLOWED_PROJECT_REFS is empty in scripts/preflight-supabase.mjs.\n" +
       "Add your BSK Supabase project ref(s) to the allow-list before pushing migrations.",
   );
 }
@@ -63,7 +69,7 @@ if (!ALLOWED_PROJECT_REFS.includes(ref)) {
       `Pushing to the wrong project can require a project-wide PITR to recover —\n` +
       `which would wipe every other app's data too.\n\n` +
       `If "${ref}" is legitimately a new BSK project, add it to ALLOWED_PROJECT_REFS\n` +
-      `in scripts/preflight-supabase.ts via a PR, then re-run.`,
+      `in scripts/preflight-supabase.mjs via a PR, then re-run.`,
   );
 }
 

@@ -120,5 +120,5 @@ Channel names live in a single project-wide namespace. Prefix every channel with
 Free-tier PITR is project-wide; a restore wipes every app's data to a point in time. Per-app rollback is not supported by Supabase. Mitigations:
 
 - Daily `pg_dump --schema=bsk` cron (see `docs/runbooks/restore-from-bad-migration.md`).
-- Preflight check on migrations (see `scripts/preflight-supabase.ts`).
+- Preflight check on migrations (see `scripts/preflight-supabase.mjs`).
 - Never run destructive DDL without a recent dump.
