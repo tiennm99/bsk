@@ -12,6 +12,7 @@
 import { getTranslations } from "next-intl/server";
 import { InviteUserForm } from "./invite-user-form";
 
+/** @returns {Promise<import("react").JSX.Element>} */
 export default async function AdminInvitePage() {
   const t = await getTranslations("admin.invite");
 

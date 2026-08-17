@@ -16,11 +16,11 @@ import { Button } from "@/components/ui/button";
 import { routing } from "@/i18n/routing";
 import { PrescriptionComposer } from "./prescription-composer";
 
-export default async function PrescriptionPage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string, id: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function PrescriptionPage({ params }) {
   const { locale, id } = await params;
   const t = await getTranslations("billing");
   const tReports = await getTranslations("reports");

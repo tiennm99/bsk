@@ -11,16 +11,13 @@
  * receiving a 404, which would confirm that restricted admin routes exist.
  */
 
-import type { ReactNode } from "react";
 import { requireRole } from "@/lib/auth/require-role";
 
-export default async function AdminLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
-}) {
+/**
+ * @param {{ children: import("react").ReactNode, params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function AdminLayout({ children, params }) {
   const { locale } = await params;
 
   // Redirects to /dashboard if role !== 'admin'.

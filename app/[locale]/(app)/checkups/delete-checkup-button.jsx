@@ -6,16 +6,19 @@
  * window.confirm(), and cancels (preventDefault) if the user declines.
  */
 
-import type { FormEvent } from "react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { deleteCheckupAction } from "./actions";
 
-export function DeleteCheckupButton({ checkupId }: { checkupId: number }) {
+/**
+ * @param {{ checkupId: number }} props
+ */
+export function DeleteCheckupButton({ checkupId }) {
   const t = useTranslations("checkups");
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  /** @param {import("react").FormEvent<HTMLFormElement>} e */
+  function onSubmit(e) {
     if (!window.confirm(t("confirmDelete"))) {
       e.preventDefault();
     }

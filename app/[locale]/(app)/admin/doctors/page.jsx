@@ -14,7 +14,11 @@ import { Input } from "@/components/ui/input";
 import { AddDoctorForm } from "./add-doctor-form";
 import { updateDoctorAction, deactivateDoctorAction } from "./actions";
 
-export default async function DoctorsPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function DoctorsPage({ params }) {
   await params; // Next.js 16: params is async.
   const t = await getTranslations("admin.doctors");
 

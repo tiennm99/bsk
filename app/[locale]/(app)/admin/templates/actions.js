@@ -12,15 +12,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import {
-  TemplateSchema,
-  fieldsTextToJson,
-  type TemplateFormState,
-  type TemplateInput,
-} from "@/lib/templates/template-schema";
+import { TemplateSchema, fieldsTextToJson } from "@/lib/templates/template-schema";
 
-function readForm(formData: FormData) {
-  const get = (k: string) => String(formData.get(k) ?? "");
+/** @typedef {import('@/lib/templates/template-schema').TemplateFormState} TemplateFormState */
+/** @typedef {import('@/lib/templates/template-schema').TemplateInput} TemplateInput */
+
+/** @param {FormData} formData */
+function readForm(formData) {
+  /** @param {string} k */
+  const get = (k) => String(formData.get(k) ?? "");
   return {
     name: get("name"),
     title: get("title"),
@@ -30,7 +30,8 @@ function readForm(formData: FormData) {
   };
 }
 
-function toRow(d: TemplateInput) {
+/** @param {TemplateInput} d */
+function toRow(d) {
   return {
     name: d.name,
     title: d.title.trim().length ? d.title.trim() : null,
@@ -40,16 +41,19 @@ function toRow(d: TemplateInput) {
   };
 }
 
-async function finish(): Promise<never> {
+/** @returns {Promise<never>} */
+async function finish() {
   const locale = await getLocale();
   revalidatePath(`/${locale}/admin/templates`);
   return redirect({ href: `/${locale}/admin/templates`, locale });
 }
 
-export async function createTemplateAction(
-  _prev: TemplateFormState,
-  formData: FormData,
-): Promise<TemplateFormState> {
+/**
+ * @param {TemplateFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<TemplateFormState>}
+ */
+export async function createTemplateAction(_prev, formData) {
   const t = await getTranslations("admin.templates");
 
   const session = await getServerSession();
@@ -61,7 +65,7 @@ export async function createTemplateAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }
@@ -84,10 +88,12 @@ export async function createTemplateAction(
   return finish();
 }
 
-export async function updateTemplateAction(
-  _prev: TemplateFormState,
-  formData: FormData,
-): Promise<TemplateFormState> {
+/**
+ * @param {TemplateFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<TemplateFormState>}
+ */
+export async function updateTemplateAction(_prev, formData) {
   const t = await getTranslations("admin.templates");
 
   const session = await getServerSession();
@@ -102,7 +108,7 @@ export async function updateTemplateAction(
       status: "error",
       fieldErrors: parsed.success
         ? {}
-        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+        : /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -124,7 +130,11 @@ export async function updateTemplateAction(
   return finish();
 }
 
-export async function deactivateTemplateAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function deactivateTemplateAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 

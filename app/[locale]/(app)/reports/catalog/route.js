@@ -13,6 +13,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/** Streams the catalog report as an XLSX download. @returns {Promise<Response>} */
 export async function GET() {
   const session = await getServerSession();
   if (session?.role !== "admin" && session?.role !== "cashier") {
@@ -53,7 +54,7 @@ export async function GET() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(medicineRows), t("medicinesSheet"));
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(serviceRows), t("servicesSheet"));
-  const buffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+  const buffer = /** @type {Buffer} */ (XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
 
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(
     new Date(),

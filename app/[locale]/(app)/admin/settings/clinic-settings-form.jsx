@@ -13,24 +13,23 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  ClinicSettingsSchema,
-  type ClinicSettingsInput,
-  type ClinicSettingsState,
-} from "@/lib/clinic/clinic-settings-schema";
+import { ClinicSettingsSchema } from "@/lib/clinic/clinic-settings-schema";
 import { updateClinicSettingsAction } from "./actions";
 
-const FIELDS = ["name", "address", "phone", "prefix"] as const;
+/** @typedef {import('@/lib/clinic/clinic-settings-schema').ClinicSettingsInput} ClinicSettingsInput */
+/** @typedef {import('@/lib/clinic/clinic-settings-schema').ClinicSettingsState} ClinicSettingsState */
 
-export function ClinicSettingsForm({ defaults }: { defaults: ClinicSettingsInput }) {
+const FIELDS = /** @type {const} */ (["name", "address", "phone", "prefix"]);
+
+/** @param {{ defaults: ClinicSettingsInput }} props */
+export function ClinicSettingsForm({ defaults }) {
   const t = useTranslations("admin.settings");
 
-  const [state, dispatchAction, isPending] = useActionState<ClinicSettingsState, FormData>(
-    updateClinicSettingsAction,
-    { status: "idle" },
-  );
+  const [state, dispatchAction, isPending] = useActionState(updateClinicSettingsAction, {
+    status: "idle",
+  });
 
-  const form = useForm<ClinicSettingsInput>({
+  const form = useForm({
     resolver: zodResolver(ClinicSettingsSchema),
     mode: "onBlur",
     defaultValues: defaults,

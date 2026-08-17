@@ -4,11 +4,11 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { MedicineForm } from "../../medicine-form";
 import { updateMedicineAction } from "../../actions";
 
-export default async function EditMedicinePage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string, id: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function EditMedicinePage({ params }) {
   const { id } = await params;
   const t = await getTranslations("admin.medicines");
   const medId = Number(id);

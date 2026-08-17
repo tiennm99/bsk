@@ -43,7 +43,7 @@ describe("CustomerSchema", () => {
     const payload = {
       ...validBase,
       dob: "1990-05-15",
-      gender: "male" as const,
+      gender: /** @type {import("@/lib/customers/customer-schema").Gender} */ ("male"),
       phone: "0912345678",
       cccd: "012345678901",
       provinceCode: "079",

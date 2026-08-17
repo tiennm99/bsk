@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { CheckupForm } from "../checkup-form";
 import { DeleteCheckupButton } from "../delete-checkup-button";
 
-const str = (v: string | number | null) => (v == null ? "" : String(v));
+/** @param {string | number | null} v */
+const str = (v) => (v == null ? "" : String(v));
 
-export default async function CheckupPage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string, id: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function CheckupPage({ params }) {
   const { locale, id } = await params;
   const t = await getTranslations("checkups");
   const tBilling = await getTranslations("billing");
@@ -58,7 +59,9 @@ export default async function CheckupPage({
   // De-dupe + trim recent diagnoses for the quick-pick, capped at 50 entries.
   const diagnosisSuggestions = [
     ...new Set(
-      (recentDiagnoses ?? []).map((r) => r.diagnosis?.trim()).filter((d): d is string => !!d),
+      (recentDiagnoses ?? [])
+        .map((r) => r.diagnosis?.trim())
+        .filter(/** @returns {d is string} */ (d) => !!d),
     ),
   ].slice(0, 50);
 
@@ -71,8 +74,11 @@ export default async function CheckupPage({
     : (templates ?? []);
 
   const templateValues = Array.isArray(c.template_values)
-    ? (c.template_values as unknown[])
-        .filter((v): v is { label: unknown; value: unknown } => !!v && typeof v === "object")
+    ? /** @type {unknown[]} */ (c.template_values)
+        .filter(
+          /** @returns {v is { label: unknown, value: unknown }} */
+          (v) => !!v && typeof v === "object",
+        )
         .map((v) => ({ label: String(v.label ?? ""), value: String(v.value ?? "") }))
     : [];
 
@@ -102,12 +108,15 @@ export default async function CheckupPage({
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline">
-            <Link href={`/checkups/${c.id}/prescription`} locale={locale as "vi" | "en"}>
+            <Link
+              href={`/checkups/${c.id}/prescription`}
+              locale={/** @type {"vi" | "en"} */ (locale)}
+            >
               {tBilling("title")}
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href={`/checkups/${c.id}/imaging`} locale={locale as "vi" | "en"}>
+            <Link href={`/checkups/${c.id}/imaging`} locale={/** @type {"vi" | "en"} */ (locale)}>
               {tImaging("title")}
             </Link>
           </Button>

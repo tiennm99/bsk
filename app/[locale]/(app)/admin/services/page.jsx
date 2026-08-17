@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { AddServiceForm } from "./add-service-form";
 import { updateServiceAction, deactivateServiceAction } from "./actions";
 
-export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function ServicesPage({ params }) {
   await params;
   const t = await getTranslations("admin.services");
 

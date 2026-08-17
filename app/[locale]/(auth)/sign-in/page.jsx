@@ -9,11 +9,11 @@ import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { SignInForm } from "./sign-in-form";
 
-interface SignInPageProps {
-  params: Promise<{ locale: string }>;
-}
-
-export default async function SignInPage({ params }: SignInPageProps) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function SignInPage({ params }) {
   const { locale } = await params;
 
   // Redirect authenticated users away from the sign-in page.

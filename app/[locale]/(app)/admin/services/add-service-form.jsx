@@ -12,18 +12,17 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { ServiceFormState } from "@/lib/catalog/service-schema";
 import { createServiceAction } from "./actions";
 
+/** @typedef {import('@/lib/catalog/service-schema').ServiceFormState} ServiceFormState */
+
+/** Admin form to add a service row. @returns {import("react").JSX.Element} */
 export function AddServiceForm() {
   const t = useTranslations("admin.services");
-  const formRef = useRef<HTMLFormElement>(null);
-  const [state, dispatch, isPending] = useActionState<ServiceFormState, FormData>(
-    createServiceAction,
-    {
-      status: "idle",
-    },
-  );
+  const formRef = useRef(/** @type {HTMLFormElement | null} */ (null));
+  const [state, dispatch, isPending] = useActionState(createServiceAction, {
+    status: "idle",
+  });
 
   useEffect(() => {
     if (state.status === "success") formRef.current?.reset();

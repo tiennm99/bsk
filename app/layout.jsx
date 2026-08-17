@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 // Intentionally empty pass-through. The real `<html>` + `<body>` live in
 // `app/[locale]/layout.tsx` so `lang={locale}` and the i18n provider can
 // be set per locale. Do not put global UI here.
@@ -13,6 +11,9 @@ import type { ReactNode } from "react";
 // render without `<html><body>`. Prefer placing `error.tsx` files under
 // `app/[locale]/` (where the real shell lives), or render the document
 // shell explicitly inside any root-level error file.
-export default function RootLayout({ children }: { children: ReactNode }) {
+/**
+ * @param {{ children: import("react").ReactNode }} props
+ */
+export default function RootLayout({ children }) {
   return children;
 }

@@ -8,7 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { routing } from "@/i18n/routing";
 
-export default async function ReportsPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function ReportsPage({ params }) {
   const { locale } = await params;
   const t = await getTranslations("reports");
 

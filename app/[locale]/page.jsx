@@ -1,6 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function HomePage({ params }) {
   const { locale } = await params;
   // Required per next-intl static-rendering guide; intentionally duplicated
   // alongside the same call in `[locale]/layout.tsx`. Do not remove.

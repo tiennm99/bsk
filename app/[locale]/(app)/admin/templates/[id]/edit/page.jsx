@@ -7,11 +7,11 @@ import { fieldsJsonToText } from "@/lib/templates/template-schema";
 import { TemplateForm } from "../../template-form";
 import { updateTemplateAction } from "../../actions";
 
-export default async function EditTemplatePage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string, id: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function EditTemplatePage({ params }) {
   const { id } = await params;
   const t = await getTranslations("admin.templates");
   const templateId = Number(id);

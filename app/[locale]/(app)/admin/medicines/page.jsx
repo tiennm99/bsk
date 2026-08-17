@@ -6,9 +6,14 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { deactivateMedicineAction } from "./actions";
 
-const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
+/** @param {number} n */
+const vnd = (n) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
 
-export default async function MedicinesPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function MedicinesPage({ params }) {
   const { locale } = await params;
   const t = await getTranslations("admin.medicines");
 
@@ -25,7 +30,7 @@ export default async function MedicinesPage({ params }: { params: Promise<{ loca
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-foreground text-xl font-semibold">{t("title")}</h1>
         <Button asChild size="lg">
-          <Link href="/admin/medicines/new" locale={locale as "vi" | "en"}>
+          <Link href="/admin/medicines/new" locale={/** @type {"vi" | "en"} */ (locale)}>
             {t("new")}
           </Link>
         </Button>
@@ -45,7 +50,10 @@ export default async function MedicinesPage({ params }: { params: Promise<{ loca
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <Button asChild variant="outline">
-                  <Link href={`/admin/medicines/${m.id}/edit`} locale={locale as "vi" | "en"}>
+                  <Link
+                    href={`/admin/medicines/${m.id}/edit`}
+                    locale={/** @type {"vi" | "en"} */ (locale)}
+                  >
                     {t("edit")}
                   </Link>
                 </Button>

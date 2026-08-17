@@ -3,6 +3,7 @@
  * (respects prefers-reduced-motion via the global rule in globals.css).
  */
 
+/** App route-segment loading skeleton. @returns {import("react").JSX.Element} */
 export default function AppLoading() {
   return (
     <div className="flex min-h-[50vh] items-center justify-center" role="status" aria-live="polite">

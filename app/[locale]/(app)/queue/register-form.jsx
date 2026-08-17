@@ -12,33 +12,26 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { RegisterCheckupState } from "@/lib/checkups/checkup-schema";
 import { registerCheckupAction } from "./actions";
 
-type Patient = { id: number; last_name: string; first_name: string };
-type Shift = { id: number; code: string };
-type Doctor = { id: number; last_name: string; first_name: string };
+/** @typedef {import('@/lib/checkups/checkup-schema').RegisterCheckupState} RegisterCheckupState */
+
+/** @typedef {{ id: number, last_name: string, first_name: string }} Patient */
+/** @typedef {{ id: number, code: string }} Shift */
+/** @typedef {{ id: number, last_name: string, first_name: string }} Doctor */
 
 const SELECT =
   "border-input bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus-visible:ring-2 disabled:opacity-50";
 
-export function RegisterForm({
-  patients,
-  shifts,
-  doctors,
-}: {
-  patients: Patient[];
-  shifts: Shift[];
-  doctors: Doctor[];
-}) {
+/**
+ * @param {{ patients: Patient[], shifts: Shift[], doctors: Doctor[] }} props
+ */
+export function RegisterForm({ patients, shifts, doctors }) {
   const t = useTranslations("queue");
   const tShift = useTranslations("shifts");
-  const formRef = useRef<HTMLFormElement>(null);
+  const formRef = useRef(/** @type {HTMLFormElement | null} */ (null));
 
-  const [state, dispatch, isPending] = useActionState<RegisterCheckupState, FormData>(
-    registerCheckupAction,
-    { status: "idle" },
-  );
+  const [state, dispatch, isPending] = useActionState(registerCheckupAction, { status: "idle" });
 
   useEffect(() => {
     if (state.status === "success") formRef.current?.reset();

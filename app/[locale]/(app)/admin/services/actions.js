@@ -7,17 +7,21 @@ import { revalidatePath } from "next/cache";
 
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { ServiceSchema, type ServiceFormState } from "@/lib/catalog/service-schema";
+import { ServiceSchema } from "@/lib/catalog/service-schema";
+
+/** @typedef {import('@/lib/catalog/service-schema').ServiceFormState} ServiceFormState */
 
 async function revalidateServices() {
   const locale = await getLocale();
   revalidatePath(`/${locale}/admin/services`);
 }
 
-export async function createServiceAction(
-  _prev: ServiceFormState,
-  formData: FormData,
-): Promise<ServiceFormState> {
+/**
+ * @param {ServiceFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<ServiceFormState>}
+ */
+export async function createServiceAction(_prev, formData) {
   const t = await getTranslations("admin.services");
   const session = await getServerSession();
   if (session?.role !== "admin")
@@ -30,7 +34,7 @@ export async function createServiceAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }
@@ -52,7 +56,11 @@ export async function createServiceAction(
   return { status: "success", serviceName: parsed.data.name };
 }
 
-export async function updateServiceAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function updateServiceAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 
@@ -78,7 +86,11 @@ export async function updateServiceAction(formData: FormData): Promise<void> {
   }
 }
 
-export async function deactivateServiceAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function deactivateServiceAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 

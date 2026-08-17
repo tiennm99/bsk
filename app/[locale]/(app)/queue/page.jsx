@@ -18,13 +18,18 @@ import { callPatientAction } from "./actions";
 
 const COUNTER_MANAGERS = new Set(["admin", "receptionist"]);
 
-const STATUS_STYLE: Record<string, string> = {
+/** @type {Record<string, string>} */
+const STATUS_STYLE = {
   waiting: "bg-muted text-foreground",
   in_progress: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200",
   done: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200",
 };
 
-export default async function QueuePage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function QueuePage({ params }) {
   const { locale } = await params;
   const t = await getTranslations("queue");
   const tShift = await getTranslations("shifts");
@@ -71,7 +76,8 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
   const shiftCode = new Map((shifts ?? []).map((s) => [s.id, s.code]));
   const counterByShift = new Map((counters ?? []).map((c) => [c.shift_id, c.last_number]));
 
-  const waitingCountByShift = new Map<number, number>();
+  /** @type {Map<number, number>} */
+  const waitingCountByShift = new Map();
   for (const r of rows) {
     if (r.status === "waiting" && r.shift_id != null) {
       waitingCountByShift.set(r.shift_id, (waitingCountByShift.get(r.shift_id) ?? 0) + 1);
@@ -128,7 +134,8 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
         <h2 className="text-foreground mb-3 text-sm font-medium">{t("registerTitle")}</h2>
         <RegisterForm
           patients={(patients ?? []).map(
-            (p: { id: number; last_name: string; first_name: string }) => ({
+            /** @param {{ id: number, last_name: string, first_name: string }} p */
+            (p) => ({
               id: p.id,
               last_name: p.last_name,
               first_name: p.first_name,
@@ -158,7 +165,7 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
                   </p>
                   <p className="text-muted-foreground truncate text-xs">
                     {shiftCode.get(c.shift_id ?? -1)
-                      ? tShift(shiftCode.get(c.shift_id ?? -1)!)
+                      ? tShift(/** @type {string} */ (shiftCode.get(c.shift_id ?? -1)))
                       : "—"}
                     {c.doctor_id ? ` · ${docName.get(c.doctor_id) ?? "—"}` : ""}
                   </p>
@@ -179,7 +186,7 @@ export default async function QueuePage({ params }: { params: Promise<{ locale: 
                   </form>
                 )}
                 <Button asChild variant="outline">
-                  <Link href={`/checkups/${c.id}`} locale={locale as "vi" | "en"}>
+                  <Link href={`/checkups/${c.id}`} locale={/** @type {"vi" | "en"} */ (locale)}>
                     {t("open")}
                   </Link>
                 </Button>

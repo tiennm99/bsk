@@ -13,27 +13,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deactivateCustomerAction } from "./actions";
 
-export default async function PatientsPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string }>;
-}) {
+/**
+ * @typedef {{ id: number, first_name: string, last_name: string, phone: string | null, dob: string | null }} PatientRow
+ */
+
+/**
+ * @param {{ params: Promise<{ locale: string }>, searchParams: Promise<{ q?: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function PatientsPage({ params, searchParams }) {
   const { locale } = await params;
   const { q = "" } = await searchParams;
   const t = await getTranslations("patients");
 
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.rpc("search_customers", { q });
-  type PatientRow = {
-    id: number;
-    first_name: string;
-    last_name: string;
-    phone: string | null;
-    dob: string | null;
-  };
-  const patients = (data ?? []) as PatientRow[];
+  const patients = /** @type {PatientRow[]} */ (data ?? []);
 
   // Recently seen: most recent distinct customers by their latest checkup.
   const { data: recentCheckups } = await supabase
@@ -44,8 +39,10 @@ export default async function PatientsPage({
     .order("id", { ascending: false })
     .limit(50);
 
-  const seenIds = new Set<number>();
-  const recentIds: number[] = [];
+  /** @type {Set<number>} */
+  const seenIds = new Set();
+  /** @type {number[]} */
+  const recentIds = [];
   for (const row of recentCheckups ?? []) {
     if (!seenIds.has(row.customer_id)) {
       seenIds.add(row.customer_id);
@@ -67,14 +64,14 @@ export default async function PatientsPage({
   );
   const recentlySeen = recentIds
     .filter((cid) => recentNames.has(cid))
-    .map((cid) => ({ id: cid, name: recentNames.get(cid)! }));
+    .map((cid) => ({ id: cid, name: /** @type {string} */ (recentNames.get(cid)) }));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-foreground text-xl font-semibold">{t("title")}</h1>
         <Button asChild size="lg">
-          <Link href="/patients/new" locale={locale as "vi" | "en"}>
+          <Link href="/patients/new" locale={/** @type {"vi" | "en"} */ (locale)}>
             {t("new")}
           </Link>
         </Button>
@@ -90,7 +87,7 @@ export default async function PatientsPage({
               <Link
                 key={p.id}
                 href={`/patients/${p.id}`}
-                locale={locale as "vi" | "en"}
+                locale={/** @type {"vi" | "en"} */ (locale)}
                 className="border-border bg-muted/50 hover:bg-accent rounded-full border px-3 py-1 text-sm"
               >
                 {p.name}
@@ -121,7 +118,7 @@ export default async function PatientsPage({
               <div className="min-w-0">
                 <Link
                   href={`/patients/${p.id}`}
-                  locale={locale as "vi" | "en"}
+                  locale={/** @type {"vi" | "en"} */ (locale)}
                   className="text-foreground block truncate font-medium hover:underline"
                 >
                   {p.last_name} {p.first_name}
@@ -132,7 +129,10 @@ export default async function PatientsPage({
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <Button asChild variant="outline">
-                  <Link href={`/patients/${p.id}/edit`} locale={locale as "vi" | "en"}>
+                  <Link
+                    href={`/patients/${p.id}/edit`}
+                    locale={/** @type {"vi" | "en"} */ (locale)}
+                  >
                     {t("edit")}
                   </Link>
                 </Button>

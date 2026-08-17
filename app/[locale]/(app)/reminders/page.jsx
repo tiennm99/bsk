@@ -8,7 +8,11 @@
 import { getTranslations } from "next-intl/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default async function RemindersPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function RemindersPage({ params }) {
   await params;
   const t = await getTranslations("reminders");
 

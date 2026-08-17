@@ -17,7 +17,10 @@ export const dynamic = "force-dynamic";
 const RETENTION_DAYS = 7;
 const MEDIA_BUCKET = "bsk-checkup-media";
 
-export async function GET(req: Request) {
+/**
+ * @param {Request} req
+ */
+export async function GET(req) {
   if (!serverEnv.CRON_SECRET) {
     return new Response("CRON_SECRET not configured", { status: 503 });
   }

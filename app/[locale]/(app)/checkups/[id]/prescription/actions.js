@@ -16,35 +16,47 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { AppRole } from "@/lib/db/roles";
 import {
   MedicineLinesSchema,
   ServiceLinesSchema,
   MarkPaidSchema,
-  type PrescriptionSaveState,
-  type MarkPaidState,
 } from "@/lib/billing/prescription-schema";
 
-const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
-const BILLING: AppRole[] = ["admin", "cashier"];
-const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
-const isBilling = (r: AppRole | null | undefined) => !!r && BILLING.includes(r);
+/** @typedef {import('@/lib/db/roles').AppRole} AppRole */
+/** @typedef {import('@/lib/billing/prescription-schema').PrescriptionSaveState} PrescriptionSaveState */
+/** @typedef {import('@/lib/billing/prescription-schema').MarkPaidState} MarkPaidState */
 
-/** Parses a JSON-array form field; returns [] on any malformed input. */
-function parseJsonArray(raw: FormDataEntryValue | null): unknown[] {
+/** @type {AppRole[]} */
+const CLINICAL = ["admin", "receptionist", "doctor", "nurse"];
+/** @type {AppRole[]} */
+const BILLING = ["admin", "cashier"];
+/** @param {AppRole | null | undefined} r */
+const isClinical = (r) => !!r && CLINICAL.includes(r);
+/** @param {AppRole | null | undefined} r */
+const isBilling = (r) => !!r && BILLING.includes(r);
+
+/**
+ * Parses a JSON-array form field; returns [] on any malformed input.
+ * @param {FormDataEntryValue | null} raw
+ * @returns {unknown[]}
+ */
+function parseJsonArray(raw) {
   if (typeof raw !== "string") return [];
   try {
-    const v: unknown = JSON.parse(raw);
+    /** @type {unknown} */
+    const v = JSON.parse(raw);
     return Array.isArray(v) ? v : [];
   } catch {
     return [];
   }
 }
 
-export async function savePrescriptionAction(
-  _prev: PrescriptionSaveState,
-  formData: FormData,
-): Promise<PrescriptionSaveState> {
+/**
+ * @param {PrescriptionSaveState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<PrescriptionSaveState>}
+ */
+export async function savePrescriptionAction(_prev, formData) {
   const t = await getTranslations("billing");
 
   const session = await getServerSession();
@@ -95,10 +107,12 @@ export async function savePrescriptionAction(
   return redirect({ href: `/${locale}/checkups/${checkupId}`, locale });
 }
 
-export async function markPaidAction(
-  _prev: MarkPaidState,
-  formData: FormData,
-): Promise<MarkPaidState> {
+/**
+ * @param {MarkPaidState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<MarkPaidState>}
+ */
+export async function markPaidAction(_prev, formData) {
   const t = await getTranslations("billing");
 
   const session = await getServerSession();

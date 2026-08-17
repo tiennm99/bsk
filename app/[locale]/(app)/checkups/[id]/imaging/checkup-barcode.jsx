@@ -14,9 +14,12 @@ import bwipjs from "bwip-js/browser";
 
 import { Button } from "@/components/ui/button";
 
-export function CheckupBarcode({ checkupId }: { checkupId: number }) {
+/**
+ * @param {{ checkupId: number }} props
+ */
+export function CheckupBarcode({ checkupId }) {
   const t = useTranslations("imaging");
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef(/** @type {HTMLCanvasElement | null} */ (null));
   const [error, setError] = useState(false);
 
   useEffect(() => {

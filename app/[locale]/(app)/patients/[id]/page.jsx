@@ -12,17 +12,18 @@ import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 
-const STATUS_STYLE: Record<string, string> = {
+/** @type {Record<string, string>} */
+const STATUS_STYLE = {
   waiting: "bg-muted text-foreground",
   in_progress: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200",
   done: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200",
 };
 
-export default async function PatientDetailPage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string, id: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function PatientDetailPage({ params }) {
   const { locale, id } = await params;
   const t = await getTranslations("patients");
   const tCheckups = await getTranslations("checkups");
@@ -61,7 +62,7 @@ export default async function PatientDetailPage({
 
   const rows = checkups ?? [];
   const doctorIds = [
-    ...new Set(rows.map((r) => r.doctor_id).filter((d): d is number => d != null)),
+    ...new Set(rows.map((r) => r.doctor_id).filter(/** @returns {d is number} */ (d) => d != null)),
   ];
   const { data: doctors } = doctorIds.length
     ? await supabase.from("doctors").select("id, last_name, first_name").in("id", doctorIds)
@@ -91,7 +92,7 @@ export default async function PatientDetailPage({
           </p>
         </div>
         <Button asChild variant="outline">
-          <Link href={`/patients/${customer.id}/edit`} locale={locale as "vi" | "en"}>
+          <Link href={`/patients/${customer.id}/edit`} locale={/** @type {"vi" | "en"} */ (locale)}>
             {t("edit")}
           </Link>
         </Button>
@@ -106,7 +107,7 @@ export default async function PatientDetailPage({
             <li key={c.id}>
               <Link
                 href={`/checkups/${c.id}`}
-                locale={locale as "vi" | "en"}
+                locale={/** @type {"vi" | "en"} */ (locale)}
                 className="hover:bg-accent -mx-2 flex items-center justify-between gap-3 rounded-md px-2 py-3"
               >
                 <div className="min-w-0">

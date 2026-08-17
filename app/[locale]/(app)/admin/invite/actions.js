@@ -24,15 +24,19 @@ import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createRateLimiter } from "@/lib/upstash";
-import { InviteUserSchema, type InviteUserState } from "@/lib/auth/invite-schema";
+import { InviteUserSchema } from "@/lib/auth/invite-schema";
+
+/** @typedef {import('@/lib/auth/invite-schema').InviteUserState} InviteUserState */
 
 // Bound SMTP spend on the SHARED project: cap invites per admin. 20 / hour.
 const inviteLimiter = createRateLimiter("invite", 20, 3600);
 
-export async function inviteUserAction(
-  _prevState: InviteUserState,
-  formData: FormData,
-): Promise<InviteUserState> {
+/**
+ * @param {InviteUserState} _prevState
+ * @param {FormData} formData
+ * @returns {Promise<InviteUserState>}
+ */
+export async function inviteUserAction(_prevState, formData) {
   const t = await getTranslations("admin.invite");
 
   // ── Caller-role check (defense-in-depth) ──────────────────────────────────
@@ -59,7 +63,7 @@ export async function inviteUserAction(
     const flat = parsed.error.flatten();
     return {
       status: "error",
-      fieldErrors: flat.fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (flat.fieldErrors),
       formError: null,
     };
   }
@@ -75,7 +79,7 @@ export async function inviteUserAction(
     // An existing email (often a sibling-app user on the shared auth pool)
     // makes inviteUserByEmail fail — report it as "already enrolled/known"
     // rather than a generic error so the admin understands what happened.
-    const code = (inviteError as { code?: string } | null)?.code;
+    const code = /** @type {{ code?: string } | null} */ (inviteError)?.code;
     const msg = inviteError?.message?.toLowerCase() ?? "";
     const emailExists =
       code === "email_exists" ||

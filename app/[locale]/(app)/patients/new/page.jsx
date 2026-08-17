@@ -17,7 +17,11 @@ const BLANK = {
   addressDetail: "",
 };
 
-export default async function NewPatientPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function NewPatientPage({ params }) {
   await params;
   const t = await getTranslations("patients");
 

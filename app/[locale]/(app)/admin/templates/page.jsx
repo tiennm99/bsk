@@ -10,7 +10,11 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { deactivateTemplateAction } from "./actions";
 
-export default async function TemplatesPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function TemplatesPage({ params }) {
   const { locale } = await params;
   const t = await getTranslations("admin.templates");
 
@@ -27,7 +31,7 @@ export default async function TemplatesPage({ params }: { params: Promise<{ loca
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-foreground text-xl font-semibold">{t("title")}</h1>
         <Button asChild size="lg">
-          <Link href="/admin/templates/new" locale={locale as "vi" | "en"}>
+          <Link href="/admin/templates/new" locale={/** @type {"vi" | "en"} */ (locale)}>
             {t("new")}
           </Link>
         </Button>
@@ -45,7 +49,10 @@ export default async function TemplatesPage({ params }: { params: Promise<{ loca
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <Button asChild variant="outline">
-                  <Link href={`/admin/templates/${tpl.id}/edit`} locale={locale as "vi" | "en"}>
+                  <Link
+                    href={`/admin/templates/${tpl.id}/edit`}
+                    locale={/** @type {"vi" | "en"} */ (locale)}
+                  >
                     {t("edit")}
                   </Link>
                 </Button>

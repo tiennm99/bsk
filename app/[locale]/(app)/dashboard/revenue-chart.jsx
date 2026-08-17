@@ -8,7 +8,8 @@ import { formatVnd, formatVndCompact } from "@/lib/billing/totals";
 const vnd = formatVnd;
 const compact = formatVndCompact;
 
-export function RevenueChart({ data }: { data: { day: string; amount: number }[] }) {
+/** @param {{ data: { day: string, amount: number }[] }} props */
+export function RevenueChart({ data }) {
   return (
     <div className="h-56 w-full text-current">
       <ResponsiveContainer width="100%" height="100%">

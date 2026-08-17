@@ -4,7 +4,11 @@ import { getTranslations } from "next-intl/server";
 import { TemplateForm } from "../template-form";
 import { createTemplateAction } from "../actions";
 
-export default async function NewTemplatePage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function NewTemplatePage({ params }) {
   await params;
   const t = await getTranslations("admin.templates");
 

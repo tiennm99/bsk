@@ -9,11 +9,11 @@ import { getTranslations } from "next-intl/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ClinicSettingsForm } from "./clinic-settings-form";
 
-export default async function ClinicSettingsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function ClinicSettingsPage({ params }) {
   await params; // Next.js 16: params is async.
   const t = await getTranslations("admin.settings");
 

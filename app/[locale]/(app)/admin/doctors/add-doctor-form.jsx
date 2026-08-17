@@ -14,18 +14,21 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DoctorSchema, type DoctorInput, type DoctorFormState } from "@/lib/doctors/doctor-schema";
+import { DoctorSchema } from "@/lib/doctors/doctor-schema";
 import { createDoctorAction } from "./actions";
 
+/** @typedef {import('@/lib/doctors/doctor-schema').DoctorInput} DoctorInput */
+/** @typedef {import('@/lib/doctors/doctor-schema').DoctorFormState} DoctorFormState */
+
+/** Admin form to add a doctor row. @returns {import("react").JSX.Element} */
 export function AddDoctorForm() {
   const t = useTranslations("admin.doctors");
 
-  const [state, dispatchAction, isPending] = useActionState<DoctorFormState, FormData>(
-    createDoctorAction,
-    { status: "idle" },
-  );
+  const [state, dispatchAction, isPending] = useActionState(createDoctorAction, {
+    status: "idle",
+  });
 
-  const form = useForm<DoctorInput>({
+  const form = useForm({
     resolver: zodResolver(DoctorSchema),
     mode: "onBlur",
     defaultValues: { firstName: "", lastName: "" },

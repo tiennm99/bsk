@@ -2,7 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { MedicineForm } from "../medicine-form";
 import { createMedicineAction } from "../actions";
 
-export default async function NewMedicinePage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function NewMedicinePage({ params }) {
   await params;
   const t = await getTranslations("admin.medicines");
   return (

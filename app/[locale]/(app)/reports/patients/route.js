@@ -13,6 +13,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/** Streams the patients report as an XLSX download. @returns {Promise<Response>} */
 export async function GET() {
   const session = await getServerSession();
   if (session?.role !== "admin" && session?.role !== "cashier") {
@@ -32,21 +33,21 @@ export async function GET() {
     .order("last_name", { ascending: true })
     .order("first_name", { ascending: true });
 
+  /** @param {string | null} v
+   *  @returns {v is string} */
+  const isString = (v) => v != null;
+
   const rows = customers ?? [];
-  const provinceCodes = [
-    ...new Set(rows.map((r) => r.province_code).filter((v): v is string => v != null)),
-  ];
-  const wardCodes = [
-    ...new Set(rows.map((r) => r.ward_code).filter((v): v is string => v != null)),
-  ];
+  const provinceCodes = [...new Set(rows.map((r) => r.province_code).filter(isString))];
+  const wardCodes = [...new Set(rows.map((r) => r.ward_code).filter(isString))];
 
   const [{ data: provinces }, { data: wards }] = await Promise.all([
     provinceCodes.length
       ? supabase.from("provinces").select("code, name").in("code", provinceCodes)
-      : Promise.resolve({ data: [] as { code: string; name: string }[] }),
+      : Promise.resolve({ data: /** @type {{ code: string, name: string }[]} */ ([]) }),
     wardCodes.length
       ? supabase.from("wards").select("code, name").in("code", wardCodes)
-      : Promise.resolve({ data: [] as { code: string; name: string }[] }),
+      : Promise.resolve({ data: /** @type {{ code: string, name: string }[]} */ ([]) }),
   ]);
 
   const provinceName = new Map((provinces ?? []).map((p) => [p.code, p.name]));
@@ -71,7 +72,7 @@ export async function GET() {
   const ws = XLSX.utils.json_to_sheet(sheetRows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Patients");
-  const buffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+  const buffer = /** @type {Buffer} */ (XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
 
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(
     new Date(),

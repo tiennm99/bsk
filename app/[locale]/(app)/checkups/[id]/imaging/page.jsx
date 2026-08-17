@@ -18,11 +18,11 @@ import { ImageCapture } from "./image-capture";
 import { ImageGallery } from "./image-gallery";
 import { CheckupBarcode } from "./checkup-barcode";
 
-export default async function ImagingPage({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}) {
+/**
+ * @param {{ params: Promise<{ locale: string, id: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function ImagingPage({ params }) {
   const { locale, id } = await params;
   const t = await getTranslations("imaging");
   const tReports = await getTranslations("reports");

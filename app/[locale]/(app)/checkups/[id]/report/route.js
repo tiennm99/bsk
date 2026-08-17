@@ -14,17 +14,20 @@ import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CHECKUP_MEDIA_BUCKET, SIGNED_URL_TTL_SECONDS } from "@/lib/imaging/image-schema";
 import { computeAge } from "@/lib/pdf/patient-info";
-import { renderUltrasoundPdf, type UltrasoundImage } from "@/lib/pdf/ultrasound-document";
+import { renderUltrasoundPdf } from "@/lib/pdf/ultrasound-document";
+
+/** @typedef {import('@/lib/pdf/ultrasound-document').UltrasoundImage} UltrasoundImage */
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_REPORT_IMAGES = 4;
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ locale: string; id: string }> },
-) {
+/**
+ * @param {Request} _req
+ * @param {{ params: Promise<{ locale: string, id: string }> }} context
+ */
+export async function GET(_req, { params }) {
   const { id } = await params;
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
@@ -75,23 +78,27 @@ export async function GET(
   const tPatients = await getTranslations("patients");
 
   const downloaded = await Promise.all(
-    (images ?? []).map(async (img): Promise<UltrasoundImage | null> => {
-      const { data: signed } = await supabase.storage
-        .from(CHECKUP_MEDIA_BUCKET)
-        .createSignedUrl(img.storage_path, SIGNED_URL_TTL_SECONDS);
-      if (!signed?.signedUrl) return null;
-      try {
-        const res = await fetch(signed.signedUrl);
-        if (!res.ok) return null;
-        const arrayBuffer = await res.arrayBuffer();
-        return { data: Buffer.from(arrayBuffer), format: "jpg" };
-      } catch {
-        return null;
-      }
-    }),
+    (images ?? []).map(
+      /** @returns {Promise<UltrasoundImage | null>} */
+      async (img) => {
+        const { data: signed } = await supabase.storage
+          .from(CHECKUP_MEDIA_BUCKET)
+          .createSignedUrl(img.storage_path, SIGNED_URL_TTL_SECONDS);
+        if (!signed?.signedUrl) return null;
+        try {
+          const res = await fetch(signed.signedUrl);
+          if (!res.ok) return null;
+          const arrayBuffer = await res.arrayBuffer();
+          return { data: Buffer.from(arrayBuffer), format: "jpg" };
+        } catch {
+          return null;
+        }
+      },
+    ),
   );
-  const reportImages: UltrasoundImage[] = downloaded.filter(
-    (img): img is UltrasoundImage => img != null,
+  /** @type {UltrasoundImage[]} */
+  const reportImages = downloaded.filter(
+    /** @returns {img is UltrasoundImage} */ (img) => img != null,
   );
 
   const buffer = await renderUltrasoundPdf({

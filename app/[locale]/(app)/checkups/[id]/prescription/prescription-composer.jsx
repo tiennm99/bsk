@@ -18,38 +18,51 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { dosePresets } from "@/lib/billing/dose-presets";
-import {
-  paymentMethods,
-  type MarkPaidState,
-  type PrescriptionSaveState,
-} from "@/lib/billing/prescription-schema";
+import { paymentMethods } from "@/lib/billing/prescription-schema";
 import { markPaidAction, savePrescriptionAction } from "./actions";
+
+/** @typedef {import('@/lib/billing/prescription-schema').MarkPaidState} MarkPaidState */
+/** @typedef {import('@/lib/billing/prescription-schema').PrescriptionSaveState} PrescriptionSaveState */
 
 const DOSE_PRESETS_LIST_ID = "dose-presets";
 
-const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
+/** @param {number} n */
+const vnd = (n) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
 
 const SELECT =
   "border-input bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus-visible:ring-2 disabled:opacity-50";
 
-type Medicine = { id: number; name: string; unit: string | null; sale_price: number };
-type Service = { id: number; name: string; price: number };
+/** @typedef {{ id: number, name: string, unit: string | null, sale_price: number }} Medicine */
+/** @typedef {{ id: number, name: string, price: number }} Service */
 
-type MedicineRow = {
-  key: string;
-  medicineId: number;
-  quantity: number;
-  dosage: string;
-  notes: string;
-};
-type ServiceRow = { key: string; serviceId: number; quantity: number };
+/**
+ * @typedef {object} MedicineRow
+ * @property {string} key
+ * @property {number} medicineId
+ * @property {number} quantity
+ * @property {string} dosage
+ * @property {string} notes
+ */
+/** @typedef {{ key: string, serviceId: number, quantity: number }} ServiceRow */
 
-type Payment = {
-  status: "unpaid" | "paid";
-  method: string | null;
-  paidAt: string | null;
-};
+/**
+ * @typedef {object} Payment
+ * @property {"unpaid" | "paid"} status
+ * @property {string | null} method
+ * @property {string | null} paidAt
+ */
 
+/**
+ * @param {{
+ *   checkupId: number,
+ *   medicines: Medicine[],
+ *   services: Service[],
+ *   initialMedicineLines: { medicineId: number, quantity: number, dosage: string, notes: string }[],
+ *   initialServiceLines: { serviceId: number, quantity: number }[],
+ *   payment: Payment,
+ *   canMarkPaid: boolean,
+ * }} props
+ */
 export function PrescriptionComposer({
   checkupId,
   medicines,
@@ -58,34 +71,24 @@ export function PrescriptionComposer({
   initialServiceLines,
   payment,
   canMarkPaid,
-}: {
-  checkupId: number;
-  medicines: Medicine[];
-  services: Service[];
-  initialMedicineLines: { medicineId: number; quantity: number; dosage: string; notes: string }[];
-  initialServiceLines: { serviceId: number; quantity: number }[];
-  payment: Payment;
-  canMarkPaid: boolean;
 }) {
   const t = useTranslations("billing");
 
-  const [medicineRows, setMedicineRows] = useState<MedicineRow[]>(() =>
-    initialMedicineLines.map((l, i) => ({ ...l, key: `m-init-${i}` })),
+  const [medicineRows, setMedicineRows] = useState(
+    /** @type {MedicineRow[]} */ (
+      initialMedicineLines.map((l, i) => ({ ...l, key: `m-init-${i}` }))
+    ),
   );
-  const [serviceRows, setServiceRows] = useState<ServiceRow[]>(() =>
-    initialServiceLines.map((l, i) => ({ ...l, key: `s-init-${i}` })),
+  const [serviceRows, setServiceRows] = useState(
+    /** @type {ServiceRow[]} */ (initialServiceLines.map((l, i) => ({ ...l, key: `s-init-${i}` }))),
   );
 
-  const [saveState, saveDispatch, isSaving] = useActionState<PrescriptionSaveState, FormData>(
-    savePrescriptionAction,
-    { status: "idle" },
-  );
-  const [payState, payDispatch, isPaying] = useActionState<MarkPaidState, FormData>(
-    markPaidAction,
-    {
-      status: "idle",
-    },
-  );
+  const [saveState, saveDispatch, isSaving] = useActionState(savePrescriptionAction, {
+    status: "idle",
+  });
+  const [payState, payDispatch, isPaying] = useActionState(markPaidAction, {
+    status: "idle",
+  });
 
   const medMap = new Map(medicines.map((m) => [m.id, m.sale_price]));
   const svcMap = new Map(services.map((s) => [s.id, s.price]));
@@ -101,26 +104,32 @@ export function PrescriptionComposer({
         notes: "",
       },
     ]);
-  const removeMedicineRow = (key: string) =>
-    setMedicineRows((rows) => rows.filter((r) => r.key !== key));
-  const updateMedicineRow = <K extends keyof MedicineRow>(
-    key: string,
-    field: K,
-    value: MedicineRow[K],
-  ) => setMedicineRows((rows) => rows.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
+  /** @param {string} key */
+  const removeMedicineRow = (key) => setMedicineRows((rows) => rows.filter((r) => r.key !== key));
+  /**
+   * @template {keyof MedicineRow} K
+   * @param {string} key
+   * @param {K} field
+   * @param {MedicineRow[K]} value
+   */
+  const updateMedicineRow = (key, field, value) =>
+    setMedicineRows((rows) => rows.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
 
   const addServiceRow = () =>
     setServiceRows((rows) => [
       ...rows,
       { key: `s-${crypto.randomUUID()}`, serviceId: services[0]?.id ?? 0, quantity: 1 },
     ]);
-  const removeServiceRow = (key: string) =>
-    setServiceRows((rows) => rows.filter((r) => r.key !== key));
-  const updateServiceRow = <K extends keyof ServiceRow>(
-    key: string,
-    field: K,
-    value: ServiceRow[K],
-  ) => setServiceRows((rows) => rows.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
+  /** @param {string} key */
+  const removeServiceRow = (key) => setServiceRows((rows) => rows.filter((r) => r.key !== key));
+  /**
+   * @template {keyof ServiceRow} K
+   * @param {string} key
+   * @param {K} field
+   * @param {ServiceRow[K]} value
+   */
+  const updateServiceRow = (key, field, value) =>
+    setServiceRows((rows) => rows.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
 
   const medicineTotal = medicineRows.reduce(
     (sum, r) => sum + (medMap.get(r.medicineId) ?? 0) * (r.quantity || 0),

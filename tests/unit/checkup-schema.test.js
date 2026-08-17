@@ -53,7 +53,7 @@ describe("CheckupSaveSchema", () => {
       conclusion: "",
       notes: "",
       recheckDate: "",
-      status: "in_progress" as const,
+      status: /** @type {import("@/lib/checkups/checkup-schema").CheckupStatus} */ ("in_progress"),
     };
     const result = CheckupSaveSchema.safeParse(payload);
     expect(result.success).toBe(true);
@@ -89,7 +89,7 @@ describe("CheckupSaveSchema", () => {
       conclusion: "",
       notes: "",
       recheckDate: "2026-08-10",
-      status: "done" as const,
+      status: /** @type {import("@/lib/checkups/checkup-schema").CheckupStatus} */ ("done"),
     };
     const result = CheckupSaveSchema.safeParse(payload);
     expect(result.success).toBe(true);
@@ -107,7 +107,7 @@ describe("CheckupSaveSchema", () => {
       conclusion: "",
       notes: "",
       recheckDate: "invalid-date",
-      status: "done" as const,
+      status: /** @type {import("@/lib/checkups/checkup-schema").CheckupStatus} */ ("done"),
     };
     const result = CheckupSaveSchema.safeParse(payload);
     expect(result.success).toBe(false);
@@ -125,7 +125,7 @@ describe("CheckupSaveSchema", () => {
       conclusion: "Rest",
       notes: "Monitor",
       recheckDate: "",
-      status: "done" as const,
+      status: /** @type {import("@/lib/checkups/checkup-schema").CheckupStatus} */ ("done"),
     };
     const result = CheckupSaveSchema.safeParse(payload);
     expect(result.success).toBe(true);

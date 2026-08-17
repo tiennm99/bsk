@@ -3,37 +3,45 @@ import { registerPdfFonts } from "./fonts";
 
 /** Server-rendered invoice PDF (Be Vietnam Pro registered via registerPdfFonts). */
 
-export type InvoiceLine = { name: string; quantity: number; unitPrice: number; lineTotal: number };
+/**
+ * @typedef {object} InvoiceLine
+ * @property {string} name
+ * @property {number} quantity
+ * @property {number} unitPrice
+ * @property {number} lineTotal
+ */
 
-export type InvoiceData = {
-  clinicName: string;
-  clinicAddress: string;
-  clinicPhone: string;
-  patientName: string;
-  date: string;
-  queueNumber: number | null;
-  medicines: InvoiceLine[];
-  services: InvoiceLine[];
-  total: number;
-  paid: boolean;
-  labels: {
-    invoice: string;
-    patient: string;
-    date: string;
-    queue: string;
-    medicines: string;
-    services: string;
-    item: string;
-    qty: string;
-    unitPrice: string;
-    lineTotal: string;
-    total: string;
-    paid: string;
-    unpaid: string;
-  };
-};
+/**
+ * @typedef {object} InvoiceData
+ * @property {string} clinicName
+ * @property {string} clinicAddress
+ * @property {string} clinicPhone
+ * @property {string} patientName
+ * @property {string} date
+ * @property {number | null} queueNumber
+ * @property {InvoiceLine[]} medicines
+ * @property {InvoiceLine[]} services
+ * @property {number} total
+ * @property {boolean} paid
+ * @property {{
+ *   invoice: string;
+ *   patient: string;
+ *   date: string;
+ *   queue: string;
+ *   medicines: string;
+ *   services: string;
+ *   item: string;
+ *   qty: string;
+ *   unitPrice: string;
+ *   lineTotal: string;
+ *   total: string;
+ *   paid: string;
+ *   unpaid: string;
+ * }} labels
+ */
 
-const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
+/** @param {number} n */
+const vnd = (n) => `${new Intl.NumberFormat("vi-VN").format(n)} ₫`;
 
 const s = StyleSheet.create({
   page: { fontFamily: "Be Vietnam Pro", fontSize: 10, padding: 36, color: "#111" },
@@ -65,15 +73,10 @@ const s = StyleSheet.create({
   status: { marginTop: 10, textAlign: "right", fontSize: 10 },
 });
 
-function Table({
-  title,
-  rows,
-  L,
-}: {
-  title: string;
-  rows: InvoiceLine[];
-  L: InvoiceData["labels"];
-}) {
+/**
+ * @param {{ title: string; rows: InvoiceLine[]; L: InvoiceData["labels"] }} props
+ */
+function Table({ title, rows, L }) {
   if (rows.length === 0) return null;
   return (
     <View>
@@ -96,7 +99,8 @@ function Table({
   );
 }
 
-export function InvoiceDocument({ data }: { data: InvoiceData }) {
+/** @param {{ data: InvoiceData }} props */
+export function InvoiceDocument({ data }) {
   const L = data.labels;
   return (
     <Document>
@@ -128,8 +132,12 @@ export function InvoiceDocument({ data }: { data: InvoiceData }) {
   );
 }
 
-/** Render the invoice to a PDF Buffer (Node runtime). Registers fonts first. */
-export async function renderInvoicePdf(data: InvoiceData): Promise<Buffer> {
+/**
+ * Render the invoice to a PDF Buffer (Node runtime). Registers fonts first.
+ * @param {InvoiceData} data
+ * @returns {Promise<Buffer>}
+ */
+export async function renderInvoicePdf(data) {
   registerPdfFonts();
   return renderToBuffer(<InvoiceDocument data={data} />);
 }

@@ -15,7 +15,9 @@ import { revalidatePath } from "next/cache";
 
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { DoctorSchema, type DoctorFormState } from "@/lib/doctors/doctor-schema";
+import { DoctorSchema } from "@/lib/doctors/doctor-schema";
+
+/** @typedef {import('@/lib/doctors/doctor-schema').DoctorFormState} DoctorFormState */
 
 async function revalidateDoctors() {
   const locale = await getLocale();
@@ -23,10 +25,12 @@ async function revalidateDoctors() {
 }
 
 // ── Create (useActionState-compatible) ───────────────────────────────────────
-export async function createDoctorAction(
-  _prev: DoctorFormState,
-  formData: FormData,
-): Promise<DoctorFormState> {
+/**
+ * @param {DoctorFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<DoctorFormState>}
+ */
+export async function createDoctorAction(_prev, formData) {
   const t = await getTranslations("admin.doctors");
 
   const session = await getServerSession();
@@ -41,7 +45,7 @@ export async function createDoctorAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }
@@ -70,7 +74,11 @@ export async function createDoctorAction(
 }
 
 // ── Update ───────────────────────────────────────────────────────────────────
-export async function updateDoctorAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function updateDoctorAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 
@@ -98,7 +106,11 @@ export async function updateDoctorAction(formData: FormData): Promise<void> {
 }
 
 // ── Soft-delete (deactivate) ─────────────────────────────────────────────────
-export async function deactivateDoctorAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function deactivateDoctorAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 

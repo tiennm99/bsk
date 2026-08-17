@@ -14,50 +14,50 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getWardsAction } from "./actions";
-import type { CustomerFormState } from "@/lib/customers/customer-schema";
 
-type Option = { code: string; name: string };
+/** @typedef {import('@/lib/customers/customer-schema').CustomerFormState} CustomerFormState */
 
-export type PatientDefaults = {
-  id?: number;
-  lastName: string;
-  firstName: string;
-  dob: string;
-  gender: string;
-  phone: string;
-  cccd: string;
-  provinceCode: string;
-  wardCode: string;
-  addressDetail: string;
-};
+/** @typedef {{ code: string, name: string }} Option */
+
+/**
+ * @typedef {object} PatientDefaults
+ * @property {number} [id]
+ * @property {string} lastName
+ * @property {string} firstName
+ * @property {string} dob
+ * @property {string} gender
+ * @property {string} phone
+ * @property {string} cccd
+ * @property {string} provinceCode
+ * @property {string} wardCode
+ * @property {string} addressDetail
+ */
 
 const SELECT_CLASS =
   "border-input bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-md border px-3 text-sm focus:outline-none focus-visible:ring-2 disabled:opacity-50";
 
-export function PatientForm({
-  mode,
-  action,
-  provinces,
-  initialWards,
-  defaults,
-}: {
-  mode: "create" | "edit";
-  action: (prev: CustomerFormState, formData: FormData) => Promise<CustomerFormState>;
-  provinces: Option[];
-  initialWards: Option[];
-  defaults: PatientDefaults;
-}) {
+/**
+ * @param {{
+ *   mode: "create" | "edit",
+ *   action: (prev: CustomerFormState, formData: FormData) => Promise<CustomerFormState>,
+ *   provinces: Option[],
+ *   initialWards: Option[],
+ *   defaults: PatientDefaults,
+ * }} props
+ */
+export function PatientForm({ mode, action, provinces, initialWards, defaults }) {
   const t = useTranslations("patients");
-  const [state, dispatch, isPending] = useActionState<CustomerFormState, FormData>(action, {
+  const [state, dispatch, isPending] = useActionState(action, {
     status: "idle",
   });
 
   const [province, setProvince] = useState(defaults.provinceCode);
   const [ward, setWard] = useState(defaults.wardCode);
-  const [wards, setWards] = useState<Option[]>(initialWards);
+  const [wards, setWards] = useState(/** @type {Option[]} */ (initialWards));
   const [loadingWards, startWards] = useTransition();
 
-  function onProvinceChange(code: string) {
+  /** @param {string} code */
+  function onProvinceChange(code) {
     setProvince(code);
     setWard("");
     startWards(async () => setWards(await getWardsAction(code)));
@@ -66,7 +66,8 @@ export function PatientForm({
   const fe = state.status === "error" ? state.fieldErrors : {};
   const formError = state.status === "error" ? state.formError : null;
 
-  const err = (field: string) =>
+  /** @param {string} field */
+  const err = (field) =>
     fe[field]?.length ? (
       <p className="text-destructive text-sm" role="alert">
         {fe[field][0]}

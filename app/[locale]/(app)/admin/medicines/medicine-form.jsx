@@ -8,35 +8,41 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { MedicineFormState } from "@/lib/catalog/medicine-schema";
 
-export type MedicineDefaults = {
-  id?: number;
-  name: string;
-  unit: string;
-  salePrice: string;
-  costPrice: string;
-  company: string;
-  route: string;
-};
+/** @typedef {import('@/lib/catalog/medicine-schema').MedicineFormState} MedicineFormState */
 
-export function MedicineForm({
-  mode,
-  action,
-  defaults,
-}: {
-  mode: "create" | "edit";
-  action: (prev: MedicineFormState, formData: FormData) => Promise<MedicineFormState>;
-  defaults: MedicineDefaults;
-}) {
+/**
+ * @typedef {Object} MedicineDefaults
+ * @property {number} [id]
+ * @property {string} name
+ * @property {string} unit
+ * @property {string} salePrice
+ * @property {string} costPrice
+ * @property {string} company
+ * @property {string} route
+ */
+
+/**
+ * @param {{
+ *   mode: "create" | "edit",
+ *   action: (prev: MedicineFormState, formData: FormData) => Promise<MedicineFormState>,
+ *   defaults: MedicineDefaults,
+ * }} props
+ */
+export function MedicineForm({ mode, action, defaults }) {
   const t = useTranslations("admin.medicines");
-  const [state, dispatch, isPending] = useActionState<MedicineFormState, FormData>(action, {
+  const [state, dispatch, isPending] = useActionState(action, {
     status: "idle",
   });
   const fe = state.status === "error" ? state.fieldErrors : {};
   const formError = state.status === "error" ? state.formError : null;
 
-  const field = (name: keyof MedicineDefaults, label: string, type = "text") => (
+  /**
+   * @param {keyof MedicineDefaults} name
+   * @param {string} label
+   * @param {string} [type]
+   */
+  const field = (name, label, type = "text") => (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
       <Input

@@ -1,5 +1,5 @@
 import createMiddleware from "next-intl/middleware";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
 import { updateSupabaseSession, PROTECTED_PATH_PREFIXES } from "@/lib/supabase/session";
 import { copyCookies } from "@/lib/proxy/copy-cookies";
@@ -18,7 +18,11 @@ const handleI18nRouting = createMiddleware(routing);
  * Strips the leading locale segment before comparing so "/vi/dashboard" and
  * "/en/dashboard" both match "/dashboard".
  */
-function isProtectedPath(pathname: string): boolean {
+/**
+ * @param {string} pathname
+ * @returns {boolean}
+ */
+function isProtectedPath(pathname) {
   // Remove a leading locale segment if present (e.g. "/vi" or "/en").
   const localeSegmentRe = new RegExp(`^\\/(${routing.locales.join("|")})(\\/.*)?(\\?.*)?$`);
   const match = localeSegmentRe.exec(pathname);
@@ -51,7 +55,11 @@ function isProtectedPath(pathname: string): boolean {
  * NOTE: No `export const runtime = 'edge'` — proxy runs on the Node.js runtime
  * in Next.js 16+. Supabase SSR is not certified for the Edge runtime.
  */
-export default async function proxy(request: NextRequest): Promise<NextResponse> {
+/**
+ * @param {import("next/server").NextRequest} request
+ * @returns {Promise<NextResponse>}
+ */
+export default async function proxy(request) {
   // ── Step 1: Supabase session refresh ─────────────────────────────────────
   const { response: supabaseResponse, user } = await updateSupabaseSession(request);
 

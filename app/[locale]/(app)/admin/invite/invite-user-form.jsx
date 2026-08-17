@@ -23,30 +23,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { appRoles } from "@/lib/db/roles";
-import {
-  InviteUserSchema,
-  type InviteUserInput,
-  type InviteUserState,
-} from "@/lib/auth/invite-schema";
+import { InviteUserSchema } from "@/lib/auth/invite-schema";
 import { inviteUserAction } from "./actions";
+
+/** @typedef {import('@/lib/auth/invite-schema').InviteUserInput} InviteUserInput */
+/** @typedef {import('@/lib/auth/invite-schema').InviteUserState} InviteUserState */
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
+/** Admin form that invites a user by email with a role. @returns {import("react").JSX.Element} */
 export function InviteUserForm() {
   const t = useTranslations("admin.invite");
   const tRoles = useTranslations("roles");
 
-  const [state, dispatchAction, isPending] = useActionState<InviteUserState, FormData>(
-    inviteUserAction,
-    { status: "idle" },
-  );
+  const [state, dispatchAction, isPending] = useActionState(inviteUserAction, {
+    status: "idle",
+  });
 
-  const form = useForm<InviteUserInput>({
+  const form = useForm({
     resolver: zodResolver(InviteUserSchema),
     mode: "onBlur",
-    defaultValues: { email: "", role: "patient" },
+    defaultValues: { email: "", role: /** @type {InviteUserInput["role"]} */ ("patient") },
   });
 
   const { errors: fieldErrors } = form.formState;

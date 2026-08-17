@@ -18,22 +18,27 @@ import { revalidatePath } from "next/cache";
 
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { AppRole } from "@/lib/db/roles";
 import {
   CHECKUP_MEDIA_BUCKET,
   DeleteImageSchema,
   RecordImageSchema,
   isValidStoragePath,
-  type ImageActionState,
 } from "@/lib/imaging/image-schema";
 
-const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
-const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
+/** @typedef {import('@/lib/db/roles').AppRole} AppRole */
+/** @typedef {import('@/lib/imaging/image-schema').ImageActionState} ImageActionState */
 
-export async function recordImageAction(
-  checkupId: number,
-  storagePath: string,
-): Promise<ImageActionState> {
+/** @type {AppRole[]} */
+const CLINICAL = ["admin", "receptionist", "doctor", "nurse"];
+/** @param {AppRole | null | undefined} r */
+const isClinical = (r) => !!r && CLINICAL.includes(r);
+
+/**
+ * @param {number} checkupId
+ * @param {string} storagePath
+ * @returns {Promise<ImageActionState>}
+ */
+export async function recordImageAction(checkupId, storagePath) {
   const t = await getTranslations("imaging");
 
   const session = await getServerSession();
@@ -65,11 +70,13 @@ export async function recordImageAction(
   return { status: "success" };
 }
 
-export async function deleteImageAction(
-  checkupId: number,
-  imageId: number,
-  storagePath: string,
-): Promise<ImageActionState> {
+/**
+ * @param {number} checkupId
+ * @param {number} imageId
+ * @param {string} storagePath
+ * @returns {Promise<ImageActionState>}
+ */
+export async function deleteImageAction(checkupId, imageId, storagePath) {
   const t = await getTranslations("imaging");
 
   const session = await getServerSession();

@@ -7,19 +7,20 @@
  */
 
 import { getTranslations } from "next-intl/server";
-import type { AppRole } from "@/lib/db/roles";
 import { SidebarNav } from "@/components/app-shell/sidebar-nav";
 import { SignOutButton } from "@/components/app-shell/sign-out-button";
 import { LocaleSwitcher } from "@/components/app-shell/locale-switcher";
 
-type SidebarProps = {
-  email: string;
-  fullName: string | null;
-  role: AppRole;
-  locale: string;
-};
+/**
+ * @typedef {object} SidebarProps
+ * @property {string} email
+ * @property {string | null} fullName
+ * @property {import("@/lib/db/roles").AppRole} role
+ * @property {string} locale
+ */
 
-export async function Sidebar({ email, fullName, role, locale }: SidebarProps) {
+/** @param {SidebarProps} props */
+export async function Sidebar({ email, fullName, role, locale }) {
   const tRoles = await getTranslations("roles");
 
   return (

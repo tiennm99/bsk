@@ -20,7 +20,7 @@ import { useTranslations } from "next-intl";
 import { Wifi, WifiOff } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-type ConnectionStatus = "live" | "disconnected";
+/** @typedef {"live" | "disconnected"} ConnectionStatus */
 
 const timeFormatter = new Intl.DateTimeFormat("vi-VN", {
   hour: "2-digit",
@@ -29,11 +29,12 @@ const timeFormatter = new Intl.DateTimeFormat("vi-VN", {
   hour12: false,
 });
 
+/** Realtime connection badge: subscribes to queue changes and refreshes the route on updates. @returns {import("react").JSX.Element} */
 export function QueueRealtime() {
   const router = useRouter();
   const t = useTranslations("queue");
-  const [status, setStatus] = useState<ConnectionStatus>("disconnected");
-  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const [status, setStatus] = useState(/** @type {ConnectionStatus} */ ("disconnected"));
+  const [lastUpdatedAt, setLastUpdatedAt] = useState(/** @type {string | null} */ (null));
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();

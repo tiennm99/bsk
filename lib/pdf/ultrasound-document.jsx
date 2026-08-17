@@ -8,34 +8,39 @@ import { registerPdfFonts } from "./fonts";
  * time in every runtime, so the route handler fetches the bytes first.
  */
 
-export type UltrasoundImage = { data: Buffer; format: "jpg" | "png" };
+/**
+ * @typedef {object} UltrasoundImage
+ * @property {Buffer} data
+ * @property {"jpg" | "png"} format
+ */
 
-export type UltrasoundData = {
-  clinicName: string;
-  clinicAddress: string;
-  clinicPhone: string;
-  title: string;
-  patientName: string;
-  patientDob: string | null;
-  patientAge: number | null;
-  patientGender: string | null;
-  date: string;
-  diagnosis: string | null;
-  conclusion: string | null;
-  doctorName: string | null;
-  images: UltrasoundImage[];
-  labels: {
-    patient: string;
-    date: string;
-    dob: string;
-    age: string;
-    gender: string;
-    diagnosis: string;
-    conclusion: string;
-    doctor: string;
-    signature: string;
-  };
-};
+/**
+ * @typedef {object} UltrasoundData
+ * @property {string} clinicName
+ * @property {string} clinicAddress
+ * @property {string} clinicPhone
+ * @property {string} title
+ * @property {string} patientName
+ * @property {string | null} patientDob
+ * @property {number | null} patientAge
+ * @property {string | null} patientGender
+ * @property {string} date
+ * @property {string | null} diagnosis
+ * @property {string | null} conclusion
+ * @property {string | null} doctorName
+ * @property {UltrasoundImage[]} images
+ * @property {{
+ *   patient: string;
+ *   date: string;
+ *   dob: string;
+ *   age: string;
+ *   gender: string;
+ *   diagnosis: string;
+ *   conclusion: string;
+ *   doctor: string;
+ *   signature: string;
+ * }} labels
+ */
 
 const s = StyleSheet.create({
   page: { fontFamily: "Be Vietnam Pro", fontSize: 10, padding: 36, color: "#111" },
@@ -56,7 +61,8 @@ const s = StyleSheet.create({
   signatureName: { fontWeight: "bold", marginTop: 4 },
 });
 
-export function UltrasoundDocument({ data }: { data: UltrasoundData }) {
+/** @param {{ data: UltrasoundData }} props */
+export function UltrasoundDocument({ data }) {
   const L = data.labels;
   return (
     <Document>
@@ -122,8 +128,12 @@ export function UltrasoundDocument({ data }: { data: UltrasoundData }) {
   );
 }
 
-/** Render the ultrasound report to a PDF Buffer (Node runtime). Registers fonts first. */
-export async function renderUltrasoundPdf(data: UltrasoundData): Promise<Buffer> {
+/**
+ * Render the ultrasound report to a PDF Buffer (Node runtime). Registers fonts first.
+ * @param {UltrasoundData} data
+ * @returns {Promise<Buffer>}
+ */
+export async function renderUltrasoundPdf(data) {
   registerPdfFonts();
   return renderToBuffer(<UltrasoundDocument data={data} />);
 }

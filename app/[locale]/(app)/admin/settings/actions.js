@@ -11,17 +11,19 @@ import { revalidatePath } from "next/cache";
 
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import {
-  ClinicSettingsSchema,
-  type ClinicSettingsState,
-} from "@/lib/clinic/clinic-settings-schema";
+import { ClinicSettingsSchema } from "@/lib/clinic/clinic-settings-schema";
 
-const emptyToNull = (s: string) => (s.length > 0 ? s : null);
+/** @typedef {import('@/lib/clinic/clinic-settings-schema').ClinicSettingsState} ClinicSettingsState */
 
-export async function updateClinicSettingsAction(
-  _prev: ClinicSettingsState,
-  formData: FormData,
-): Promise<ClinicSettingsState> {
+/** @param {string} s */
+const emptyToNull = (s) => (s.length > 0 ? s : null);
+
+/**
+ * @param {ClinicSettingsState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<ClinicSettingsState>}
+ */
+export async function updateClinicSettingsAction(_prev, formData) {
   const t = await getTranslations("admin.settings");
 
   const session = await getServerSession();
@@ -38,7 +40,7 @@ export async function updateClinicSettingsAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }

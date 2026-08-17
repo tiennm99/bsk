@@ -7,42 +7,44 @@ import { registerPdfFonts } from "./fonts";
  * dosage column is the whole point of a prescription.
  */
 
-export type PrescriptionMedicineLine = {
-  name: string;
-  unit: string | null;
-  quantity: number;
-  dosage: string;
-};
+/**
+ * @typedef {object} PrescriptionMedicineLine
+ * @property {string} name
+ * @property {string | null} unit
+ * @property {number} quantity
+ * @property {string} dosage
+ */
 
-export type PrescriptionData = {
-  clinicName: string;
-  clinicAddress: string;
-  clinicPhone: string;
-  patientName: string;
-  patientDob: string | null;
-  patientAge: number | null;
-  patientGender: string | null;
-  patientAddress: string | null;
-  date: string;
-  diagnosis: string | null;
-  doctorName: string | null;
-  medicines: PrescriptionMedicineLine[];
-  labels: {
-    prescription: string;
-    patient: string;
-    date: string;
-    dob: string;
-    age: string;
-    gender: string;
-    address: string;
-    diagnosis: string;
-    item: string;
-    qty: string;
-    dosage: string;
-    doctor: string;
-    signature: string;
-  };
-};
+/**
+ * @typedef {object} PrescriptionData
+ * @property {string} clinicName
+ * @property {string} clinicAddress
+ * @property {string} clinicPhone
+ * @property {string} patientName
+ * @property {string | null} patientDob
+ * @property {number | null} patientAge
+ * @property {string | null} patientGender
+ * @property {string | null} patientAddress
+ * @property {string} date
+ * @property {string | null} diagnosis
+ * @property {string | null} doctorName
+ * @property {PrescriptionMedicineLine[]} medicines
+ * @property {{
+ *   prescription: string;
+ *   patient: string;
+ *   date: string;
+ *   dob: string;
+ *   age: string;
+ *   gender: string;
+ *   address: string;
+ *   diagnosis: string;
+ *   item: string;
+ *   qty: string;
+ *   dosage: string;
+ *   doctor: string;
+ *   signature: string;
+ * }} labels
+ */
 
 const s = StyleSheet.create({
   page: { fontFamily: "Be Vietnam Pro", fontSize: 10, padding: 36, color: "#111" },
@@ -76,13 +78,10 @@ const s = StyleSheet.create({
   signatureName: { fontWeight: "bold", marginTop: 4 },
 });
 
-function MedicineTable({
-  rows,
-  L,
-}: {
-  rows: PrescriptionMedicineLine[];
-  L: PrescriptionData["labels"];
-}) {
+/**
+ * @param {{ rows: PrescriptionMedicineLine[]; L: PrescriptionData["labels"] }} props
+ */
+function MedicineTable({ rows, L }) {
   if (rows.length === 0) return null;
   return (
     <View>
@@ -104,7 +103,8 @@ function MedicineTable({
   );
 }
 
-export function PrescriptionDocument({ data }: { data: PrescriptionData }) {
+/** @param {{ data: PrescriptionData }} props */
+export function PrescriptionDocument({ data }) {
   const L = data.labels;
   return (
     <Document>
@@ -159,8 +159,12 @@ export function PrescriptionDocument({ data }: { data: PrescriptionData }) {
   );
 }
 
-/** Render the prescription to a PDF Buffer (Node runtime). Registers fonts first. */
-export async function renderPrescriptionPdf(data: PrescriptionData): Promise<Buffer> {
+/**
+ * Render the prescription to a PDF Buffer (Node runtime). Registers fonts first.
+ * @param {PrescriptionData} data
+ * @returns {Promise<Buffer>}
+ */
+export async function renderPrescriptionPdf(data) {
   registerPdfFonts();
   return renderToBuffer(<PrescriptionDocument data={data} />);
 }

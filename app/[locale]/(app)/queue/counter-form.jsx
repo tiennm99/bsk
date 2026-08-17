@@ -11,15 +11,16 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { SetQueueCounterState } from "@/lib/checkups/checkup-schema";
 import { setQueueCounterAction } from "./actions";
 
-export function CounterForm({ shiftId, currentValue }: { shiftId: number; currentValue: number }) {
+/** @typedef {import('@/lib/checkups/checkup-schema').SetQueueCounterState} SetQueueCounterState */
+
+/**
+ * @param {{ shiftId: number, currentValue: number }} props
+ */
+export function CounterForm({ shiftId, currentValue }) {
   const t = useTranslations("queue");
-  const [state, dispatch, isPending] = useActionState<SetQueueCounterState, FormData>(
-    setQueueCounterAction,
-    { status: "idle" },
-  );
+  const [state, dispatch, isPending] = useActionState(setQueueCounterAction, { status: "idle" });
 
   return (
     <form action={dispatch} className="flex items-center gap-2">

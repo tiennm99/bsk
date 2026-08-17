@@ -13,19 +13,23 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { AppRole } from "@/lib/db/roles";
-import {
-  CustomerSchema,
-  type CustomerFormState,
-  type CustomerInput,
-} from "@/lib/customers/customer-schema";
+import { CustomerSchema } from "@/lib/customers/customer-schema";
 
-const CLINICAL_ROLES: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
-const isClinical = (role: AppRole | null | undefined) => !!role && CLINICAL_ROLES.includes(role);
-const nullIfBlank = (s: string) => (s.trim().length ? s.trim() : null);
+/** @typedef {import('@/lib/db/roles').AppRole} AppRole */
+/** @typedef {import('@/lib/customers/customer-schema').CustomerFormState} CustomerFormState */
+/** @typedef {import('@/lib/customers/customer-schema').CustomerInput} CustomerInput */
 
-function readForm(formData: FormData) {
-  const get = (k: string) => String(formData.get(k) ?? "");
+/** @type {AppRole[]} */
+const CLINICAL_ROLES = ["admin", "receptionist", "doctor", "nurse"];
+/** @param {AppRole | null | undefined} role */
+const isClinical = (role) => !!role && CLINICAL_ROLES.includes(role);
+/** @param {string} s */
+const nullIfBlank = (s) => (s.trim().length ? s.trim() : null);
+
+/** @param {FormData} formData */
+function readForm(formData) {
+  /** @param {string} k */
+  const get = (k) => String(formData.get(k) ?? "");
   return {
     lastName: get("lastName"),
     firstName: get("firstName"),
@@ -39,7 +43,8 @@ function readForm(formData: FormData) {
   };
 }
 
-function toRow(d: CustomerInput) {
+/** @param {CustomerInput} d */
+function toRow(d) {
   return {
     first_name: d.firstName,
     last_name: d.lastName,
@@ -54,10 +59,12 @@ function toRow(d: CustomerInput) {
 }
 
 // ── Create (useActionState-compatible; redirects to the list on success) ─────
-export async function createCustomerAction(
-  _prev: CustomerFormState,
-  formData: FormData,
-): Promise<CustomerFormState> {
+/**
+ * @param {CustomerFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<CustomerFormState>}
+ */
+export async function createCustomerAction(_prev, formData) {
   const t = await getTranslations("patients");
 
   const session = await getServerSession();
@@ -69,7 +76,7 @@ export async function createCustomerAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }
@@ -97,10 +104,12 @@ export async function createCustomerAction(
 }
 
 // ── Update ───────────────────────────────────────────────────────────────────
-export async function updateCustomerAction(
-  _prev: CustomerFormState,
-  formData: FormData,
-): Promise<CustomerFormState> {
+/**
+ * @param {CustomerFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<CustomerFormState>}
+ */
+export async function updateCustomerAction(_prev, formData) {
   const t = await getTranslations("patients");
 
   const session = await getServerSession();
@@ -115,7 +124,7 @@ export async function updateCustomerAction(
       status: "error",
       fieldErrors: parsed.success
         ? {}
-        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+        : /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -138,7 +147,11 @@ export async function updateCustomerAction(
 }
 
 // ── Soft-delete (deactivate) ─────────────────────────────────────────────────
-export async function deactivateCustomerAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function deactivateCustomerAction(formData) {
   const session = await getServerSession();
   if (!isClinical(session?.role)) return;
 
@@ -159,9 +172,11 @@ export async function deactivateCustomerAction(formData: FormData): Promise<void
 }
 
 // ── Wards for a province (cascading address dropdown) ─────────────────────────
-export async function getWardsAction(
-  provinceCode: string,
-): Promise<{ code: string; name: string }[]> {
+/**
+ * @param {string} provinceCode
+ * @returns {Promise<{ code: string, name: string }[]>}
+ */
+export async function getWardsAction(provinceCode) {
   const session = await getServerSession();
   if (!session?.role || !provinceCode) return [];
 

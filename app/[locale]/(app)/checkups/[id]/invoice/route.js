@@ -7,16 +7,19 @@
 import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { renderInvoicePdf, type InvoiceLine } from "@/lib/pdf/invoice-document";
+import { renderInvoicePdf } from "@/lib/pdf/invoice-document";
 import { sumLineTotals } from "@/lib/billing/totals";
+
+/** @typedef {import('@/lib/pdf/invoice-document').InvoiceLine} InvoiceLine */
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ locale: string; id: string }> },
-) {
+/**
+ * @param {Request} _req
+ * @param {{ params: Promise<{ locale: string, id: string }> }} context
+ */
+export async function GET(_req, { params }) {
   const { id } = await params;
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
@@ -69,13 +72,15 @@ export async function GET(
   const medName = new Map((meds ?? []).map((m) => [m.id, m.name]));
   const svcName = new Map((services ?? []).map((x) => [x.id, x.name]));
 
-  const medicines: InvoiceLine[] = (items ?? []).map((i) => ({
+  /** @type {InvoiceLine[]} */
+  const medicines = (items ?? []).map((i) => ({
     name: medName.get(i.medicine_id) ?? "—",
     quantity: i.quantity,
     unitPrice: i.unit_price,
     lineTotal: i.line_total,
   }));
-  const serviceLines: InvoiceLine[] = (svcs ?? []).map((x) => ({
+  /** @type {InvoiceLine[]} */
+  const serviceLines = (svcs ?? []).map((x) => ({
     name: svcName.get(x.service_id) ?? "—",
     quantity: x.quantity,
     unitPrice: x.unit_price,

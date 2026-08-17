@@ -16,19 +16,16 @@
  * "authed but unenrolled" edge case the proxy cannot detect.
  */
 
-import type { ReactNode } from "react";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { signOutAction } from "@/app/[locale]/(auth)/sign-in/actions";
 import { AppShell } from "@/components/app-shell/app-shell";
 
-export default async function AppLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
-}) {
+/**
+ * @param {{ children: import("react").ReactNode, params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element | null>}
+ */
+export default async function AppLayout({ children, params }) {
   const { locale } = await params;
 
   const session = await getServerSession();

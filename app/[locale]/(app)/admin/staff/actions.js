@@ -22,7 +22,11 @@ async function revalidateStaff() {
   revalidatePath(`/${locale}/admin/staff`);
 }
 
-export async function updateStaffRoleAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function updateStaffRoleAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 
@@ -43,7 +47,11 @@ export async function updateStaffRoleAction(formData: FormData): Promise<void> {
   }
 }
 
-export async function removeStaffAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function removeStaffAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 

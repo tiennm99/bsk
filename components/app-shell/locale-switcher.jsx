@@ -13,6 +13,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
+/** Dropdown that switches the active locale while preserving the path. @returns {import("react").JSX.Element} */
 export function LocaleSwitcher() {
   const locale = useLocale();
   const router = useRouter();
@@ -22,8 +23,9 @@ export function LocaleSwitcher() {
   // slots (desktop rail + mobile drawer) — no duplicate id / label collision.
   const selectId = useId();
 
-  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const nextLocale = e.target.value as (typeof routing.locales)[number];
+  /** @param {import("react").ChangeEvent<HTMLSelectElement>} e */
+  function handleChange(e) {
+    const nextLocale = /** @type {(typeof routing.locales)[number]} */ (e.target.value);
     router.replace(pathname, { locale: nextLocale });
   }
 

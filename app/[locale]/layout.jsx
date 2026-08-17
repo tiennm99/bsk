@@ -5,8 +5,6 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Be_Vietnam_Pro } from "next/font/google";
-import type { Metadata, Viewport } from "next";
-import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SessionProvider } from "@/lib/auth/session-provider";
@@ -23,29 +21,30 @@ const beVietnamPro = Be_Vietnam_Pro({
   display: "swap",
 });
 
-export const metadata: Metadata = {
+/** @type {import("next").Metadata} */
+export const metadata = {
   title: "BSK Clinic",
   description: "Educational clinic management rewrite",
 };
 
-export const viewport: Viewport = {
+/** @type {import("next").Viewport} */
+export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
 };
 
+/** Pre-renders one static shell per supported locale. @returns {{ locale: string }[]} */
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ locale: string }>;
-}) {
+/**
+ * @param {{ children: import("react").ReactNode, params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function LocaleLayout({ children, params }) {
   const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {

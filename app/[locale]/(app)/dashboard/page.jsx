@@ -13,7 +13,11 @@ import { formatVnd, sumLineTotals } from "@/lib/billing/totals";
 
 const vnd = formatVnd;
 
-export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function DashboardPage({ params }) {
   await params;
 
   const t = await getTranslations("dashboard");
@@ -56,7 +60,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           .gte("checkup_date", days[0])
           .lte("checkup_date", today)
           .eq("deleted", false)
-      : Promise.resolve({ data: [] as { id: number; checkup_date: string }[] }),
+      : Promise.resolve({
+          data: /** @type {{ id: number, checkup_date: string }[]} */ ([]),
+        }),
   ]);
 
   let revenue7d = days.map((d) => ({ day: d.slice(5), amount: 0 }));
@@ -74,7 +80,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
     ]);
     const paid = new Set((paidOrders ?? []).map((o) => o.checkup_id));
     const dateOf = new Map(weekCheckups.map((c) => [c.id, c.checkup_date]));
-    const totalByCheckup = new Map<number, number>();
+    const totalByCheckup = /** @type {Map<number, number>} */ (new Map());
     for (const r of [...(oi ?? []), ...(cs ?? [])]) {
       totalByCheckup.set(r.checkup_id, (totalByCheckup.get(r.checkup_id) ?? 0) + r.line_total);
     }

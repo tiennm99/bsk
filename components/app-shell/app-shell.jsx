@@ -6,20 +6,20 @@
  * user info from the (app) layout which has already validated session + role.
  */
 
-import type { ReactNode } from "react";
-import type { AppRole } from "@/lib/db/roles";
 import { Sidebar } from "@/components/app-shell/sidebar";
 import { AppShellFrame } from "@/components/app-shell/app-shell-frame";
 
-type AppShellProps = {
-  email: string;
-  fullName: string | null;
-  role: AppRole;
-  locale: string;
-  children: ReactNode;
-};
+/**
+ * @typedef {object} AppShellProps
+ * @property {string} email
+ * @property {string | null} fullName
+ * @property {import("@/lib/db/roles").AppRole} role
+ * @property {string} locale
+ * @property {import("react").ReactNode} children
+ */
 
-export function AppShell({ email, fullName, role, locale, children }: AppShellProps) {
+/** @param {AppShellProps} props */
+export function AppShell({ email, fullName, role, locale, children }) {
   return (
     <AppShellFrame
       sidebar={<Sidebar email={email} fullName={fullName} role={role} locale={locale} />}

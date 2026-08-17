@@ -16,7 +16,11 @@ export const dynamic = "force-dynamic";
 
 const MONTH_RE = /^\d{4}-\d{2}$/;
 
-function monthRange(month: string): { start: string; end: string } {
+/**
+ * @param {string} month
+ * @returns {{ start: string, end: string }}
+ */
+function monthRange(month) {
   const parts = month.split("-");
   const y = Number(parts[0] ?? 0);
   const m = Number(parts[1] ?? 1);
@@ -27,7 +31,8 @@ function monthRange(month: string): { start: string; end: string } {
   return { start, end };
 }
 
-export async function GET(req: Request) {
+/** @param {Request} req */
+export async function GET(req) {
   const session = await getServerSession();
   if (session?.role !== "admin" && session?.role !== "cashier") {
     return new Response("Forbidden", { status: 403 });
@@ -69,7 +74,7 @@ export async function GET(req: Request) {
         .in("checkup_id", ids)
         .eq("payment_status", "paid")
     : {
-        data: [] as { checkup_id: number; payment_status: string; payment_method: string | null }[],
+        data: /** @type {{ checkup_id: number, payment_status: string, payment_method: string | null }[]} */ ([]),
       };
 
   const paidIds = new Set((orders ?? []).map((o) => o.checkup_id));
@@ -81,43 +86,51 @@ export async function GET(req: Request) {
   const [{ data: custs }, { data: items }, { data: svcs }] = await Promise.all([
     custIds.length
       ? supabase.from("customers").select("id, last_name, first_name").in("id", custIds)
-      : Promise.resolve({ data: [] as { id: number; last_name: string; first_name: string }[] }),
+      : Promise.resolve({
+          data: /** @type {{ id: number, last_name: string, first_name: string }[]} */ ([]),
+        }),
     paidCheckupIds.length
       ? supabase
           .from("order_items")
           .select("checkup_id, line_total")
           .in("checkup_id", paidCheckupIds)
-      : Promise.resolve({ data: [] as { checkup_id: number; line_total: number }[] }),
+      : Promise.resolve({
+          data: /** @type {{ checkup_id: number, line_total: number }[]} */ ([]),
+        }),
     paidCheckupIds.length
       ? supabase
           .from("checkup_services")
           .select("checkup_id, line_total")
           .in("checkup_id", paidCheckupIds)
-      : Promise.resolve({ data: [] as { checkup_id: number; line_total: number }[] }),
+      : Promise.resolve({
+          data: /** @type {{ checkup_id: number, line_total: number }[]} */ ([]),
+        }),
   ]);
 
   const name = new Map((custs ?? []).map((c) => [c.id, `${c.last_name} ${c.first_name}`]));
-  const medSubtotalBy = new Map<number, number>();
+  const medSubtotalBy = /** @type {Map<number, number>} */ (new Map());
   for (const it of items ?? []) {
     medSubtotalBy.set(it.checkup_id, (medSubtotalBy.get(it.checkup_id) ?? 0) + it.line_total);
   }
-  const svcSubtotalBy = new Map<number, number>();
+  const svcSubtotalBy = /** @type {Map<number, number>} */ (new Map());
   for (const sv of svcs ?? []) {
     svcSubtotalBy.set(sv.checkup_id, (svcSubtotalBy.get(sv.checkup_id) ?? 0) + sv.line_total);
   }
 
-  const KNOWN_METHODS = ["cash", "card", "transfer"] as const;
-  const methodLabel = (method: string | null) => {
+  const KNOWN_METHODS = /** @type {const} */ (["cash", "card", "transfer"]);
+  /** @param {string | null} method */
+  const methodLabel = (method) => {
     if (!method) return "";
-    return (KNOWN_METHODS as readonly string[]).includes(method)
+    return /** @type {readonly string[]} */ (KNOWN_METHODS).includes(method)
       ? tBilling(`method.${method}`)
       : method;
   };
 
-  type RevenueRow = Record<string, string | number>;
+  /** @typedef {Record<string, string | number>} RevenueRow */
 
   let grandTotal = 0;
-  const sheetRows: RevenueRow[] = paidRows.map((r) => {
+  /** @type {RevenueRow[]} */
+  const sheetRows = paidRows.map((r) => {
     const medSubtotal = medSubtotalBy.get(r.id) ?? 0;
     const svcSubtotal = svcSubtotalBy.get(r.id) ?? 0;
     const total = medSubtotal + svcSubtotal;
@@ -144,7 +157,7 @@ export async function GET(req: Request) {
   const ws = XLSX.utils.json_to_sheet(sheetRows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Revenue");
-  const buffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+  const buffer = /** @type {Buffer} */ (XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
 
   return new Response(new Uint8Array(buffer), {
     headers: {

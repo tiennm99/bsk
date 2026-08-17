@@ -1,5 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
+/**
+ * @returns {Promise<import("react").JSX.Element>}
+ */
 export default async function LocaleNotFound() {
   const t = await getTranslations("errors");
 

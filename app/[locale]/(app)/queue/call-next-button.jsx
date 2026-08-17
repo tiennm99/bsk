@@ -16,28 +16,22 @@ import { callNextPatientAction } from "./actions";
 
 const TYPING_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"]);
 
-export function CallNextButton({
-  shiftId,
-  shiftLabel,
-  waitingCount,
-  enableShortcut,
-}: {
-  shiftId: number;
-  shiftLabel: string;
-  waitingCount: number;
-  enableShortcut: boolean;
-}) {
+/**
+ * @param {{ shiftId: number, shiftLabel: string, waitingCount: number, enableShortcut: boolean }} props
+ */
+export function CallNextButton({ shiftId, shiftLabel, waitingCount, enableShortcut }) {
   const t = useTranslations("queue");
-  const formRef = useRef<HTMLFormElement>(null);
+  const formRef = useRef(/** @type {HTMLFormElement | null} */ (null));
 
   useEffect(() => {
     if (!enableShortcut) return;
 
-    function onKeyDown(event: KeyboardEvent) {
+    /** @param {KeyboardEvent} event */
+    function onKeyDown(event) {
       if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (event.key.toLowerCase() !== "n") return;
 
-      const target = event.target as HTMLElement | null;
+      const target = /** @type {HTMLElement | null} */ (event.target);
       if (target && (TYPING_TAGS.has(target.tagName) || target.isContentEditable)) return;
 
       event.preventDefault();

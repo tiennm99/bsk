@@ -20,7 +20,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createRateLimiter } from "@/lib/upstash";
-import { parseSignIn, type SignInState } from "@/lib/auth/schemas";
+import { parseSignIn } from "@/lib/auth/schemas";
+
+/** @typedef {import('@/lib/auth/schemas').SignInState} SignInState */
 
 // Brute-force guard on the SHARED Supabase auth quota. Keyed by client IP
 // (not email) so an attacker cannot lock a specific victim out. 5 tries / 60s.
@@ -40,10 +42,12 @@ const signInLimiter = createRateLimiter("login", 5, 60);
  *     out and return the same generic error (enumeration defense).
  *  4. redirect to /${locale}/dashboard — never returns on the success path.
  */
-export async function signInAction(
-  _prevState: SignInState,
-  formData: FormData,
-): Promise<SignInState> {
+/**
+ * @param {SignInState} _prevState
+ * @param {FormData} formData
+ * @returns {Promise<SignInState>}
+ */
+export async function signInAction(_prevState, formData) {
   const t = await getTranslations("auth.signIn");
 
   // Step 1 — schema validation
@@ -160,7 +164,10 @@ export async function signInAction(
  * The try/catch around signOut is intentional: cookie clearing is local, so
  * even if the Supabase call fails we still redirect to clear the UI state.
  */
-export async function signOutAction(): Promise<void> {
+/**
+ * @returns {Promise<void>}
+ */
+export async function signOutAction() {
   const supabase = await createSupabaseServerClient();
 
   try {

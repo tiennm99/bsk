@@ -15,16 +15,20 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { deleteImageAction } from "./actions";
 
-type GalleryImage = { id: number; storagePath: string; url: string | null };
+/** @typedef {{ id: number, storagePath: string, url: string | null }} GalleryImage */
 
-export function ImageGallery({ checkupId, images }: { checkupId: number; images: GalleryImage[] }) {
+/**
+ * @param {{ checkupId: number, images: GalleryImage[] }} props
+ */
+export function ImageGallery({ checkupId, images }) {
   const t = useTranslations("imaging");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [pendingId, setPendingId] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [pendingId, setPendingId] = useState(/** @type {number | null} */ (null));
+  const [error, setError] = useState(/** @type {string | null} */ (null));
 
-  function handleDelete(image: GalleryImage) {
+  /** @param {GalleryImage} image */
+  function handleDelete(image) {
     setError(null);
     setPendingId(image.id);
     startTransition(async () => {

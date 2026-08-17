@@ -1,12 +1,12 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { ReactNode } from "react";
-import type { User } from "@/lib/auth/get-server-session";
+
+/** @typedef {import("@/lib/auth/get-server-session").User} User */
 
 // ── Context ───────────────────────────────────────────────────────────────────
 
-const SessionContext = createContext<User | null>(null);
+const SessionContext = createContext(/** @type {User | null} */ (null));
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
@@ -20,8 +20,10 @@ const SessionContext = createContext<User | null>(null);
  *
  * Phase 06 consumes this via `useSession()` for: sidebar user badge,
  * sign-out button, and client-side role checks.
+ *
+ * @param {{ user: User | null; children: import("react").ReactNode }} props
  */
-export function SessionProvider({ user, children }: { user: User | null; children: ReactNode }) {
+export function SessionProvider({ user, children }) {
   return <SessionContext.Provider value={user}>{children}</SessionContext.Provider>;
 }
 
@@ -30,7 +32,9 @@ export function SessionProvider({ user, children }: { user: User | null; childre
 /**
  * Returns the current authenticated user, or `null` when unauthenticated.
  * Must be called from a client component inside `<SessionProvider>`.
+ *
+ * @returns {User | null}
  */
-export function useSession(): User | null {
+export function useSession() {
   return useContext(SessionContext);
 }

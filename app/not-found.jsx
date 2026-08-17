@@ -3,6 +3,7 @@ import { routing } from "@/i18n/routing";
 
 // Outside-locale fallback (URL didn't match any locale segment). Renders
 // without locale context, so messages are hardcoded in both languages.
+/** Root 404 page outside the locale segment. @returns {import("react").JSX.Element} */
 export default function GlobalNotFound() {
   return (
     <html lang={routing.defaultLocale}>

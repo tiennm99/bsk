@@ -6,56 +6,59 @@
  * (redirects to the queue on success).
  */
 
-import { useActionState, useEffect, useRef, useState, type RefObject } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { checkupStatuses, type CheckupSaveState } from "@/lib/checkups/checkup-schema";
+import { checkupStatuses } from "@/lib/checkups/checkup-schema";
 import { saveCheckupAction } from "./actions";
+
+/** @typedef {import('@/lib/checkups/checkup-schema').CheckupSaveState} CheckupSaveState */
 
 const CONTROL =
   "border-input bg-background text-foreground focus-visible:ring-ring w-full rounded-md border px-3 text-sm focus:outline-none focus-visible:ring-2 disabled:opacity-50";
 
-export type CheckupDefaults = {
-  id: number;
-  heartBeat: string;
-  bloodPressure: string;
-  temperature: string;
-  weight: string;
-  height: string;
-  symptoms: string;
-  diagnosis: string;
-  conclusion: string;
-  notes: string;
-  recheckDate: string;
-  status: string;
-};
+/**
+ * @typedef {object} CheckupDefaults
+ * @property {number} id
+ * @property {string} heartBeat
+ * @property {string} bloodPressure
+ * @property {string} temperature
+ * @property {string} weight
+ * @property {string} height
+ * @property {string} symptoms
+ * @property {string} diagnosis
+ * @property {string} conclusion
+ * @property {string} notes
+ * @property {string} recheckDate
+ * @property {string} status
+ */
 
-export type CheckupTemplateOption = { id: number; name: string; labels: string[] };
-type TemplateValue = { label: string; value: string };
+/** @typedef {{ id: number, name: string, labels: string[] }} CheckupTemplateOption */
+/** @typedef {{ label: string, value: string }} TemplateValue */
 
+/**
+ * @param {{
+ *   defaults: CheckupDefaults,
+ *   templates: CheckupTemplateOption[],
+ *   initialTemplateId: number | null,
+ *   initialTemplateValues: TemplateValue[],
+ *   diagnosisSuggestions?: string[],
+ * }} props
+ */
 export function CheckupForm({
   defaults,
   templates,
   initialTemplateId,
   initialTemplateValues,
   diagnosisSuggestions = [],
-}: {
-  defaults: CheckupDefaults;
-  templates: CheckupTemplateOption[];
-  initialTemplateId: number | null;
-  initialTemplateValues: TemplateValue[];
-  diagnosisSuggestions?: string[];
 }) {
   const t = useTranslations("checkups");
-  const [state, dispatch, isPending] = useActionState<CheckupSaveState, FormData>(
-    saveCheckupAction,
-    {
-      status: "idle",
-    },
-  );
+  const [state, dispatch, isPending] = useActionState(saveCheckupAction, {
+    status: "idle",
+  });
   const formError = state.status === "error" ? state.formError : null;
 
   // Unsaved-changes guard: any edit flips `dirty`; saving clears it so a
@@ -63,11 +66,12 @@ export function CheckupForm({
   // beforeunload doesn't fire for client-side route changes, so we also show
   // an in-app marker near the Save button.
   const [dirty, setDirty] = useState(false);
-  const diagnosisRef = useRef<HTMLTextAreaElement>(null);
+  const diagnosisRef = useRef(/** @type {HTMLTextAreaElement | null} */ (null));
 
   useEffect(() => {
     if (!dirty || isPending) return;
-    function onBeforeUnload(e: BeforeUnloadEvent) {
+    /** @param {BeforeUnloadEvent} e */
+    function onBeforeUnload(e) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -80,7 +84,8 @@ export function CheckupForm({
   // appends the chosen text into the (uncontrolled) textarea via ref — the
   // least disruptive option since it doesn't require converting the field to
   // controlled state.
-  function applyDiagnosisSuggestion(text: string) {
+  /** @param {string} text */
+  function applyDiagnosisSuggestion(text) {
     if (!text) return;
     const el = diagnosisRef.current;
     if (!el) return;
@@ -95,8 +100,10 @@ export function CheckupForm({
   const [templateId, setTemplateId] = useState(
     initialTemplateId != null ? String(initialTemplateId) : "",
   );
-  const [templateFieldValues, setTemplateFieldValues] = useState<Record<string, string>>(() =>
-    Object.fromEntries(initialTemplateValues.map((v) => [v.label, v.value])),
+  const [templateFieldValues, setTemplateFieldValues] = useState(
+    /** @type {Record<string, string>} */ (
+      Object.fromEntries(initialTemplateValues.map((v) => [v.label, v.value]))
+    ),
   );
 
   const selectedTemplate = templates.find((tpl) => String(tpl.id) === templateId) ?? null;
@@ -107,18 +114,23 @@ export function CheckupForm({
     })),
   );
 
-  const textField = (name: keyof CheckupDefaults, label: string) => (
+  /**
+   * @param {keyof CheckupDefaults} name
+   * @param {string} label
+   */
+  const textField = (name, label) => (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
       <Input id={name} name={name} defaultValue={defaults[name]} disabled={isPending} />
     </div>
   );
 
-  const area = (
-    name: keyof CheckupDefaults,
-    label: string,
-    ref?: RefObject<HTMLTextAreaElement | null>,
-  ) => (
+  /**
+   * @param {keyof CheckupDefaults} name
+   * @param {string} label
+   * @param {import("react").RefObject<HTMLTextAreaElement | null>} [ref]
+   */
+  const area = (name, label, ref) => (
     <div className="space-y-1.5">
       <Label htmlFor={name}>{label}</Label>
       <textarea

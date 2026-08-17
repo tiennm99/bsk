@@ -15,14 +15,15 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { ROLE_MENU } from "@/lib/auth/role-menu";
-import type { AppRole } from "@/lib/db/roles";
 
-type SidebarNavProps = {
-  role: AppRole;
-  locale: string;
-};
+/**
+ * @typedef {object} SidebarNavProps
+ * @property {import("@/lib/db/roles").AppRole} role
+ * @property {string} locale
+ */
 
-export function SidebarNav({ role, locale }: SidebarNavProps) {
+/** @param {SidebarNavProps} props */
+export function SidebarNav({ role, locale }) {
   const t = useTranslations();
   const pathname = usePathname();
   const items = ROLE_MENU[role];
@@ -37,7 +38,7 @@ export function SidebarNav({ role, locale }: SidebarNavProps) {
             <li key={item.href}>
               <Link
                 href={item.href}
-                locale={locale as "vi" | "en"}
+                locale={/** @type {"vi" | "en"} */ (locale)}
                 aria-current={isActive ? "page" : undefined}
                 className={`flex min-h-11 items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors ${
                   isActive
@@ -46,7 +47,7 @@ export function SidebarNav({ role, locale }: SidebarNavProps) {
                 }`}
               >
                 <Icon className="size-4 shrink-0" />
-                {t(item.labelKey as Parameters<typeof t>[0])}
+                {t(/** @type {Parameters<typeof t>[0]} */ (item.labelKey))}
               </Link>
             </li>
           );

@@ -14,7 +14,11 @@ export const dynamic = "force-dynamic";
 
 const MONTH_RE = /^\d{4}-\d{2}$/;
 
-function monthRange(month: string): { start: string; end: string } {
+/**
+ * @param {string} month
+ * @returns {{ start: string, end: string }}
+ */
+function monthRange(month) {
   const parts = month.split("-");
   const y = Number(parts[0] ?? 0);
   const m = Number(parts[1] ?? 1);
@@ -25,7 +29,8 @@ function monthRange(month: string): { start: string; end: string } {
   return { start, end };
 }
 
-export async function GET(req: Request) {
+/** @param {Request} req */
+export async function GET(req) {
   const session = await getServerSession();
   if (session?.role !== "admin" && session?.role !== "cashier") {
     return new Response("Forbidden", { status: 403 });
@@ -63,20 +68,28 @@ export async function GET(req: Request) {
   const [{ data: custs }, { data: items }, { data: svcs }, { data: orders }] = await Promise.all([
     custIds.length
       ? supabase.from("customers").select("id, last_name, first_name").in("id", custIds)
-      : Promise.resolve({ data: [] as { id: number; last_name: string; first_name: string }[] }),
+      : Promise.resolve({
+          data: /** @type {{ id: number, last_name: string, first_name: string }[]} */ ([]),
+        }),
     ids.length
       ? supabase.from("order_items").select("checkup_id, line_total").in("checkup_id", ids)
-      : Promise.resolve({ data: [] as { checkup_id: number; line_total: number }[] }),
+      : Promise.resolve({
+          data: /** @type {{ checkup_id: number, line_total: number }[]} */ ([]),
+        }),
     ids.length
       ? supabase.from("checkup_services").select("checkup_id, line_total").in("checkup_id", ids)
-      : Promise.resolve({ data: [] as { checkup_id: number; line_total: number }[] }),
+      : Promise.resolve({
+          data: /** @type {{ checkup_id: number, line_total: number }[]} */ ([]),
+        }),
     ids.length
       ? supabase.from("medicine_orders").select("checkup_id, payment_status").in("checkup_id", ids)
-      : Promise.resolve({ data: [] as { checkup_id: number; payment_status: string }[] }),
+      : Promise.resolve({
+          data: /** @type {{ checkup_id: number, payment_status: string }[]} */ ([]),
+        }),
   ]);
 
   const name = new Map((custs ?? []).map((c) => [c.id, `${c.last_name} ${c.first_name}`]));
-  const totalBy = new Map<number, number>();
+  const totalBy = /** @type {Map<number, number>} */ (new Map());
   for (const it of [...(items ?? []), ...(svcs ?? [])]) {
     totalBy.set(it.checkup_id, (totalBy.get(it.checkup_id) ?? 0) + it.line_total);
   }
@@ -94,7 +107,7 @@ export async function GET(req: Request) {
   const ws = XLSX.utils.json_to_sheet(sheetRows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Visits");
-  const buffer: Buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+  const buffer = /** @type {Buffer} */ (XLSX.write(wb, { type: "buffer", bookType: "xlsx" }));
 
   return new Response(new Uint8Array(buffer), {
     headers: {

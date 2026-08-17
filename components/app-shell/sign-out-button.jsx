@@ -26,6 +26,7 @@ function SignOutButtonInner() {
   );
 }
 
+/** Signs the user out via server action and redirects to sign-in. @returns {import("react").JSX.Element} */
 export function SignOutButton() {
   return (
     <form action={signOutAction}>

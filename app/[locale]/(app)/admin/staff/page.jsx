@@ -13,7 +13,11 @@ import { appRoles } from "@/lib/db/roles";
 import { Button } from "@/components/ui/button";
 import { updateStaffRoleAction, removeStaffAction } from "./actions";
 
-export default async function StaffPage({ params }: { params: Promise<{ locale: string }> }) {
+/**
+ * @param {{ params: Promise<{ locale: string }> }} props
+ * @returns {Promise<import("react").JSX.Element>}
+ */
+export default async function StaffPage({ params }) {
   await params;
   const t = await getTranslations("admin.staff");
   const tRoles = await getTranslations("roles");

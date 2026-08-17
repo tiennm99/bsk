@@ -9,7 +9,10 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
-export default function LocaleError({ reset }: { error: Error; reset: () => void }) {
+/**
+ * @param {{ error: Error, reset: () => void }} props
+ */
+export default function LocaleError({ reset }) {
   const t = useTranslations("errors");
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 text-center">

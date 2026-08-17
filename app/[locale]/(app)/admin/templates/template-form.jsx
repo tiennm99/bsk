@@ -12,37 +12,40 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { templateGenders, type TemplateFormState } from "@/lib/templates/template-schema";
+import { templateGenders } from "@/lib/templates/template-schema";
 
-export type TemplateDefaults = {
-  id?: number;
-  name: string;
-  title: string;
-  gender: string;
-  photoNum: number;
-  fieldsText: string;
-};
+/** @typedef {import('@/lib/templates/template-schema').TemplateFormState} TemplateFormState */
+
+/**
+ * @typedef {Object} TemplateDefaults
+ * @property {number} [id]
+ * @property {string} name
+ * @property {string} title
+ * @property {string} gender
+ * @property {number} photoNum
+ * @property {string} fieldsText
+ */
 
 const CONTROL =
   "border-input bg-background text-foreground focus-visible:ring-ring w-full rounded-md border px-3 text-sm focus:outline-none focus-visible:ring-2 disabled:opacity-50";
 
-export function TemplateForm({
-  mode,
-  action,
-  defaults,
-}: {
-  mode: "create" | "edit";
-  action: (prev: TemplateFormState, formData: FormData) => Promise<TemplateFormState>;
-  defaults: TemplateDefaults;
-}) {
+/**
+ * @param {{
+ *   mode: "create" | "edit",
+ *   action: (prev: TemplateFormState, formData: FormData) => Promise<TemplateFormState>,
+ *   defaults: TemplateDefaults,
+ * }} props
+ */
+export function TemplateForm({ mode, action, defaults }) {
   const t = useTranslations("admin.templates");
-  const [state, dispatch, isPending] = useActionState<TemplateFormState, FormData>(action, {
+  const [state, dispatch, isPending] = useActionState(action, {
     status: "idle",
   });
 
   const fe = state.status === "error" ? state.fieldErrors : {};
   const formError = state.status === "error" ? state.formError : null;
-  const err = (f: string) =>
+  /** @param {string} f */
+  const err = (f) =>
     fe[f]?.length ? (
       <p className="text-destructive text-sm" role="alert">
         {fe[f][0]}

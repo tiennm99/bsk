@@ -28,18 +28,21 @@ import {
 } from "@/lib/imaging/image-schema";
 import { recordImageAction } from "./actions";
 
-const QUALITY_STEPS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4] as const;
+/** @type {readonly [0.9, 0.8, 0.7, 0.6, 0.5, 0.4]} */
+const QUALITY_STEPS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4];
 // Downscale the longest side to this before quality-stepping — a full-res phone
 // photo (e.g. 4000×3000) never fits 200KB on JPEG quality alone, so we must
 // reduce resolution first. 1280px keeps ultrasound/clinic detail legible.
 const MAX_DIMENSION = 1280;
 
-/** Draw a source (video frame or image) onto a canvas scaled to fit MAX_DIMENSION. */
-function makeScaledCanvas(
-  source: CanvasImageSource,
-  w: number,
-  h: number,
-): HTMLCanvasElement | null {
+/**
+ * Draw a source (video frame or image) onto a canvas scaled to fit MAX_DIMENSION.
+ * @param {CanvasImageSource} source
+ * @param {number} w
+ * @param {number} h
+ * @returns {HTMLCanvasElement | null}
+ */
+function makeScaledCanvas(source, w, h) {
   const scale = Math.min(1, MAX_DIMENSION / Math.max(w, h));
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(w * scale));
@@ -58,13 +61,23 @@ const getCameraSupportSnapshot = () =>
   typeof navigator !== "undefined" && !!navigator.mediaDevices?.getUserMedia;
 const getCameraSupportServerSnapshot = () => false;
 
-function canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null> {
+/**
+ * @param {HTMLCanvasElement} canvas
+ * @param {number} quality
+ * @returns {Promise<Blob | null>}
+ */
+function canvasToBlob(canvas, quality) {
   return new Promise((resolve) => canvas.toBlob((b) => resolve(b), "image/jpeg", quality));
 }
 
-/** Steps JPEG quality down from 0.9 to 0.4 until the blob fits MAX_IMAGE_BYTES. */
-async function compressToJpeg(canvas: HTMLCanvasElement): Promise<Blob | null> {
-  let smallest: Blob | null = null;
+/**
+ * Steps JPEG quality down from 0.9 to 0.4 until the blob fits MAX_IMAGE_BYTES.
+ * @param {HTMLCanvasElement} canvas
+ * @returns {Promise<Blob | null>}
+ */
+async function compressToJpeg(canvas) {
+  /** @type {Blob | null} */
+  let smallest = null;
   for (const q of QUALITY_STEPS) {
     const blob = await canvasToBlob(canvas, q);
     if (!blob) continue;
@@ -74,12 +87,15 @@ async function compressToJpeg(canvas: HTMLCanvasElement): Promise<Blob | null> {
   return smallest && smallest.size <= MAX_IMAGE_BYTES ? smallest : null;
 }
 
-export function ImageCapture({ checkupId }: { checkupId: number }) {
+/**
+ * @param {{ checkupId: number }} props
+ */
+export function ImageCapture({ checkupId }) {
   const t = useTranslations("imaging");
   const router = useRouter();
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const videoRef = useRef(/** @type {HTMLVideoElement | null} */ (null));
+  const streamRef = useRef(/** @type {MediaStream | null} */ (null));
 
   // Browser-only feature detection without an Effect: getServerSnapshot
   // returns false so SSR/hydration render the same (no-camera) markup, then
@@ -91,7 +107,7 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
   );
   const [streaming, setStreaming] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(/** @type {string | null} */ (null));
 
   // Stop any open camera stream on unmount.
   useEffect(() => {
@@ -122,7 +138,8 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
     setStreaming(false);
   }
 
-  async function uploadFromCanvas(canvas: HTMLCanvasElement) {
+  /** @param {HTMLCanvasElement} canvas */
+  async function uploadFromCanvas(canvas) {
     setUploading(true);
     setError(null);
     try {
@@ -169,7 +186,8 @@ export function ImageCapture({ checkupId }: { checkupId: number }) {
     void uploadFromCanvas(canvas);
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  /** @param {import("react").ChangeEvent<HTMLInputElement>} e */
+  function handleFileChange(e) {
     const file = e.target.files?.[0];
     e.target.value = ""; // allow re-selecting the same file
     if (!file) return;

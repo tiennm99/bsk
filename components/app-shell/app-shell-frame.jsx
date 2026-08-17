@@ -13,7 +13,7 @@
  * the layout. Drawer auto-closes on route change.
  */
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
@@ -21,17 +21,19 @@ import { usePathname } from "@/i18n/navigation";
 const DRAWER_ID = "app-mobile-drawer";
 const MAIN_ID = "main-content";
 
-type AppShellFrameProps = {
-  sidebar: ReactNode;
-  children: ReactNode;
-};
+/**
+ * @typedef {object} AppShellFrameProps
+ * @property {import("react").ReactNode} sidebar
+ * @property {import("react").ReactNode} children
+ */
 
-export function AppShellFrame({ sidebar, children }: AppShellFrameProps) {
+/** @param {AppShellFrameProps} props */
+export function AppShellFrame({ sidebar, children }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("app");
-  const drawerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef(/** @type {HTMLDivElement | null} */ (null));
+  const triggerRef = useRef(/** @type {HTMLButtonElement | null} */ (null));
 
   // Close the drawer on route change (nav tap, redirect). Adjusting state
   // during render on a changed value is the React-recommended pattern — no
@@ -52,10 +54,12 @@ export function AppShellFrame({ sidebar, children }: AppShellFrameProps) {
     if (!drawer) return;
 
     const focusable = () =>
-      Array.from(
-        drawer.querySelectorAll<HTMLElement>(
-          'a[href],button:not([disabled]),select,input,textarea,[tabindex]:not([tabindex="-1"])',
-        ),
+      /** @type {HTMLElement[]} */ (
+        Array.from(
+          drawer.querySelectorAll(
+            'a[href],button:not([disabled]),select,input,textarea,[tabindex]:not([tabindex="-1"])',
+          ),
+        )
       );
 
     focusable()[0]?.focus();
@@ -64,7 +68,8 @@ export function AppShellFrame({ sidebar, children }: AppShellFrameProps) {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    function onKeyDown(e: KeyboardEvent) {
+    /** @param {KeyboardEvent} e */
+    function onKeyDown(e) {
       if (e.key === "Escape") {
         setOpen(false);
         return;

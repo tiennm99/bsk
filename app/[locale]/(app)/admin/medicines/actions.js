@@ -8,14 +8,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import {
-  MedicineSchema,
-  type MedicineFormState,
-  type MedicineInput,
-} from "@/lib/catalog/medicine-schema";
+import { MedicineSchema } from "@/lib/catalog/medicine-schema";
 
-function readForm(formData: FormData) {
-  const get = (k: string) => String(formData.get(k) ?? "");
+/** @typedef {import('@/lib/catalog/medicine-schema').MedicineFormState} MedicineFormState */
+/** @typedef {import('@/lib/catalog/medicine-schema').MedicineInput} MedicineInput */
+
+/** @param {FormData} formData */
+function readForm(formData) {
+  /** @param {string} k */
+  const get = (k) => String(formData.get(k) ?? "");
   return {
     name: get("name"),
     unit: get("unit"),
@@ -26,7 +27,8 @@ function readForm(formData: FormData) {
   };
 }
 
-function toRow(d: MedicineInput) {
+/** @param {MedicineInput} d */
+function toRow(d) {
   const cost = d.costPrice.trim() ? Number(d.costPrice) : null;
   return {
     name: d.name,
@@ -38,16 +40,19 @@ function toRow(d: MedicineInput) {
   };
 }
 
-async function finish(): Promise<never> {
+/** @returns {Promise<never>} */
+async function finish() {
   const locale = await getLocale();
   revalidatePath(`/${locale}/admin/medicines`);
   return redirect({ href: `/${locale}/admin/medicines`, locale });
 }
 
-export async function createMedicineAction(
-  _prev: MedicineFormState,
-  formData: FormData,
-): Promise<MedicineFormState> {
+/**
+ * @param {MedicineFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<MedicineFormState>}
+ */
+export async function createMedicineAction(_prev, formData) {
   const t = await getTranslations("admin.medicines");
   const session = await getServerSession();
   if (session?.role !== "admin")
@@ -57,7 +62,7 @@ export async function createMedicineAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }
@@ -78,10 +83,12 @@ export async function createMedicineAction(
   return finish();
 }
 
-export async function updateMedicineAction(
-  _prev: MedicineFormState,
-  formData: FormData,
-): Promise<MedicineFormState> {
+/**
+ * @param {MedicineFormState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<MedicineFormState>}
+ */
+export async function updateMedicineAction(_prev, formData) {
   const t = await getTranslations("admin.medicines");
   const session = await getServerSession();
   if (session?.role !== "admin")
@@ -94,7 +101,7 @@ export async function updateMedicineAction(
       status: "error",
       fieldErrors: parsed.success
         ? {}
-        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+        : /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -111,7 +118,11 @@ export async function updateMedicineAction(
   return finish();
 }
 
-export async function deactivateMedicineAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function deactivateMedicineAction(formData) {
   const session = await getServerSession();
   if (session?.role !== "admin") return;
 

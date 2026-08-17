@@ -23,25 +23,29 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SignInSchema, type SignInInput, type SignInState } from "@/lib/auth/schemas";
+import { SignInSchema } from "@/lib/auth/schemas";
 import { signInAction } from "./actions";
+
+/** @typedef {import('@/lib/auth/schemas').SignInInput} SignInInput */
+/** @typedef {import('@/lib/auth/schemas').SignInState} SignInState */
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
+/** Email/password sign-in form backed by a server action. @returns {import("react").JSX.Element} */
 export function SignInForm() {
   const t = useTranslations("auth.signIn");
 
   // useActionState wires React 19's form action mechanism.
   // isPending reflects the Transition wrapping the Server Action round-trip.
-  const [state, dispatchAction, isPending] = useActionState<SignInState, FormData>(signInAction, {
+  const [state, dispatchAction, isPending] = useActionState(signInAction, {
     status: "idle",
   });
 
   // RHF: client-side Zod validation for instant inline feedback.
   // mode:"onBlur" fires validation when the user leaves a field.
-  const form = useForm<SignInInput>({
+  const form = useForm({
     resolver: zodResolver(SignInSchema),
     mode: "onBlur",
     defaultValues: { email: "", password: "" },

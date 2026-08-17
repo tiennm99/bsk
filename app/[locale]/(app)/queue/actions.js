@@ -13,24 +13,28 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { AppRole } from "@/lib/db/roles";
-import {
-  RegisterCheckupSchema,
-  SetQueueCounterSchema,
-  type RegisterCheckupState,
-  type SetQueueCounterState,
-} from "@/lib/checkups/checkup-schema";
+import { RegisterCheckupSchema, SetQueueCounterSchema } from "@/lib/checkups/checkup-schema";
 
-const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
-const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
+/** @typedef {import('@/lib/db/roles').AppRole} AppRole */
+/** @typedef {import('@/lib/checkups/checkup-schema').RegisterCheckupState} RegisterCheckupState */
+/** @typedef {import('@/lib/checkups/checkup-schema').SetQueueCounterState} SetQueueCounterState */
 
-const COUNTER_MANAGERS: AppRole[] = ["admin", "receptionist"];
-const canManageCounter = (r: AppRole | null | undefined) => !!r && COUNTER_MANAGERS.includes(r);
+/** @type {AppRole[]} */
+const CLINICAL = ["admin", "receptionist", "doctor", "nurse"];
+/** @param {AppRole | null | undefined} r */
+const isClinical = (r) => !!r && CLINICAL.includes(r);
 
-export async function registerCheckupAction(
-  _prev: RegisterCheckupState,
-  formData: FormData,
-): Promise<RegisterCheckupState> {
+/** @type {AppRole[]} */
+const COUNTER_MANAGERS = ["admin", "receptionist"];
+/** @param {AppRole | null | undefined} r */
+const canManageCounter = (r) => !!r && COUNTER_MANAGERS.includes(r);
+
+/**
+ * @param {RegisterCheckupState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<RegisterCheckupState>}
+ */
+export async function registerCheckupAction(_prev, formData) {
   const t = await getTranslations("queue");
 
   const session = await getServerSession();
@@ -47,7 +51,7 @@ export async function registerCheckupAction(
   if (!parsed.success) {
     return {
       status: "error",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: null,
     };
   }
@@ -87,10 +91,12 @@ export async function registerCheckupAction(
  * resetting after a printer jam, etc). admin/receptionist only — RLS +
  * set_queue_counter's role check enforce it; this is defense-in-depth.
  */
-export async function setQueueCounterAction(
-  _prev: SetQueueCounterState,
-  formData: FormData,
-): Promise<SetQueueCounterState> {
+/**
+ * @param {SetQueueCounterState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<SetQueueCounterState>}
+ */
+export async function setQueueCounterAction(_prev, formData) {
   const t = await getTranslations("queue");
 
   const session = await getServerSession();
@@ -135,7 +141,11 @@ export async function setQueueCounterAction(
  * and marks it in_progress. On success, redirects straight to the checkup
  * screen so the doctor never has to find the row in the list themselves.
  */
-export async function callNextPatientAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function callNextPatientAction(formData) {
   const session = await getServerSession();
   if (!isClinical(session?.role)) return;
 
@@ -161,7 +171,11 @@ export async function callNextPatientAction(formData: FormData): Promise<void> {
   }
 }
 
-export async function callPatientAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function callPatientAction(formData) {
   const session = await getServerSession();
   if (!isClinical(session?.role)) return;
 

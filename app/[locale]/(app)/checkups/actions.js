@@ -12,22 +12,24 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { AppRole } from "@/lib/db/roles";
-import {
-  CheckupSaveSchema,
-  parseNum,
-  parseTemplateValues,
-  type CheckupSaveState,
-} from "@/lib/checkups/checkup-schema";
+import { CheckupSaveSchema, parseNum, parseTemplateValues } from "@/lib/checkups/checkup-schema";
 
-const CLINICAL: AppRole[] = ["admin", "receptionist", "doctor", "nurse"];
-const isClinical = (r: AppRole | null | undefined) => !!r && CLINICAL.includes(r);
-const nullIfBlank = (s: string) => (s.trim().length ? s.trim() : null);
+/** @typedef {import('@/lib/db/roles').AppRole} AppRole */
+/** @typedef {import('@/lib/checkups/checkup-schema').CheckupSaveState} CheckupSaveState */
 
-export async function saveCheckupAction(
-  _prev: CheckupSaveState,
-  formData: FormData,
-): Promise<CheckupSaveState> {
+/** @type {AppRole[]} */
+const CLINICAL = ["admin", "receptionist", "doctor", "nurse"];
+/** @param {AppRole | null | undefined} r */
+const isClinical = (r) => !!r && CLINICAL.includes(r);
+/** @param {string} s */
+const nullIfBlank = (s) => (s.trim().length ? s.trim() : null);
+
+/**
+ * @param {CheckupSaveState} _prev
+ * @param {FormData} formData
+ * @returns {Promise<CheckupSaveState>}
+ */
+export async function saveCheckupAction(_prev, formData) {
   const t = await getTranslations("checkups");
 
   const session = await getServerSession();
@@ -36,7 +38,8 @@ export async function saveCheckupAction(
   }
 
   const id = Number(formData.get("id"));
-  const get = (k: string) => String(formData.get(k) ?? "");
+  /** @param {string} k */
+  const get = (k) => String(formData.get(k) ?? "");
   const parsed = CheckupSaveSchema.safeParse({
     heartBeat: get("heartBeat"),
     bloodPressure: get("bloodPressure"),
@@ -56,7 +59,7 @@ export async function saveCheckupAction(
       status: "error",
       fieldErrors: parsed.success
         ? {}
-        : (parsed.error.flatten().fieldErrors as Record<string, string[]>),
+        : /** @type {Record<string, string[]>} */ (parsed.error.flatten().fieldErrors),
       formError: parsed.success ? t("errorGeneric") : null,
     };
   }
@@ -104,7 +107,11 @@ export async function saveCheckupAction(
 }
 
 // ── Soft-delete ───────────────────────────────────────────────────────────────
-export async function deleteCheckupAction(formData: FormData): Promise<void> {
+/**
+ * @param {FormData} formData
+ * @returns {Promise<void>}
+ */
+export async function deleteCheckupAction(formData) {
   const session = await getServerSession();
   if (!isClinical(session?.role)) return;
 

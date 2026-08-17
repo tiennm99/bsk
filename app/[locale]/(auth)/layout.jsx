@@ -5,9 +5,10 @@
  * Centers the card content on the page; no sidebar, no app nav.
  * Deliberately does NOT call getServerSession() — this is a public route.
  */
-import type { ReactNode } from "react";
-
-export default function AuthLayout({ children }: { children: ReactNode }) {
+/**
+ * @param {{ children: import("react").ReactNode }} props
+ */
+export default function AuthLayout({ children }) {
   return (
     <div className="bg-background flex min-h-screen flex-col items-center justify-center px-4 py-12">
       {/* Brand mark */}
