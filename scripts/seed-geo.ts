@@ -3,7 +3,7 @@
  * Seed Vietnamese geo lookup (bsk.provinces + bsk.wards).
  *
  * Idempotent upsert from a local dataset — safe to re-run. Run once after
- * `pnpm db:push`, before using patient registration (the address dropdowns
+ * `npm run db:push`, before using patient registration (the address dropdowns
  * read these tables).
  *
  * Data file: supabase/seed/vn-geo.json (NOT committed — it's large and its
@@ -16,7 +16,7 @@
  * Env required (not read from .env.local automatically — pass explicitly):
  *   NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY
  * Example:
- *   NEXT_PUBLIC_SUPABASE_URL=... SUPABASE_SECRET_KEY=... pnpm db:seed-geo
+ *   NEXT_PUBLIC_SUPABASE_URL=... SUPABASE_SECRET_KEY=... npm run db:seed-geo
  */
 
 import { readFileSync } from "node:fs";

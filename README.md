@@ -14,19 +14,19 @@ Feature-complete against the original (Phases 0–8). See [PLAN.md](./PLAN.md) f
 
 Every command in the original's server protocol is either implemented or recorded as a non-goal in [PLAN.md](./PLAN.md) §6 — see the audits under `plans/reports/` for the source-grounded mapping.
 
-**Testing:** `pnpm test` runs the Vitest unit suite (schemas, invoice math, date/age helpers). `pnpm test:e2e` runs Playwright smoke tests that need no database (auth gates, i18n, sign-in ergonomics); the full queue→checkup→prescription→paid→invoice happy path needs a seeded Supabase project — prerequisites are documented in [tests/e2e/README.md](./tests/e2e/README.md).
+**Testing:** `npm test` runs the Vitest unit suite (schemas, invoice math, date/age helpers). `npm run test:e2e` runs Playwright smoke tests that need no database (auth gates, i18n, sign-in ergonomics); the full queue→checkup→prescription→paid→invoice happy path needs a seeded Supabase project — prerequisites are documented in [tests/e2e/README.md](./tests/e2e/README.md).
 
 > **Not yet runtime-verified.** The code type-checks, lints, builds, and passes the suites above, but the infrastructure-dependent paths (Realtime queue push, Storage upload/webcam, PDF/Excel rendering against real rows, the SQL RPCs, and the cron sweep) have never been executed against a live Supabase project. Smoke-test them after the setup below.
 
 ### First-run setup (operator)
 
-After provisioning Supabase/Upstash/Vercel and `pnpm db:push`:
+After provisioning Supabase/Upstash/Vercel and `npm run db:push`:
 
 1. **Seed the admin allowlist** before the first sign-in (or nobody can bootstrap admin):
    ```sql
    INSERT INTO bsk.admin_allowlist (email) VALUES ('you@example.com');
    ```
-2. **Seed Vietnamese geo data** (province/ward address dropdowns): `pnpm db:seed-geo` (see `scripts/seed-geo.ts`).
+2. **Seed Vietnamese geo data** (province/ward address dropdowns): `npm run db:seed-geo` (see `scripts/seed-geo.ts`).
 3. **Enable Supabase Realtime** on `bsk.checkups` (Database → Replication) for the live queue.
 4. **Set `CRON_SECRET`** in Vercel so the nightly media-retention sweep (`/api/cron/nightly`, scheduled in `vercel.json`) can authenticate.
 
@@ -34,7 +34,7 @@ See [docs/supabase-shared-config.md](./docs/supabase-shared-config.md) for the s
 
 ## Stack
 
-- **pnpm** + **Next.js 16** (App Router) + **TypeScript**
+- **npm** + **Next.js 16** (App Router) + **TypeScript**
 - **Supabase** (Postgres + Auth + Storage) — shared across personal projects via schema-per-app
 - **Upstash** Redis + QStash — shared across personal projects via key prefixes
 - **Vercel** for hosting
@@ -48,7 +48,7 @@ See [docs/supabase-shared-config.md](./docs/supabase-shared-config.md) for the s
 
 ## Database
 
-After `pnpm db:push`, run `pnpm db:gen-types` to refresh `types/supabase-bsk.ts`.
+After `npm run db:push`, run `npm run db:gen-types` to refresh `types/supabase-bsk.ts`.
 
 ## License
 

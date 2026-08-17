@@ -36,6 +36,4 @@ export const MarkPaidSchema = z.object({
 });
 
 export type MarkPaidState =
-  | { status: "idle" }
-  | { status: "error"; formError: string }
-  | { status: "success" };
+  { status: "idle" } | { status: "error"; formError: string } | { status: "success" };

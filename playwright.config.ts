@@ -20,7 +20,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: "pnpm build && pnpm start",
+    command: "npm run build && npm start",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     env: {

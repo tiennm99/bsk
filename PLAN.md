@@ -13,7 +13,7 @@ Versions are pinned to the latest stable as of May 2026. No code is written yet,
 
 | Layer | Choice |
 |---|---|
-| Package manager | pnpm |
+| Package manager | npm |
 | Framework | **Next.js 16** (App Router, RSC, Server Actions, `'use cache'` directive, Turbopack default) |
 | Runtime | React 19 — `params` and `searchParams` are **async-only** (must `await`) |
 | Language | TypeScript 5.9 (`"strict": true`); revisit TS 6 once `eslint-config-next` + `typescript-eslint` ship support |
@@ -124,7 +124,7 @@ These are the cross-cutting changes the plan assumes everywhere; they're called 
 A source-grounded audit of the original (clone + `ServerHandler.java` + SQLite schema + Swing dialogs, 2026-07-25) counts **46 server commands + 19 UI screens + 8 entities**. Rewriting all at once is a trap. Phases below are sized so each ends with a demoable, deployable slice. Every original command maps to a phase below or to §6 non-goals — the granular features named per phase (geo-lookup, gender templates, accent-insensitive search, queue counter, image batch-sync) come from that audit so they aren't lost during build.
 
 ### Phase 0 — Foundation
-- Repo scaffold: `pnpm create next-app@latest` (Next.js 16, App Router, TypeScript strict, Turbopack); add Tailwind v4 via `@tailwindcss/postcss` + CSS-first `@theme`; initialize shadcn/ui with `pnpm dlx shadcn@latest init` (CLI v4); ESLint + Prettier.
+- Repo scaffold: `npm run create next-app@latest` (Next.js 16, App Router, TypeScript strict, Turbopack); add Tailwind v4 via `@tailwindcss/postcss` + CSS-first `@theme`; initialize shadcn/ui with `npx shadcn@latest init` (CLI v4); ESLint + Prettier.
 - Document the async-`await params` + `'use cache'` rules from §3.1 in `CONTRIBUTING.md` / inline comments on the first route, so future phases inherit the pattern.
 - Supabase project created (or schema `bsk` carved out of shared one); use the new `sb_publishable_*` / `sb_secret_*` keys.
 - Upstash Redis DB + QStash topic provisioned.

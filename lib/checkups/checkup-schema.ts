@@ -29,9 +29,7 @@ export const SetQueueCounterSchema = z.object({
 export type SetQueueCounterInput = z.infer<typeof SetQueueCounterSchema>;
 
 export type SetQueueCounterState =
-  | { status: "idle" }
-  | { status: "error"; formError: string | null }
-  | { status: "success" };
+  { status: "idle" } | { status: "error"; formError: string | null } | { status: "success" };
 
 // ── Doctor fills the checkup ─────────────────────────────────────────────────
 const dateOrEmpty = z

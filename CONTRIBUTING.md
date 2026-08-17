@@ -112,12 +112,12 @@ Never run `KEYS *`, `FLUSHDB`, `FLUSHALL`, or `supabase db reset` against the sh
 ## Workflow
 
 ```bash
-pnpm install          # one-time
-pnpm dev              # local dev (Turbopack)
-pnpm lint             # ESLint
-pnpm typecheck        # tsc --noEmit
-pnpm build            # production build
-pnpm format           # prettier --write .
+npm install          # one-time
+npm run dev              # local dev (Turbopack)
+npm run lint             # ESLint
+npm run typecheck        # tsc --noEmit
+npm run build            # production build
+npm run format           # prettier --write .
 ```
 
 ## Commit hygiene

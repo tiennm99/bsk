@@ -53,8 +53,7 @@ export type SignInState =
 export function parseSignIn(
   formData: FormData,
 ):
-  | { success: true; data: SignInInput }
-  | { success: false; fieldErrors: Record<string, string[]> } {
+  { success: true; data: SignInInput } | { success: false; fieldErrors: Record<string, string[]> } {
   const result = SignInSchema.safeParse(Object.fromEntries(formData));
 
   if (!result.success) {

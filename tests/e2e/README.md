@@ -51,24 +51,24 @@ Then:
 
 ```bash
 # All E2E tests (smoke suite only until Supabase is provisioned)
-pnpm test:e2e
+npm run test:e2e
 
 # Watch mode
-pnpm test:e2e --watch
+npm run test:e2e --watch
 
 # With UI
-pnpm test:e2e --ui
+npm run test:e2e --ui
 
 # Specific file
-pnpm test:e2e auth-gate.spec.ts
+npm run test:e2e auth-gate.spec.ts
 ```
 
 ## Debugging
 
 ```bash
 # Show browser
-HEADED=1 pnpm test:e2e
+HEADED=1 npm run test:e2e
 
 # Slow motion (100ms per step)
-pnpm test:e2e --headed --workers=1 --trace=on
+npm run test:e2e --headed --workers=1 --trace=on
 ```

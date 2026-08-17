@@ -1,6 +1,6 @@
 # Normalize line endings so Prettier's `endOfLine: "lf"` check agrees between
 # Windows working copies and Linux CI. Without this (and with core.autocrlf),
-# `pnpm format:check` reports different file counts locally vs in CI.
+# `npm run format:check` reports different file counts locally vs in CI.
 * text=auto eol=lf
 
 # Binary assets — never touch these.

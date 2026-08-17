@@ -26,4 +26,4 @@ this repository.
 ---
 
 Third-party software used by this project retains its own licenses; see
-the dependency manifests (package.json, pnpm-lock.yaml) for details.
+the dependency manifests (package.json, package-lock.json) for details.

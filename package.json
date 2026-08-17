@@ -2,7 +2,6 @@
   "name": "bsk",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.1.1",
   "engines": {
     "node": ">=24"
   },
@@ -19,7 +18,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "db:preflight": "tsx scripts/preflight-supabase.ts",
-    "db:push": "pnpm db:preflight && supabase db push",
+    "db:push": "npm run db:preflight && supabase db push",
     "db:gen-types": "supabase gen types typescript --schema bsk > types/supabase-bsk.ts",
     "db:seed-geo": "tsx scripts/seed-geo.ts",
     "check:no-secret-leak": "node scripts/check-no-secret-leak.mjs"
@@ -63,12 +62,25 @@
     "eslint": "^9.36.0",
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.18",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
     "tsx": "^4.22.3",
     "typescript": "^5.9.2",
     "vitest": "^4.1.10"
+  },
+  "overrides": {
+    "postcss": "$postcss",
+    "js-yaml": ">=4.3.0",
+    "esbuild": ">=0.28.1",
+    "@babel/core": ">=7.29.1",
+    "sharp": ">=0.35.0"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "@parcel/watcher": true,
+    "@swc/core": true,
+    "unrs-resolver": true
   }
 }

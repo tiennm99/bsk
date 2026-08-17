@@ -1,6 +1,6 @@
 # dependencies
 node_modules
-.pnpm-store
+.npm-cache
 
 # next
 .next
@@ -33,7 +33,7 @@ supabase/seed/vn-geo.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+npm-debug.log*
 
 # testing
 coverage

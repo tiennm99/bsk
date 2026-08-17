@@ -26,36 +26,32 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Must run before setup-node so its `cache: pnpm` can find pnpm.
-      # Version comes from the `packageManager` field in package.json.
-      - uses: pnpm/action-setup@v6
-
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: pnpm
+          cache: npm
 
-      - run: pnpm install --frozen-lockfile
+      - run: npm ci
 
       - name: Secret-leak guard (sb_secret_* in NEXT_PUBLIC_*)
-        run: pnpm check:no-secret-leak
+        run: npm run check:no-secret-leak
 
       - name: Format check
-        run: pnpm format:check
+        run: npm run format:check
 
       - name: Unit tests
-        run: pnpm test
+        run: npm test
 
       - name: Lint
-        run: pnpm lint
+        run: npm run lint
 
       - name: Typecheck
-        run: pnpm typecheck
+        run: npm run typecheck
 
       - name: Build
-        run: pnpm build
+        run: npm run build
 
-      # E2E tests (pnpm test:e2e) are run locally / can be enabled later
+      # E2E tests (npm test:e2e) are run locally / can be enabled later
       # when Playwright browser installation and full build time are available.
       # Current suite covers smoke tests; full happy-path tests require
       # a provisioned Supabase project with seed data.

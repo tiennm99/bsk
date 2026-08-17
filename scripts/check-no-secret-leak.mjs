@@ -8,7 +8,7 @@
  * try to catch cross-line indirection — this is defense-in-depth, not a
  * comprehensive secret scanner.
  *
- * Runs locally via `pnpm check:no-secret-leak` and in CI before lint.
+ * Runs locally via `npm run check:no-secret-leak` and in CI before lint.
  */
 
 import { spawnSync } from "node:child_process";
@@ -24,7 +24,7 @@ const result = spawnSync(
     PATTERN,
     "--",
     ".",
-    ":(exclude)pnpm-lock.yaml",
+    ":(exclude)package-lock.json",
     ":(exclude)scripts/check-no-secret-leak.mjs",
   ],
   { encoding: "utf8" },

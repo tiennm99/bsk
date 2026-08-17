@@ -1,4 +1,4 @@
-// PLACEHOLDER — regenerate via `pnpm db:gen-types` after running migrations.
+// PLACEHOLDER — regenerate via `npm run db:gen-types` after running migrations.
 // Hand-written to keep typecheck green until provisioning is done.
 //
 // Shape mirrors the canonical output of:

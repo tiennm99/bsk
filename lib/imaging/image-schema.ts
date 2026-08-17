@@ -43,6 +43,4 @@ export const DeleteImageSchema = z.object({
 });
 
 export type ImageActionState =
-  | { status: "idle" }
-  | { status: "error"; message: string }
-  | { status: "success" };
+  { status: "idle" } | { status: "error"; message: string } | { status: "success" };
