@@ -32,6 +32,20 @@ After provisioning Supabase/Upstash/Vercel and `npm run db:push`:
 
 See [docs/supabase-shared-config.md](./docs/supabase-shared-config.md) for the shared-project rules and [docs/design-guidelines.md](./docs/design-guidelines.md) for UI conventions.
 
+### Migrating data from the original BSK app
+
+An existing install of the upstream Java app can be imported from its SQLite file (`database/BSK.db`):
+
+```bash
+npm run db:migrate-upstream -- /path/to/BSK.db --dry-run   # preview counts + warnings, no writes
+NEXT_PUBLIC_SUPABASE_URL=... SUPABASE_SECRET_KEY=... \
+  npm run db:migrate-upstream -- /path/to/BSK.db
+```
+
+**Copying the file:** the upstream server runs SQLite in WAL mode — stop the Java server first and copy `BSK.db` together with its `BSK.db-wal`/`BSK.db-shm` siblings (or checkpoint first), otherwise the newest visits are silently missing.
+
+Run it once, after `npm run db:push`, against an otherwise empty `bsk` schema (it re-keys all ids and refuses a non-empty target). Migrated: clinic settings, doctors, medicines, services, checkup templates (upstream RTF content converted to plain-text field labels — review them in the admin UI afterwards), patients (including pre-1970 birth dates), visits (shift 0/1 → morning/afternoon; suggestion, per-service notes, and the ultrasound doctor are folded into the visit notes), prescriptions, service lines, payment state, queue counters. **Not** migrated: staff accounts (re-invite via staff management — upstream passwords are never reused), patient images (Google Drive stays where it is), medicine descriptions/preferred notes (warned when present), and patient province/ward codes (the names remain readable at the end of each address string; backfill codes in the UI after `npm run db:seed-geo`). The script header and the reports `researcher-260818-1712-…-migration-mapping` and `code-reviewer-260818-1749-…-upstream-compat-audit` under `plans/reports/` document the full field mapping and its source-level verification.
+
 ## Stack
 
 - **npm** + **Next.js 16** (App Router) + **JavaScript with JSDoc types** (checked by tsc)

@@ -21,6 +21,7 @@
     "db:push": "npm run db:preflight && supabase db push",
     "db:gen-types": "supabase gen types typescript --schema bsk > types/supabase-bsk.d.ts",
     "db:seed-geo": "node scripts/seed-geo.mjs",
+    "db:migrate-upstream": "node scripts/migrate-from-upstream.mjs",
     "check:no-secret-leak": "node scripts/check-no-secret-leak.mjs"
   },
   "dependencies": {
