@@ -6,6 +6,7 @@
 
 import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
+import { billingRoles } from "@/lib/db/roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { renderInvoicePdf } from "@/lib/pdf/invoice-document";
 import { sumLineTotals } from "@/lib/billing/totals";
@@ -24,8 +25,11 @@ export async function GET(_req, { params }) {
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
 
+  // Billing gate: every staff role may print an invoice, patient may not.
   const session = await getServerSession();
-  if (!session?.role) return new Response("Forbidden", { status: 403 });
+  if (!session?.role || !billingRoles.includes(session.role)) {
+    return new Response("Forbidden", { status: 403 });
+  }
 
   const supabase = await createSupabaseServerClient();
 
@@ -45,6 +49,7 @@ export async function GET(_req, { params }) {
       .from("customers")
       .select("last_name, first_name")
       .eq("id", c.customer_id)
+      .eq("deleted", false)
       .maybeSingle(),
     supabase
       .from("order_items")

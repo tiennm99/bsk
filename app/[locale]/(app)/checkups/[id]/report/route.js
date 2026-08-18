@@ -11,6 +11,7 @@
 
 import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
+import { clinicalRoles } from "@/lib/db/roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CHECKUP_MEDIA_BUCKET, SIGNED_URL_TTL_SECONDS } from "@/lib/imaging/image-schema";
 import { computeAge } from "@/lib/pdf/patient-info";
@@ -32,8 +33,12 @@ export async function GET(_req, { params }) {
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
 
+  // Clinical gate, matching checkups/layout.jsx — route handlers do not
+  // inherit layout gates, and this PDF embeds diagnosis/vitals/demographics.
   const session = await getServerSession();
-  if (!session?.role) return new Response("Forbidden", { status: 403 });
+  if (!session?.role || !clinicalRoles.includes(session.role)) {
+    return new Response("Forbidden", { status: 403 });
+  }
 
   const supabase = await createSupabaseServerClient();
 
@@ -54,6 +59,7 @@ export async function GET(_req, { params }) {
         .from("customers")
         .select("last_name, first_name, dob, gender")
         .eq("id", c.customer_id)
+        .eq("deleted", false)
         .maybeSingle(),
       c.doctor_id
         ? supabase

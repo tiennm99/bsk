@@ -7,6 +7,7 @@
 
 import { getTranslations } from "next-intl/server";
 import { getServerSession } from "@/lib/auth/get-server-session";
+import { clinicalRoles } from "@/lib/db/roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { computeAge } from "@/lib/pdf/patient-info";
 import { renderPrescriptionPdf } from "@/lib/pdf/prescription-document";
@@ -25,8 +26,12 @@ export async function GET(_req, { params }) {
   const checkupId = Number(id);
   if (!Number.isFinite(checkupId)) return new Response("Not found", { status: 404 });
 
+  // Clinical gate, matching checkups/layout.jsx — this PDF embeds diagnosis,
+  // medicines, and the patient's address.
   const session = await getServerSession();
-  if (!session?.role) return new Response("Forbidden", { status: 403 });
+  if (!session?.role || !clinicalRoles.includes(session.role)) {
+    return new Response("Forbidden", { status: 403 });
+  }
 
   const supabase = await createSupabaseServerClient();
 
@@ -46,6 +51,7 @@ export async function GET(_req, { params }) {
       .from("customers")
       .select("last_name, first_name, dob, gender, address_detail, province_code, ward_code")
       .eq("id", c.customer_id)
+      .eq("deleted", false)
       .maybeSingle(),
     supabase
       .from("order_items")

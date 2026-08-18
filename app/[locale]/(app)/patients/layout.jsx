@@ -7,6 +7,7 @@
  */
 
 import { requireRole } from "@/lib/auth/require-role";
+import { clinicalRoles } from "@/lib/db/roles";
 
 /**
  * @param {{ children: import("react").ReactNode, params: Promise<{ locale: string }> }} props
@@ -14,6 +15,6 @@ import { requireRole } from "@/lib/auth/require-role";
  */
 export default async function PatientsLayout({ children, params }) {
   const { locale } = await params;
-  await requireRole(["admin", "receptionist", "doctor", "nurse"], locale);
+  await requireRole(clinicalRoles, locale);
   return <>{children}</>;
 }

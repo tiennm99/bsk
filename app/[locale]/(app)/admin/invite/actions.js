@@ -46,15 +46,18 @@ export async function inviteUserAction(_prevState, formData) {
   }
 
   // ── Rate limit (bound shared-project SMTP spend) ─────────────────────────────
-  // Keyed by admin id (server-derived, not spoofable). Fail OPEN on Redis
-  // outage — an invite is admin-gated already, so availability wins.
+  // Keyed by admin id (server-derived, not spoofable). Fail CLOSED on Redis
+  // outage: unlike a login retry, SMTP spend on the shared project cannot be
+  // undone, and an admin can simply retry once Redis is back. (The login
+  // limiter stays fail-open — availability wins there.)
   try {
     const { success: withinLimit } = await inviteLimiter.limit(session.user.id);
     if (!withinLimit) {
       return { status: "error", fieldErrors: {}, formError: t("tooManyRequests") };
     }
   } catch (err) {
-    console.warn("[invite] rate limiter unavailable, failing open:", err);
+    console.warn("[invite] rate limiter unavailable, failing closed:", err);
+    return { status: "error", fieldErrors: {}, formError: t("tooManyRequests") };
   }
 
   // ── Input validation ───────────────────────────────────────────────────────

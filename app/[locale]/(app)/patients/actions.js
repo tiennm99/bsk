@@ -14,13 +14,14 @@ import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CustomerSchema } from "@/lib/customers/customer-schema";
+import { clinicalRoles } from "@/lib/db/roles";
 
 /** @typedef {import('@/lib/db/roles').AppRole} AppRole */
 /** @typedef {import('@/lib/customers/customer-schema').CustomerFormState} CustomerFormState */
 /** @typedef {import('@/lib/customers/customer-schema').CustomerInput} CustomerInput */
 
-/** @type {AppRole[]} */
-const CLINICAL_ROLES = ["admin", "receptionist", "doctor", "nurse"];
+/** @type {readonly AppRole[]} */
+const CLINICAL_ROLES = clinicalRoles;
 /** @param {AppRole | null | undefined} role */
 const isClinical = (role) => !!role && CLINICAL_ROLES.includes(role);
 /** @param {string} s */

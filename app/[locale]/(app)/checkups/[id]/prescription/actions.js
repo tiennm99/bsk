@@ -16,6 +16,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { clinicalRoles } from "@/lib/db/roles";
 import {
   MedicineLinesSchema,
   ServiceLinesSchema,
@@ -26,8 +27,8 @@ import {
 /** @typedef {import('@/lib/billing/prescription-schema').PrescriptionSaveState} PrescriptionSaveState */
 /** @typedef {import('@/lib/billing/prescription-schema').MarkPaidState} MarkPaidState */
 
-/** @type {AppRole[]} */
-const CLINICAL = ["admin", "receptionist", "doctor", "nurse"];
+/** @type {readonly AppRole[]} */
+const CLINICAL = clinicalRoles;
 /** @type {AppRole[]} */
 const BILLING = ["admin", "cashier"];
 /** @param {AppRole | null | undefined} r */

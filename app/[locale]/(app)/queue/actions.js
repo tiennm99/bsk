@@ -14,13 +14,14 @@ import { redirect } from "@/i18n/navigation";
 import { getServerSession } from "@/lib/auth/get-server-session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { RegisterCheckupSchema, SetQueueCounterSchema } from "@/lib/checkups/checkup-schema";
+import { clinicalRoles } from "@/lib/db/roles";
 
 /** @typedef {import('@/lib/db/roles').AppRole} AppRole */
 /** @typedef {import('@/lib/checkups/checkup-schema').RegisterCheckupState} RegisterCheckupState */
 /** @typedef {import('@/lib/checkups/checkup-schema').SetQueueCounterState} SetQueueCounterState */
 
-/** @type {AppRole[]} */
-const CLINICAL = ["admin", "receptionist", "doctor", "nurse"];
+/** @type {readonly AppRole[]} */
+const CLINICAL = clinicalRoles;
 /** @param {AppRole | null | undefined} r */
 const isClinical = (r) => !!r && CLINICAL.includes(r);
 
